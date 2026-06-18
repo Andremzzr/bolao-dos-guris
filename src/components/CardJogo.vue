@@ -39,15 +39,15 @@
     <div class="px-3 py-3">
       <div class="flex items-center gap-2">
         <!-- Home team -->
-        <div class="flex-1 flex flex-col-reverse sm:flex-row justify-center sm:justify-end items-center gap-1 sm:gap-2">
+        <div class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5">
+          <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.mandante" />
           <span 
-            class="text-[10px] sm:text-sm font-bold text-white leading-tight text-center sm:text-right"
+            class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
             :class="{ 'hidden sm:block': !locked && !resultado?.finalizado }"
             :title="jogo.mandante"
           >
             {{ truncateName(jogo.mandante) }}
           </span>
-          <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.mandante" />
         </div>
 
         <!-- Score / Input area -->
@@ -150,10 +150,10 @@
         </div>
 
         <!-- Away team -->
-        <div class="flex-1 flex flex-col sm:flex-row justify-center sm:justify-start items-center gap-1 sm:gap-2">
+        <div class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5">
           <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.visitante" />
           <span 
-            class="text-[10px] sm:text-sm font-bold text-white leading-tight text-center sm:text-left"
+            class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
             :class="{ 'hidden sm:block': !locked && !resultado?.finalizado }"
             :title="jogo.visitante"
           >
