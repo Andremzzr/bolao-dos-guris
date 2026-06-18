@@ -162,8 +162,21 @@
         </div>
       </div>
 
+      <!-- Odds Bar -->
+      <div class="mt-3 px-2">
+        <div class="flex items-center justify-between text-[10px] text-slate-400 font-semibold mb-1">
+          <span :style="{ color: colorMandante }">{{ percMandante }}%</span>
+          <span>Odds</span>
+          <span :style="{ color: colorVisitante }">{{ percVisitante }}%</span>
+        </div>
+        <div class="flex w-full h-1.5 rounded-full overflow-hidden bg-slate-800">
+          <div :style="{ width: percMandante + '%', backgroundColor: colorMandante }" class="h-full transition-all duration-500"></div>
+          <div :style="{ width: percVisitante + '%', backgroundColor: colorVisitante }" class="h-full transition-all duration-500"></div>
+        </div>
+      </div>
+
       <!-- Stadium info -->
-      <div class="text-center mt-2">
+      <div class="text-center mt-3">
         <span class="text-[10px] text-slate-600">{{ jogo.estadio }}</span>
       </div>
     </div>
@@ -197,11 +210,13 @@
 import { ref, computed, watch } from 'vue'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
+import { getFlagColor } from '@/utils/colors'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
   palpite: { type: Object, default: null },
   resultado: { type: Object, default: null },
+  odd: { type: Object, default: null },
   locked: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
 })
@@ -240,6 +255,27 @@ const isPast = computed(() => {
 const formattedTime = computed(() => {
   const date = new Date(props.jogo.data)
   return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+})
+
+const colorMandante = computed(() => getFlagColor(props.jogo.mandante))
+const colorVisitante = computed(() => getFlagColor(props.jogo.visitante))
+
+const percMandante = computed(() => {
+  if (!props.odd) return 50
+  const vM = props.odd.votos_mandante || 0
+  const vV = props.odd.votos_visitante || 0
+  const total = vM + vV
+  if (total === 0) return 50
+  return Math.round((vM / total) * 100)
+})
+
+const percVisitante = computed(() => {
+  if (!props.odd) return 50
+  const vM = props.odd.votos_mandante || 0
+  const vV = props.odd.votos_visitante || 0
+  const total = vM + vV
+  if (total === 0) return 50
+  return 100 - percMandante.value
 })
 
 const hasChanged = computed(() => {

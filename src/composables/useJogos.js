@@ -5,6 +5,7 @@ import jogosData from '@/data/jogos.json'
 export function useJogos() {
   const resultados = ref({})
   const palpites = ref({})
+  const odds = ref({})
   const loading = ref(false)
   const saving = ref({})
   const toast = ref(null)
@@ -109,6 +110,19 @@ export function useJogos() {
       const map = {}
       data.forEach(p => { map[p.jogo_id] = p })
       palpites.value = map
+    }
+  }
+
+  // Fetch all odds
+  async function fetchOdds() {
+    const { data, error } = await supabase
+      .from('view_odds')
+      .select('*')
+
+    if (!error && data) {
+      const map = {}
+      data.forEach(o => { map[o.jogo_id] = o })
+      odds.value = map
     }
   }
 
@@ -221,6 +235,7 @@ export function useJogos() {
     jogosPorData,
     resultados,
     palpites,
+    odds,
     loading,
     saving,
     toast,
@@ -229,6 +244,7 @@ export function useJogos() {
     statusJogo,
     fetchResultados,
     fetchPalpites,
+    fetchOdds,
     salvarPalpite,
     upsertResultado,
     calcularPontos,

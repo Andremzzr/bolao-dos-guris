@@ -59,6 +59,7 @@
             :jogo="jogo"
             :palpite="palpites[jogo.id]"
             :resultado="resultados[jogo.id]"
+            :odd="odds[jogo.id]"
             :locked="isLocked(jogo)"
             :saving="saving[jogo.id]"
             @salvar="onSalvarPalpite"
@@ -88,10 +89,12 @@ const {
   jogosOrdenados,
   resultados,
   palpites,
+  odds,
   isLocked,
   saving,
   fetchResultados,
   fetchPalpites,
+  fetchOdds,
   salvarPalpite,
   statusJogo,
 } = useJogos()
@@ -153,6 +156,7 @@ onMounted(async () => {
   await Promise.all([
     fetchResultados(),
     fetchPalpites(user.value?.id),
+    fetchOdds(),
   ])
   initialLoading.value = false
   scrollToLiveGame()
