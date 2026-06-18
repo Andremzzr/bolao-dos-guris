@@ -209,3 +209,31 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_calcula_pontuacao_palpite
 BEFORE INSERT OR UPDATE ON palpites
 FOR EACH ROW EXECUTE FUNCTION trigger_palpite_pontuacao();
+
+-- ============================================
+-- 8. View de Ranking Diário (Rei da Rodada)
+-- ============================================
+CREATE OR REPLACE VIEW view_ranking_diario AS
+SELECT
+  DATE(j.data) AS data_jogo,
+  u.id AS usuario_id,
+  u.nome,
+  COALESCE(SUM(p.pontuacao), 0)::INTEGER AS pontos,
+
+  COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END)::INTEGER AS acertos_exatos,
+  COUNT(CASE WHEN p.pontuacao IN (3, 5) THEN 1 END)::INTEGER AS acertos_vencedor,
+  COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogos_computados,
+
+  DENSE_RANK() OVER (
+    PARTITION BY DATE(j.data)
+    ORDER BY
+      COALESCE(SUM(p.pontuacao), 0) DESC,
+      COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END) DESC
+  )::INTEGER AS posicao
+
+FROM usuarios u
+JOIN palpites p ON u.id = p.usuario_id
+JOIN jogos j ON p.jogo_id = j.id
+JOIN resultados r ON j.id = r.jogo_id AND r.finalizado = true
+WHERE DATE(j.data) = CURRENT_DATE - INTERVAL '1 day'
+GROUP BY DATE(j.data), u.id, u.nome;
