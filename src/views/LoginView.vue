@@ -33,16 +33,32 @@
         </div>
 
         <div>
-          <label for="senha" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <label for="senhaGrupo" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
             Senha do Grupo
           </label>
           <input
-            id="senha"
-            ref="senhaInput"
-            v-model="senha"
+            id="senhaGrupo"
+            ref="senhaGrupoInput"
+            v-model="senhaGrupo"
             type="password"
             placeholder="Senha compartilhada do grupo"
             class="w-full bg-slate-800/50 border border-copa-border rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-copa-accent focus:border-transparent transition-all duration-200"
+            @keyup.enter="$refs.codigoInput?.focus()"
+          />
+        </div>
+
+        <div>
+          <label for="codigo" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            Seu Código Pessoal (até 5 caracteres)
+          </label>
+          <input
+            id="codigo"
+            ref="codigoInput"
+            v-model="codigo"
+            type="text"
+            maxlength="5"
+            placeholder="Ex: AB123"
+            class="w-full bg-slate-800/50 border border-copa-border rounded-xl px-4 py-3.5 text-white placeholder-slate-500 uppercase focus:outline-none focus:ring-2 focus:ring-copa-accent focus:border-transparent transition-all duration-200"
             @keyup.enter="handleLogin"
           />
         </div>
@@ -61,7 +77,7 @@
         <button
           id="btn-login"
           @click="handleLogin"
-          :disabled="loading || !nome.trim() || !senha.trim()"
+          :disabled="loading || !nome.trim() || !senhaGrupo.trim() || !codigo.trim()"
           class="w-full bg-gradient-to-r from-copa-accent to-copa-accent-light text-white font-bold py-3.5 rounded-xl transition-all duration-200 tap-scale disabled:opacity-40 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-copa-accent/25"
         >
           <span v-if="loading" class="flex items-center justify-center gap-2">
@@ -77,7 +93,7 @@
 
       <!-- Footer -->
       <p class="text-center text-slate-500 text-xs mt-6">
-        Primeiro acesso? Basta escolher seu nome e a senha do grupo.
+        Primeiro acesso? Escolha seu nome, insira a senha do grupo e invente seu código pessoal!
       </p>
     </div>
   </div>
@@ -90,8 +106,12 @@ import { useAuth } from '@/composables/useAuth'
 const { login, loading, error } = useAuth()
 
 const nome = ref('')
-const senha = ref('')
+const senhaGrupo = ref('')
+const codigo = ref('')
+
 const nomeInput = ref(null)
+const senhaGrupoInput = ref(null)
+const codigoInput = ref(null)
 
 onMounted(() => {
   // Auto-focus on name input
@@ -99,7 +119,7 @@ onMounted(() => {
 })
 
 async function handleLogin() {
-  if (!nome.value.trim() || !senha.value.trim()) return
-  await login(nome.value, senha.value)
+  if (!nome.value.trim() || !senhaGrupo.value.trim() || !codigo.value.trim()) return
+  await login(nome.value, senhaGrupo.value, codigo.value)
 }
 </script>

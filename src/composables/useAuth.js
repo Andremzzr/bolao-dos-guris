@@ -17,10 +17,10 @@ export function useAuth() {
   const router = useRouter()
   const isLoggedIn = computed(() => !!user.value)
 
-  async function login(nome, senha) {
+  async function login(nome, senhaGrupo, codigoPessoal) {
     const groupPassword = import.meta.env.VITE_GROUP_PASSWORD
 
-    if (senha !== groupPassword) {
+    if (senhaGrupo !== groupPassword) {
       error.value = 'Senha do grupo incorreta!'
       return false
     }
@@ -29,36 +29,19 @@ export function useAuth() {
     error.value = null
 
     try {
-      // Try to find existing user
-      let { data: existingUser, error: fetchError } = await supabase
-        .from('usuarios')
-        .select('*')
-        .eq('nome', nome.trim())
-        .maybeSingle()
+      const { data, error: rpcError } = await supabase.rpc('login_ou_registro', {
+        p_nome: nome.trim(),
+        p_codigo: codigoPessoal.trim()
+      })
 
-      if (fetchError) throw fetchError
+      if (rpcError) throw rpcError
 
-      if (existingUser) {
-        user.value = existingUser
-      } else {
-        // Create new user
-        const { data: newUser, error: insertError } = await supabase
-          .from('usuarios')
-          .insert({ nome: nome.trim() })
-          .select()
-          .single()
-
-        if (insertError) {
-          if (insertError.code === '23505') {
-            error.value = 'Esse nome já está em uso!'
-          } else {
-            throw insertError
-          }
-          return false
-        }
-
-        user.value = newUser
+      if (!data.sucesso) {
+        error.value = data.mensagem
+        return false
       }
+
+      user.value = data.usuario
 
       // Persist to localStorage
       localStorage.setItem('bolao_user_id', user.value.id)
