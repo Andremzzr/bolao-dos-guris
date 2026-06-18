@@ -218,7 +218,7 @@
   {
     "id": 25,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-18T17:00:00",
+    "data": "2026-06-18T13:00:00",
     "mandante": "Tchéquia",
     "visitante": "África do Sul",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -227,7 +227,7 @@
   {
     "id": 26,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-18T23:00:00",
+    "data": "2026-06-18T22:00:00",
     "mandante": "México",
     "visitante": "Coreia do Sul",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -236,7 +236,7 @@
   {
     "id": 27,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-18T20:00:00",
+    "data": "2026-06-18T16:00:00",
     "mandante": "Suíça",
     "visitante": "Bósnia e Herzegovina",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -245,7 +245,7 @@
   {
     "id": 28,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-18T23:00:00",
+    "data": "2026-06-18T19:00:00",
     "mandante": "Canadá",
     "visitante": "Catar",
     "estadio": "Estádio Vancouver, Vancouver",
