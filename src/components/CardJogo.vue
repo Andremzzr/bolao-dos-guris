@@ -43,7 +43,6 @@
           <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.mandante" />
           <span 
             class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
-            :class="{ 'hidden sm:block': !locked && !resultado?.finalizado }"
             :title="jogo.mandante"
           >
             {{ truncateName(jogo.mandante) }}
@@ -156,7 +155,6 @@
           <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.visitante" />
           <span 
             class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
-            :class="{ 'hidden sm:block': !locked && !resultado?.finalizado }"
             :title="jogo.visitante"
           >
             {{ truncateName(jogo.visitante) }}
@@ -308,6 +306,6 @@ async function save() {
 
 function truncateName(name) {
   if (!name) return ''
-  return name.length > 10 ? name.substring(0, 10) + '...' : name
+  return name.length > 8 ? name.substring(0, 8) + '...' : name
 }
 </script>
