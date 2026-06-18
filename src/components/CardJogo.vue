@@ -98,8 +98,8 @@
               <div class="flex items-center">
                 <button
                   @click="decrementHome"
-                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
-                  :disabled="localHome <= 0"
+                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="localHome === 0"
                 >
                   −
                 </button>
@@ -108,7 +108,8 @@
                   v-model.number="localHome"
                   min="0"
                   max="20"
-                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors"
+                  placeholder="-"
+                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
                   @change="autoSave"
                 />
                 <button
@@ -125,8 +126,8 @@
               <div class="flex items-center">
                 <button
                   @click="decrementAway"
-                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
-                  :disabled="localAway <= 0"
+                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  :disabled="localAway === 0"
                 >
                   −
                 </button>
@@ -135,7 +136,8 @@
                   v-model.number="localAway"
                   min="0"
                   max="20"
-                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors"
+                  placeholder="-"
+                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
                   @change="autoSave"
                 />
                 <button
@@ -209,8 +211,8 @@ const props = defineProps({
 const emit = defineEmits(['salvar'])
 const { calcularPontos, tempoAteBloquear } = useJogos()
 
-const localHome = ref(props.palpite?.gols_mandante ?? 0)
-const localAway = ref(props.palpite?.gols_visitante ?? 0)
+const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
+const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
 const justSaved = ref(false)
 
 // Watch for palpite changes (e.g., after save)
@@ -218,6 +220,9 @@ watch(() => props.palpite, (newVal) => {
   if (newVal) {
     localHome.value = newVal.gols_mandante
     localAway.value = newVal.gols_visitante
+  } else {
+    localHome.value = ''
+    localAway.value = ''
   }
 }, { deep: true })
 
@@ -240,7 +245,9 @@ const formattedTime = computed(() => {
 })
 
 const hasChanged = computed(() => {
-  if (!props.palpite) return localHome.value !== 0 || localAway.value !== 0
+  if (!props.palpite) {
+    return localHome.value !== '' && localAway.value !== ''
+  }
   return localHome.value !== props.palpite.gols_mandante ||
     localAway.value !== props.palpite.gols_visitante
 })
@@ -263,22 +270,30 @@ const pontosClass = computed(() => {
 })
 
 function incrementHome() {
-  localHome.value = Math.min(20, (localHome.value || 0) + 1)
+  let val = localHome.value === '' ? -1 : localHome.value
+  localHome.value = Math.min(20, val + 1)
 }
 function decrementHome() {
-  localHome.value = Math.max(0, (localHome.value || 0) - 1)
+  let val = localHome.value === '' ? 1 : localHome.value
+  localHome.value = Math.max(0, val - 1)
 }
 function incrementAway() {
-  localAway.value = Math.min(20, (localAway.value || 0) + 1)
+  let val = localAway.value === '' ? -1 : localAway.value
+  localAway.value = Math.min(20, val + 1)
 }
 function decrementAway() {
-  localAway.value = Math.max(0, (localAway.value || 0) - 1)
+  let val = localAway.value === '' ? 1 : localAway.value
+  localAway.value = Math.max(0, val - 1)
 }
 
 function autoSave() {
   // Clamp values
-  localHome.value = Math.max(0, Math.min(20, localHome.value || 0))
-  localAway.value = Math.max(0, Math.min(20, localAway.value || 0))
+  if (localHome.value !== '') {
+    localHome.value = Math.max(0, Math.min(20, localHome.value))
+  }
+  if (localAway.value !== '') {
+    localAway.value = Math.max(0, Math.min(20, localAway.value))
+  }
 }
 
 async function save() {
