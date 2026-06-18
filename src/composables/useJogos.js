@@ -147,6 +147,42 @@ export function useJogos() {
     }
   }
 
+  // Save a result (Admin)
+  async function upsertResultado(jogoId, golsMandante, golsVisitante, finalizado) {
+    if (saving.value['admin_'+jogoId]) return
+    
+    saving.value['admin_'+jogoId] = true
+
+    try {
+      const { data, error } = await supabase
+        .from('resultados')
+        .upsert({
+          jogo_id: jogoId,
+          gols_mandante: golsMandante,
+          gols_visitante: golsVisitante,
+          finalizado: finalizado
+        }, { onConflict: 'jogo_id' })
+
+      if (error) throw error
+
+      resultados.value[jogoId] = {
+        jogo_id: jogoId,
+        gols_mandante: golsMandante,
+        gols_visitante: golsVisitante,
+        finalizado: finalizado
+      }
+
+      showToast('Resultado salvo! ✅')
+      return true
+    } catch (err) {
+      console.error('Erro ao salvar resultado:', err)
+      showToast('Erro ao salvar 😕', 'error')
+      return false
+    } finally {
+      saving.value['admin_'+jogoId] = false
+    }
+  }
+
   function showToast(message, type = 'success') {
     toast.value = { message, type }
     setTimeout(() => { toast.value = null }, 2500)
@@ -194,6 +230,7 @@ export function useJogos() {
     fetchResultados,
     fetchPalpites,
     salvarPalpite,
+    upsertResultado,
     calcularPontos,
   }
 }

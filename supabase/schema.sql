@@ -10,9 +10,20 @@ CREATE TABLE IF NOT EXISTS usuarios (
   criado_em TIMESTAMPTZ DEFAULT now()
 );
 
+-- 1.5 Tabela de Jogos
+CREATE TABLE IF NOT EXISTS jogos (
+  id INTEGER PRIMARY KEY,
+  fase TEXT NOT NULL,
+  data TIMESTAMPTZ NOT NULL,
+  mandante TEXT NOT NULL,
+  visitante TEXT NOT NULL,
+  estadio TEXT NOT NULL,
+  grupo TEXT
+);
+
 -- 2. Tabela de Resultados (preenchida manualmente pelo admin)
 CREATE TABLE IF NOT EXISTS resultados (
-  jogo_id INTEGER PRIMARY KEY,
+  jogo_id INTEGER PRIMARY KEY REFERENCES jogos(id) ON DELETE CASCADE,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
   finalizado BOOLEAN DEFAULT false
@@ -21,7 +32,7 @@ CREATE TABLE IF NOT EXISTS resultados (
 CREATE TABLE IF NOT EXISTS palpites (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  jogo_id INTEGER NOT NULL,
+  jogo_id INTEGER NOT NULL REFERENCES jogos(id) ON DELETE CASCADE,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
   pontuacao INTEGER NOT NULL DEFAULT 0,
@@ -68,8 +79,19 @@ GROUP BY u.id, u.nome;
 
 -- Habilitar RLS
 ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
+ALTER TABLE jogos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE palpites ENABLE ROW LEVEL SECURITY;
 ALTER TABLE resultados ENABLE ROW LEVEL SECURITY;
+
+-- Políticas para 'jogos'
+CREATE POLICY "Qualquer um pode ler jogos"
+  ON jogos FOR SELECT TO anon USING (true);
+
+CREATE POLICY "Qualquer um pode criar jogos"
+  ON jogos FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "Qualquer um pode atualizar jogos"
+  ON jogos FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
 -- Políticas para 'usuarios'
 CREATE POLICY "Qualquer um pode ler usuarios"
@@ -88,9 +110,15 @@ CREATE POLICY "Qualquer um pode criar palpite"
 CREATE POLICY "Qualquer um pode atualizar palpite"
   ON palpites FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
--- Políticas para 'resultados' (somente leitura para anon)
+-- Políticas para 'resultados'
 CREATE POLICY "Qualquer um pode ler resultados"
   ON resultados FOR SELECT TO anon USING (true);
+
+CREATE POLICY "Qualquer um pode criar resultados"
+  ON resultados FOR INSERT TO anon WITH CHECK (true);
+
+CREATE POLICY "Qualquer um pode atualizar resultados"
+  ON resultados FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
 -- ============================================
 -- 6. Função para upsert de palpites
