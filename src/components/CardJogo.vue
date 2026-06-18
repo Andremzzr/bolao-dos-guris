@@ -51,8 +51,8 @@
 
         <!-- Score / Input area -->
         <div class="flex items-center gap-1.5 shrink-0">
-          <!-- If game is finished, show result + user's prediction -->
-          <template v-if="resultado?.finalizado">
+          <!-- If game is finished or live/locked with a result, show result + user's prediction -->
+          <template v-if="resultado?.finalizado || (locked && resultado)">
             <div class="flex flex-col items-center gap-1">
               <!-- Official result -->
               <div class="flex items-center gap-1">
@@ -71,7 +71,7 @@
                   :class="pontosClass"
                 >
                   Seu: {{ palpite.gols_mandante }}-{{ palpite.gols_visitante }}
-                  · {{ pontosInfo }}pts
+                  <template v-if="resultado.finalizado">· {{ pontosInfo }}pts</template>
                 </span>
               </div>
             </div>
