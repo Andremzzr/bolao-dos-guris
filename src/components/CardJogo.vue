@@ -293,13 +293,14 @@ const pontosInfo = computed(() => {
 })
 
 const pontosClass = computed(() => {
-  if (!pontosInfo.value) return 'bg-slate-700 text-slate-400'
-  const { tipo } = pontosInfo.value
+
   if(pontosInfo.value == 0 ) return 'bg-red-500/20 text-red-400'
 
   if(pontosInfo.value == 3) return 'bg-copa-green/20 text-copa-green'
 
   if(pontosInfo.value == 5) return 'bg-copa-gold/20 text-copa-gold'
+
+  return 'bg-slate-700 text-slate-400'
   
 })
 
