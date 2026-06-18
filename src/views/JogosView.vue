@@ -55,6 +55,7 @@
           <CardJogo
             v-for="jogo in jogos"
             :key="jogo.id"
+            :id="'jogo-' + jogo.id"
             :jogo="jogo"
             :palpite="palpites[jogo.id]"
             :resultado="resultados[jogo.id]"
@@ -76,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
 import CardJogo from '@/components/CardJogo.vue'
@@ -84,6 +85,7 @@ import CardJogo from '@/components/CardJogo.vue'
 const { user } = useAuth()
 const {
   jogosPorData,
+  jogosOrdenados,
   resultados,
   palpites,
   isLocked,
@@ -121,12 +123,48 @@ const filteredJogosPorData = computed(() => {
   return filtered
 })
 
+function scrollToLiveGame() {
+  if (activeFilter.value !== 'todos') return
+
+  let targetJogo = jogosOrdenados.value.find(j => statusJogo(j) === 'em_andamento')
+  
+  if (!targetJogo) {
+    targetJogo = jogosOrdenados.value.find(j => statusJogo(j) === 'agendado')
+  }
+
+  if (targetJogo) {
+    nextTick(() => {
+      const el = document.getElementById(`jogo-${targetJogo.id}`)
+      if (el) {
+        const headerOffset = 120
+        const elementPosition = el.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.scrollY - headerOffset
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        })
+      }
+    })
+  }
+}
+
 onMounted(async () => {
   await Promise.all([
     fetchResultados(),
     fetchPalpites(user.value?.id),
   ])
   initialLoading.value = false
+  scrollToLiveGame()
+})
+
+watch(activeFilter, (newVal) => {
+  if (newVal === 'todos') {
+    // Need a slight delay or nextTick for Vue to render the 'todos' list if it was hidden
+    nextTick(() => {
+      scrollToLiveGame()
+    })
+  }
 })
 
 async function onSalvarPalpite({ jogoId, golsMandante, golsVisitante }) {
