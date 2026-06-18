@@ -1,0 +1,46 @@
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [
+  {
+    path: '/',
+    name: 'jogos',
+    component: () => import('@/views/JogosView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/ranking',
+    name: 'ranking',
+    component: () => import('@/views/RankingView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/perfil',
+    name: 'perfil',
+    component: () => import('@/views/PerfilView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/LoginView.vue'),
+  },
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const userId = localStorage.getItem('bolao_user_id')
+  if (to.meta.requiresAuth && !userId) {
+    next({ name: 'login' })
+  } else if (to.name === 'login' && userId) {
+    next({ name: 'jogos' })
+  } else {
+    next()
+  }
+})
+
+export default router
