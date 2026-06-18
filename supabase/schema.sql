@@ -18,13 +18,13 @@ CREATE TABLE IF NOT EXISTS resultados (
   finalizado BOOLEAN DEFAULT false
 );
 
--- 3. Tabela de Palpites
 CREATE TABLE IF NOT EXISTS palpites (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
   jogo_id INTEGER NOT NULL,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
+  pontuacao INTEGER NOT NULL DEFAULT 0,
   atualizado_em TIMESTAMPTZ DEFAULT now(),
   UNIQUE (usuario_id, jogo_id)
 );
@@ -42,76 +42,19 @@ CREATE OR REPLACE VIEW view_ranking AS
 SELECT
   u.id AS usuario_id,
   u.nome,
-  COALESCE(SUM(
-    CASE
-      -- Acerto exato do placar: 25 pontos
-      WHEN p.gols_mandante = r.gols_mandante
-        AND p.gols_visitante = r.gols_visitante
-      THEN 25
-
-      -- Acerto do vencedor + saldo de gols: 18 pontos
-      WHEN SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-        AND (p.gols_mandante - p.gols_visitante) = (r.gols_mandante - r.gols_visitante)
-      THEN 18
-
-      -- Acerto apenas do vencedor/empate: 10 pontos
-      WHEN SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-      THEN 10
-
-      -- Erro total: 0 pontos
-      ELSE 0
-    END
-  ), 0)::INTEGER AS pontos,
+  COALESCE(SUM(p.pontuacao), 0)::INTEGER AS pontos,
 
   -- Estatísticas detalhadas
-  COUNT(CASE
-    WHEN r.finalizado = true
-      AND p.gols_mandante = r.gols_mandante
-      AND p.gols_visitante = r.gols_visitante
-    THEN 1
-  END)::INTEGER AS acertos_exatos,
-
-  COUNT(CASE
-    WHEN r.finalizado = true
-      AND SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-      AND (p.gols_mandante - p.gols_visitante) = (r.gols_mandante - r.gols_visitante)
-      AND NOT (p.gols_mandante = r.gols_mandante AND p.gols_visitante = r.gols_visitante)
-    THEN 1
-  END)::INTEGER AS acertos_saldo,
-
-  COUNT(CASE
-    WHEN r.finalizado = true
-      AND SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-      AND (p.gols_mandante - p.gols_visitante) != (r.gols_mandante - r.gols_visitante)
-    THEN 1
-  END)::INTEGER AS acertos_vencedor,
-
+  COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END)::INTEGER AS acertos_exatos,
+  COUNT(CASE WHEN p.pontuacao IN (3, 5) THEN 1 END)::INTEGER AS acertos_vencedor,
   COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogos_computados,
-
   COUNT(p.id)::INTEGER AS total_palpites,
 
   DENSE_RANK() OVER (
     ORDER BY
-      COALESCE(SUM(
-        CASE
-          WHEN p.gols_mandante = r.gols_mandante
-            AND p.gols_visitante = r.gols_visitante
-          THEN 25
-          WHEN SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-            AND (p.gols_mandante - p.gols_visitante) = (r.gols_mandante - r.gols_visitante)
-          THEN 18
-          WHEN SIGN(p.gols_mandante - p.gols_visitante) = SIGN(r.gols_mandante - r.gols_visitante)
-          THEN 10
-          ELSE 0
-        END
-      ), 0) DESC,
+      COALESCE(SUM(p.pontuacao), 0) DESC,
       -- Desempate: mais acertos exatos
-      COUNT(CASE
-        WHEN r.finalizado = true
-          AND p.gols_mandante = r.gols_mandante
-          AND p.gols_visitante = r.gols_visitante
-        THEN 1
-      END) DESC
+      COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END) DESC
   )::INTEGER AS posicao
 
 FROM usuarios u
@@ -177,3 +120,64 @@ BEGIN
   RETURN resultado;
 END;
 $$;
+
+-- ============================================
+-- 7. Triggers para cálculo de pontuação
+-- ============================================
+
+-- Função para atualizar palpites quando o resultado final for modificado
+CREATE OR REPLACE FUNCTION trigger_resultado_pontuacao()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.finalizado = true THEN
+    UPDATE palpites p
+    SET pontuacao = (
+      CASE
+        WHEN p.gols_mandante = NEW.gols_mandante AND p.gols_visitante = NEW.gols_visitante THEN 5
+        WHEN SIGN(p.gols_mandante - p.gols_visitante) = SIGN(NEW.gols_mandante - NEW.gols_visitante) THEN 3
+        ELSE 0
+      END
+    )
+    WHERE p.jogo_id = NEW.jogo_id;
+  ELSE
+    UPDATE palpites p SET pontuacao = 0 WHERE p.jogo_id = NEW.jogo_id;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_atualiza_pontuacao_resultado
+AFTER INSERT OR UPDATE ON resultados
+FOR EACH ROW EXECUTE FUNCTION trigger_resultado_pontuacao();
+
+-- Função para calcular pontuação quando um palpite é inserido ou atualizado
+CREATE OR REPLACE FUNCTION trigger_palpite_pontuacao()
+RETURNS TRIGGER AS $$
+DECLARE
+  r_finalizado BOOLEAN;
+  r_gols_mandante INTEGER;
+  r_gols_visitante INTEGER;
+BEGIN
+  SELECT finalizado, gols_mandante, gols_visitante 
+  INTO r_finalizado, r_gols_mandante, r_gols_visitante
+  FROM resultados WHERE jogo_id = NEW.jogo_id;
+
+  IF FOUND AND r_finalizado = true THEN
+    NEW.pontuacao := (
+      CASE
+        WHEN NEW.gols_mandante = r_gols_mandante AND NEW.gols_visitante = r_gols_visitante THEN 5
+        WHEN SIGN(NEW.gols_mandante - NEW.gols_visitante) = SIGN(r_gols_mandante - r_gols_visitante) THEN 3
+        ELSE 0
+      END
+    );
+  ELSE
+    NEW.pontuacao := 0;
+  END IF;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_calcula_pontuacao_palpite
+BEFORE INSERT OR UPDATE ON palpites
+FOR EACH ROW EXECUTE FUNCTION trigger_palpite_pontuacao();

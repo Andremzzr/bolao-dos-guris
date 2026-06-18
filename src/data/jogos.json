@@ -2,7 +2,7 @@
   {
     "id": 1,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-11T19:00:00Z",
+    "data": "2026-06-11T19:00:00",
     "mandante": "México",
     "visitante": "África do Sul",
     "estadio": "Estádio Cidade do México, Cidade do México",
@@ -11,7 +11,7 @@
   {
     "id": 2,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-12T00:00:00Z",
+    "data": "2026-06-12T00:00:00",
     "mandante": "Coreia do Sul",
     "visitante": "Tchéquia",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -20,7 +20,7 @@
   {
     "id": 3,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-12T17:00:00Z",
+    "data": "2026-06-12T17:00:00",
     "mandante": "Canadá",
     "visitante": "Bósnia e Herzegovina",
     "estadio": "Estádio Toronto, Toronto",
@@ -29,7 +29,7 @@
   {
     "id": 4,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-12T23:00:00Z",
+    "data": "2026-06-12T23:00:00",
     "mandante": "Estados Unidos",
     "visitante": "Paraguai",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -38,7 +38,7 @@
   {
     "id": 5,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-13T17:00:00Z",
+    "data": "2026-06-13T17:00:00",
     "mandante": "Catar",
     "visitante": "Suíça",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -47,7 +47,7 @@
   {
     "id": 6,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-13T20:00:00Z",
+    "data": "2026-06-13T20:00:00",
     "mandante": "Brasil",
     "visitante": "Marrocos",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -56,7 +56,7 @@
   {
     "id": 7,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-13T17:00:00Z",
+    "data": "2026-06-13T17:00:00",
     "mandante": "Escócia",
     "visitante": "Haiti",
     "estadio": "Estádio Boston, Foxborough",
@@ -65,7 +65,7 @@
   {
     "id": 8,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-13T23:00:00Z",
+    "data": "2026-06-13T23:00:00",
     "mandante": "Austrália",
     "visitante": "Turquia",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -74,7 +74,7 @@
   {
     "id": 9,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-14T17:00:00Z",
+    "data": "2026-06-14T17:00:00",
     "mandante": "Alemanha",
     "visitante": "Curaçao",
     "estadio": "Estádio Houston, Houston",
@@ -83,7 +83,7 @@
   {
     "id": 10,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-14T20:00:00Z",
+    "data": "2026-06-14T20:00:00",
     "mandante": "Holanda",
     "visitante": "Japão",
     "estadio": "Estádio Dallas, Arlington",
@@ -92,7 +92,7 @@
   {
     "id": 11,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-14T20:00:00Z",
+    "data": "2026-06-14T20:00:00",
     "mandante": "Costa do Marfim",
     "visitante": "Equador",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -101,7 +101,7 @@
   {
     "id": 12,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-14T23:00:00Z",
+    "data": "2026-06-14T23:00:00",
     "mandante": "Suécia",
     "visitante": "Tunísia",
     "estadio": "Estádio Monterrey, Monterrey",
@@ -110,7 +110,7 @@
   {
     "id": 13,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-15T17:00:00Z",
+    "data": "2026-06-15T17:00:00",
     "mandante": "Espanha",
     "visitante": "Cabo Verde",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -119,7 +119,7 @@
   {
     "id": 14,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-15T20:00:00Z",
+    "data": "2026-06-15T20:00:00",
     "mandante": "Arábia Saudita",
     "visitante": "Uruguai",
     "estadio": "Estádio Miami, Miami",
@@ -128,7 +128,7 @@
   {
     "id": 15,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-15T23:00:00Z",
+    "data": "2026-06-15T23:00:00",
     "mandante": "Bélgica",
     "visitante": "Egito",
     "estadio": "Estádio Seattle, Seattle",
@@ -137,7 +137,7 @@
   {
     "id": 16,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-16T01:00:00Z",
+    "data": "2026-06-16T01:00:00",
     "mandante": "Irã",
     "visitante": "Nova Zelândia",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -146,7 +146,7 @@
   {
     "id": 17,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-16T17:00:00Z",
+    "data": "2026-06-16T17:00:00",
     "mandante": "França",
     "visitante": "Senegal",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -155,7 +155,7 @@
   {
     "id": 18,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-16T20:00:00Z",
+    "data": "2026-06-16T20:00:00",
     "mandante": "Iraque",
     "visitante": "Noruega",
     "estadio": "Estádio Boston, Foxborough",
@@ -164,7 +164,7 @@
   {
     "id": 19,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-16T23:00:00Z",
+    "data": "2026-06-16T23:00:00",
     "mandante": "Argentina",
     "visitante": "Argélia",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -173,7 +173,7 @@
   {
     "id": 20,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-17T01:00:00Z",
+    "data": "2026-06-17T01:00:00",
     "mandante": "Áustria",
     "visitante": "Jordânia",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -182,7 +182,7 @@
   {
     "id": 21,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-17T17:00:00Z",
+    "data": "2026-06-17T17:00:00",
     "mandante": "Portugal",
     "visitante": "RD Congo",
     "estadio": "Estádio Houston, Houston",
@@ -191,7 +191,7 @@
   {
     "id": 22,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-17T23:00:00Z",
+    "data": "2026-06-17T23:00:00",
     "mandante": "Uzbequistão",
     "visitante": "Colômbia",
     "estadio": "Estádio Cidade do México, Cidade do México",
@@ -200,7 +200,7 @@
   {
     "id": 23,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-17T20:00:00Z",
+    "data": "2026-06-17T20:00:00",
     "mandante": "Inglaterra",
     "visitante": "Croácia",
     "estadio": "Estádio Dallas, Arlington",
@@ -209,7 +209,7 @@
   {
     "id": 24,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-17T17:00:00Z",
+    "data": "2026-06-17T17:00:00",
     "mandante": "Gana",
     "visitante": "Panamá",
     "estadio": "Estádio Toronto, Toronto",
@@ -218,7 +218,7 @@
   {
     "id": 25,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-18T17:00:00Z",
+    "data": "2026-06-18T17:00:00",
     "mandante": "Tchéquia",
     "visitante": "África do Sul",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -227,7 +227,7 @@
   {
     "id": 26,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-18T23:00:00Z",
+    "data": "2026-06-18T23:00:00",
     "mandante": "México",
     "visitante": "Coreia do Sul",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -236,7 +236,7 @@
   {
     "id": 27,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-18T20:00:00Z",
+    "data": "2026-06-18T20:00:00",
     "mandante": "Suíça",
     "visitante": "Bósnia e Herzegovina",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -245,7 +245,7 @@
   {
     "id": 28,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-18T23:00:00Z",
+    "data": "2026-06-18T23:00:00",
     "mandante": "Canadá",
     "visitante": "Catar",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -254,7 +254,7 @@
   {
     "id": 29,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-19T17:00:00Z",
+    "data": "2026-06-19T17:00:00",
     "mandante": "Brasil",
     "visitante": "Haiti",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -263,7 +263,7 @@
   {
     "id": 30,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-19T20:00:00Z",
+    "data": "2026-06-19T20:00:00",
     "mandante": "Escócia",
     "visitante": "Marrocos",
     "estadio": "Estádio Boston, Foxborough",
@@ -272,7 +272,7 @@
   {
     "id": 31,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-19T23:00:00Z",
+    "data": "2026-06-19T23:00:00",
     "mandante": "Turquia",
     "visitante": "Paraguai",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -281,7 +281,7 @@
   {
     "id": 32,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-20T01:00:00Z",
+    "data": "2026-06-20T01:00:00",
     "mandante": "Estados Unidos",
     "visitante": "Austrália",
     "estadio": "Estádio Seattle, Seattle",
@@ -290,7 +290,7 @@
   {
     "id": 33,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-20T17:00:00Z",
+    "data": "2026-06-20T17:00:00",
     "mandante": "Alemanha",
     "visitante": "Costa do Marfim",
     "estadio": "Estádio Toronto, Toronto",
@@ -299,7 +299,7 @@
   {
     "id": 34,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-20T20:00:00Z",
+    "data": "2026-06-20T20:00:00",
     "mandante": "Equador",
     "visitante": "Curaçao",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -308,7 +308,7 @@
   {
     "id": 35,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-20T23:00:00Z",
+    "data": "2026-06-20T23:00:00",
     "mandante": "Holanda",
     "visitante": "Suécia",
     "estadio": "Estádio Houston, Houston",
@@ -317,7 +317,7 @@
   {
     "id": 36,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-20T23:00:00Z",
+    "data": "2026-06-20T23:00:00",
     "mandante": "Tunísia",
     "visitante": "Japão",
     "estadio": "Estádio Monterrey, Monterrey",
@@ -326,7 +326,7 @@
   {
     "id": 37,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-21T17:00:00Z",
+    "data": "2026-06-21T17:00:00",
     "mandante": "Uruguai",
     "visitante": "Cabo Verde",
     "estadio": "Estádio Miami, Miami",
@@ -335,7 +335,7 @@
   {
     "id": 38,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-21T20:00:00Z",
+    "data": "2026-06-21T20:00:00",
     "mandante": "Espanha",
     "visitante": "Arábia Saudita",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -344,7 +344,7 @@
   {
     "id": 39,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-21T23:00:00Z",
+    "data": "2026-06-21T23:00:00",
     "mandante": "Bélgica",
     "visitante": "Irã",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -353,7 +353,7 @@
   {
     "id": 40,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-22T01:00:00Z",
+    "data": "2026-06-22T01:00:00",
     "mandante": "Nova Zelândia",
     "visitante": "Egito",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -362,7 +362,7 @@
   {
     "id": 41,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-22T17:00:00Z",
+    "data": "2026-06-22T17:00:00",
     "mandante": "Noruega",
     "visitante": "Senegal",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -371,7 +371,7 @@
   {
     "id": 42,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-22T20:00:00Z",
+    "data": "2026-06-22T20:00:00",
     "mandante": "França",
     "visitante": "Iraque",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -380,7 +380,7 @@
   {
     "id": 43,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-22T23:00:00Z",
+    "data": "2026-06-22T23:00:00",
     "mandante": "Argentina",
     "visitante": "Áustria",
     "estadio": "Estádio Dallas, Arlington",
@@ -389,7 +389,7 @@
   {
     "id": 44,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-23T01:00:00Z",
+    "data": "2026-06-23T01:00:00",
     "mandante": "Jordânia",
     "visitante": "Argélia",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -398,7 +398,7 @@
   {
     "id": 45,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-23T17:00:00Z",
+    "data": "2026-06-23T17:00:00",
     "mandante": "Portugal",
     "visitante": "Uzbequistão",
     "estadio": "Estádio Houston, Houston",
@@ -407,7 +407,7 @@
   {
     "id": 46,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-23T20:00:00Z",
+    "data": "2026-06-23T20:00:00",
     "mandante": "Colômbia",
     "visitante": "RD Congo",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -416,7 +416,7 @@
   {
     "id": 47,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-23T20:00:00Z",
+    "data": "2026-06-23T20:00:00",
     "mandante": "Inglaterra",
     "visitante": "Gana",
     "estadio": "Estádio Boston, Foxborough",
@@ -425,7 +425,7 @@
   {
     "id": 48,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-23T23:00:00Z",
+    "data": "2026-06-23T23:00:00",
     "mandante": "Panamá",
     "visitante": "Croácia",
     "estadio": "Estádio Toronto, Toronto",
@@ -434,7 +434,7 @@
   {
     "id": 49,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-24T17:00:00Z",
+    "data": "2026-06-24T17:00:00",
     "mandante": "Bósnia e Herzegovina",
     "visitante": "Catar",
     "estadio": "Estádio Seattle, Seattle",
@@ -443,7 +443,7 @@
   {
     "id": 50,
     "fase": "Fase de Grupos - Grupo B",
-    "data": "2026-06-24T17:00:00Z",
+    "data": "2026-06-24T17:00:00",
     "mandante": "Suíça",
     "visitante": "Canadá",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -452,7 +452,7 @@
   {
     "id": 51,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-24T20:00:00Z",
+    "data": "2026-06-24T20:00:00",
     "mandante": "Escócia",
     "visitante": "Brasil",
     "estadio": "Estádio Miami, Miami",
@@ -461,7 +461,7 @@
   {
     "id": 52,
     "fase": "Fase de Grupos - Grupo C",
-    "data": "2026-06-24T20:00:00Z",
+    "data": "2026-06-24T20:00:00",
     "mandante": "Marrocos",
     "visitante": "Haiti",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -470,7 +470,7 @@
   {
     "id": 53,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-24T23:00:00Z",
+    "data": "2026-06-24T23:00:00",
     "mandante": "Tchéquia",
     "visitante": "México",
     "estadio": "Estádio Cidade do México, Cidade do México",
@@ -479,7 +479,7 @@
   {
     "id": 54,
     "fase": "Fase de Grupos - Grupo A",
-    "data": "2026-06-24T23:00:00Z",
+    "data": "2026-06-24T23:00:00",
     "mandante": "África do Sul",
     "visitante": "Coreia do Sul",
     "estadio": "Estádio Monterrey, Monterrey",
@@ -488,7 +488,7 @@
   {
     "id": 55,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-25T17:00:00Z",
+    "data": "2026-06-25T17:00:00",
     "mandante": "Curaçao",
     "visitante": "Costa do Marfim",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -497,7 +497,7 @@
   {
     "id": 56,
     "fase": "Fase de Grupos - Grupo E",
-    "data": "2026-06-25T17:00:00Z",
+    "data": "2026-06-25T17:00:00",
     "mandante": "Equador",
     "visitante": "Alemanha",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -506,7 +506,7 @@
   {
     "id": 57,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-25T20:00:00Z",
+    "data": "2026-06-25T20:00:00",
     "mandante": "Tunísia",
     "visitante": "Holanda",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -515,7 +515,7 @@
   {
     "id": 58,
     "fase": "Fase de Grupos - Grupo F",
-    "data": "2026-06-25T20:00:00Z",
+    "data": "2026-06-25T20:00:00",
     "mandante": "Japão",
     "visitante": "Suécia",
     "estadio": "Estádio Dallas, Arlington",
@@ -524,7 +524,7 @@
   {
     "id": 59,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-25T23:00:00Z",
+    "data": "2026-06-25T23:00:00",
     "mandante": "Turquia",
     "visitante": "Estados Unidos",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -533,7 +533,7 @@
   {
     "id": 60,
     "fase": "Fase de Grupos - Grupo D",
-    "data": "2026-06-25T23:00:00Z",
+    "data": "2026-06-25T23:00:00",
     "mandante": "Paraguai",
     "visitante": "Austrália",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -542,7 +542,7 @@
   {
     "id": 61,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-26T17:00:00Z",
+    "data": "2026-06-26T17:00:00",
     "mandante": "Noruega",
     "visitante": "França",
     "estadio": "Estádio Boston, Foxborough",
@@ -551,7 +551,7 @@
   {
     "id": 62,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-26T17:00:00Z",
+    "data": "2026-06-26T17:00:00",
     "mandante": "Senegal",
     "visitante": "Iraque",
     "estadio": "Estádio Toronto, Toronto",
@@ -560,7 +560,7 @@
   {
     "id": 63,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-26T20:00:00Z",
+    "data": "2026-06-26T20:00:00",
     "mandante": "Egito",
     "visitante": "Irã",
     "estadio": "Estádio Seattle, Seattle",
@@ -569,7 +569,7 @@
   {
     "id": 64,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-26T20:00:00Z",
+    "data": "2026-06-26T20:00:00",
     "mandante": "Nova Zelândia",
     "visitante": "Bélgica",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -578,7 +578,7 @@
   {
     "id": 65,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-26T23:00:00Z",
+    "data": "2026-06-26T23:00:00",
     "mandante": "Cabo Verde",
     "visitante": "Arábia Saudita",
     "estadio": "Estádio Houston, Houston",
@@ -587,7 +587,7 @@
   {
     "id": 66,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-26T23:00:00Z",
+    "data": "2026-06-26T23:00:00",
     "mandante": "Uruguai",
     "visitante": "Espanha",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -596,7 +596,7 @@
   {
     "id": 67,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-27T17:00:00Z",
+    "data": "2026-06-27T17:00:00",
     "mandante": "Panamá",
     "visitante": "Inglaterra",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -605,7 +605,7 @@
   {
     "id": 68,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-27T17:00:00Z",
+    "data": "2026-06-27T17:00:00",
     "mandante": "Croácia",
     "visitante": "Gana",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -614,7 +614,7 @@
   {
     "id": 69,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-27T20:00:00Z",
+    "data": "2026-06-27T20:00:00",
     "mandante": "Colômbia",
     "visitante": "Portugal",
     "estadio": "Estádio Miami, Miami",
@@ -623,7 +623,7 @@
   {
     "id": 70,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-27T20:00:00Z",
+    "data": "2026-06-27T20:00:00",
     "mandante": "RD Congo",
     "visitante": "Uzbequistão",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -632,7 +632,7 @@
   {
     "id": 71,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-27T23:00:00Z",
+    "data": "2026-06-27T23:00:00",
     "mandante": "Jordânia",
     "visitante": "Argentina",
     "estadio": "Estádio Dallas, Arlington",
@@ -641,7 +641,7 @@
   {
     "id": 72,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-27T23:00:00Z",
+    "data": "2026-06-27T23:00:00",
     "mandante": "Argélia",
     "visitante": "Áustria",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -650,7 +650,7 @@
   {
     "id": 73,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-28T19:00:00Z",
+    "data": "2026-06-28T19:00:00",
     "mandante": "2º Grupo A",
     "visitante": "2º Grupo B",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -659,7 +659,7 @@
   {
     "id": 74,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-29T17:00:00Z",
+    "data": "2026-06-29T17:00:00",
     "mandante": "Venc. Grupo E",
     "visitante": "3º Grupo A/B/C/D/F",
     "estadio": "Estádio Boston, Foxborough",
@@ -668,7 +668,7 @@
   {
     "id": 75,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-29T20:00:00Z",
+    "data": "2026-06-29T20:00:00",
     "mandante": "Venc. Grupo F",
     "visitante": "2º Grupo C",
     "estadio": "Estádio Monterrey, Monterrey",
@@ -677,7 +677,7 @@
   {
     "id": 76,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-29T23:00:00Z",
+    "data": "2026-06-29T23:00:00",
     "mandante": "Venc. Grupo C",
     "visitante": "2º Grupo F",
     "estadio": "Estádio Houston, Houston",
@@ -686,7 +686,7 @@
   {
     "id": 77,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-30T17:00:00Z",
+    "data": "2026-06-30T17:00:00",
     "mandante": "Venc. Grupo I",
     "visitante": "3º Grupo C/D/F/G/H",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -695,7 +695,7 @@
   {
     "id": 78,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-30T20:00:00Z",
+    "data": "2026-06-30T20:00:00",
     "mandante": "2º Grupo E",
     "visitante": "2º Grupo I",
     "estadio": "Estádio Dallas, Arlington",
@@ -704,7 +704,7 @@
   {
     "id": 79,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-30T23:00:00Z",
+    "data": "2026-06-30T23:00:00",
     "mandante": "Venc. Grupo A",
     "visitante": "3º Grupo C/E/F/H/I",
     "estadio": "Estádio Cidade do México, Cidade do México",
@@ -713,7 +713,7 @@
   {
     "id": 80,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-01T17:00:00Z",
+    "data": "2026-07-01T17:00:00",
     "mandante": "Venc. Grupo L",
     "visitante": "3º Grupo E/H/I/J/K",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -722,7 +722,7 @@
   {
     "id": 81,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-01T20:00:00Z",
+    "data": "2026-07-01T20:00:00",
     "mandante": "Venc. Grupo D",
     "visitante": "3º Grupo B/E/F/I/J",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -731,7 +731,7 @@
   {
     "id": 82,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-01T23:00:00Z",
+    "data": "2026-07-01T23:00:00",
     "mandante": "Venc. Grupo G",
     "visitante": "3º Grupo A/E/H/I/J",
     "estadio": "Estádio Seattle, Seattle",
@@ -740,7 +740,7 @@
   {
     "id": 83,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-02T17:00:00Z",
+    "data": "2026-07-02T17:00:00",
     "mandante": "2º Grupo K",
     "visitante": "2º Grupo L",
     "estadio": "Estádio Toronto, Toronto",
@@ -749,7 +749,7 @@
   {
     "id": 84,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-02T20:00:00Z",
+    "data": "2026-07-02T20:00:00",
     "mandante": "Venc. Grupo H",
     "visitante": "2º Grupo J",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -758,7 +758,7 @@
   {
     "id": 85,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-02T23:00:00Z",
+    "data": "2026-07-02T23:00:00",
     "mandante": "Venc. Grupo B",
     "visitante": "3º Grupo E/F/G/I/J",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -767,7 +767,7 @@
   {
     "id": 86,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-03T17:00:00Z",
+    "data": "2026-07-03T17:00:00",
     "mandante": "2º Grupo D",
     "visitante": "2º Grupo G",
     "estadio": "Estádio Dallas, Arlington",
@@ -776,7 +776,7 @@
   {
     "id": 87,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-03T22:00:00Z",
+    "data": "2026-07-03T22:00:00",
     "mandante": "Venc. Grupo J",
     "visitante": "2º Grupo H",
     "estadio": "Estádio Miami, Miami",
@@ -785,7 +785,7 @@
   {
     "id": 88,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-04T01:30:00Z",
+    "data": "2026-07-04T01:30:00",
     "mandante": "Venc. Grupo K",
     "visitante": "3º Grupo D/E/I/J/L",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -794,7 +794,7 @@
   {
     "id": 89,
     "fase": "Oitavas de Final",
-    "data": "2026-07-04T17:00:00Z",
+    "data": "2026-07-04T17:00:00",
     "mandante": "Venc. Jogo 73",
     "visitante": "Venc. Jogo 74",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -803,7 +803,7 @@
   {
     "id": 90,
     "fase": "Oitavas de Final",
-    "data": "2026-07-04T21:00:00Z",
+    "data": "2026-07-04T21:00:00",
     "mandante": "Venc. Jogo 75",
     "visitante": "Venc. Jogo 76",
     "estadio": "Estádio Houston, Houston",
@@ -812,7 +812,7 @@
   {
     "id": 91,
     "fase": "Oitavas de Final",
-    "data": "2026-07-05T17:00:00Z",
+    "data": "2026-07-05T17:00:00",
     "mandante": "Venc. Jogo 77",
     "visitante": "Venc. Jogo 78",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -821,7 +821,7 @@
   {
     "id": 92,
     "fase": "Oitavas de Final",
-    "data": "2026-07-05T21:00:00Z",
+    "data": "2026-07-05T21:00:00",
     "mandante": "Venc. Jogo 79",
     "visitante": "Venc. Jogo 80",
     "estadio": "Estádio Cidade do México, Cidade do México",
@@ -830,7 +830,7 @@
   {
     "id": 93,
     "fase": "Oitavas de Final",
-    "data": "2026-07-06T17:00:00Z",
+    "data": "2026-07-06T17:00:00",
     "mandante": "Venc. Jogo 81",
     "visitante": "Venc. Jogo 82",
     "estadio": "Estádio Dallas, Arlington",
@@ -839,7 +839,7 @@
   {
     "id": 94,
     "fase": "Oitavas de Final",
-    "data": "2026-07-06T21:00:00Z",
+    "data": "2026-07-06T21:00:00",
     "mandante": "Venc. Jogo 83",
     "visitante": "Venc. Jogo 84",
     "estadio": "Estádio Seattle, Seattle",
@@ -848,7 +848,7 @@
   {
     "id": 95,
     "fase": "Oitavas de Final",
-    "data": "2026-07-07T17:00:00Z",
+    "data": "2026-07-07T17:00:00",
     "mandante": "Venc. Jogo 85",
     "visitante": "Venc. Jogo 86",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -857,7 +857,7 @@
   {
     "id": 96,
     "fase": "Oitavas de Final",
-    "data": "2026-07-07T21:00:00Z",
+    "data": "2026-07-07T21:00:00",
     "mandante": "Venc. Jogo 87",
     "visitante": "Venc. Jogo 88",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -866,7 +866,7 @@
   {
     "id": 97,
     "fase": "Quartas de Final",
-    "data": "2026-07-09T17:00:00Z",
+    "data": "2026-07-09T17:00:00",
     "mandante": "Venc. Jogo 89",
     "visitante": "Venc. Jogo 90",
     "estadio": "Estádio Boston, Foxborough",
@@ -875,7 +875,7 @@
   {
     "id": 98,
     "fase": "Quartas de Final",
-    "data": "2026-07-09T21:00:00Z",
+    "data": "2026-07-09T21:00:00",
     "mandante": "Venc. Jogo 91",
     "visitante": "Venc. Jogo 92",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -884,7 +884,7 @@
   {
     "id": 99,
     "fase": "Quartas de Final",
-    "data": "2026-07-10T17:00:00Z",
+    "data": "2026-07-10T17:00:00",
     "mandante": "Venc. Jogo 93",
     "visitante": "Venc. Jogo 94",
     "estadio": "Estádio Miami, Miami",
@@ -893,7 +893,7 @@
   {
     "id": 100,
     "fase": "Quartas de Final",
-    "data": "2026-07-11T21:00:00Z",
+    "data": "2026-07-11T21:00:00",
     "mandante": "Venc. Jogo 95",
     "visitante": "Venc. Jogo 96",
     "estadio": "Estádio Kansas City, Kansas City",
@@ -902,7 +902,7 @@
   {
     "id": 101,
     "fase": "Semifinal",
-    "data": "2026-07-14T21:00:00Z",
+    "data": "2026-07-14T21:00:00",
     "mandante": "Venc. Jogo 97",
     "visitante": "Venc. Jogo 98",
     "estadio": "Estádio Dallas, Arlington",
@@ -911,7 +911,7 @@
   {
     "id": 102,
     "fase": "Semifinal",
-    "data": "2026-07-15T21:00:00Z",
+    "data": "2026-07-15T21:00:00",
     "mandante": "Venc. Jogo 99",
     "visitante": "Venc. Jogo 100",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -920,7 +920,7 @@
   {
     "id": 103,
     "fase": "Disputa pelo 3º Lugar",
-    "data": "2026-07-18T21:00:00Z",
+    "data": "2026-07-18T21:00:00",
     "mandante": "Perd. Jogo 101",
     "visitante": "Perd. Jogo 102",
     "estadio": "Estádio Miami, Miami",
@@ -929,7 +929,7 @@
   {
     "id": 104,
     "fase": "Final",
-    "data": "2026-07-19T21:00:00Z",
+    "data": "2026-07-19T21:00:00",
     "mandante": "Venc. Jogo 101",
     "visitante": "Venc. Jogo 102",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",

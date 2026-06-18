@@ -96,15 +96,11 @@
         <div class="space-y-2">
           <div class="flex items-center justify-between text-sm">
             <span class="text-slate-300">🎯 Placar exato</span>
-            <span class="font-bold text-copa-gold">25 pts</span>
+            <span class="font-bold text-copa-gold">5 pts</span>
           </div>
           <div class="flex items-center justify-between text-sm">
-            <span class="text-slate-300">📊 Vencedor + saldo</span>
-            <span class="font-bold text-blue-400">18 pts</span>
-          </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-slate-300">✅ Apenas vencedor</span>
-            <span class="font-bold text-copa-green">10 pts</span>
+            <span class="text-slate-300">✅ Acertou vencedor/empate</span>
+            <span class="font-bold text-copa-green">3 pts</span>
           </div>
           <div class="flex items-center justify-between text-sm">
             <span class="text-slate-300">❌ Errou</span>

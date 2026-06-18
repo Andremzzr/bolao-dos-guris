@@ -17,10 +17,16 @@
           FINAL
         </span>
         <span
-          v-else-if="gameStarted"
+          v-else-if="isLive"
           class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"
         >
           🔴 AO VIVO
+        </span>
+        <span
+          v-else-if="isPast"
+          class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-400"
+        >
+          FINALIZADO
         </span>
         <span v-else class="text-[10px] text-slate-500">
           {{ formattedTime }}
@@ -33,8 +39,9 @@
     <div class="px-3 py-3">
       <div class="flex items-center gap-2">
         <!-- Home team -->
-        <div class="flex-1 text-right">
-          <span class="text-sm font-bold text-white leading-tight">{{ jogo.mandante }}</span>
+        <div class="flex-1 flex justify-end items-center gap-2">
+          <span class="text-sm font-bold text-white leading-tight text-right">{{ jogo.mandante }}</span>
+          <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-6 h-4 object-cover rounded-sm shadow-sm" :alt="jogo.mandante" />
         </div>
 
         <!-- Score / Input area -->
@@ -137,8 +144,9 @@
         </div>
 
         <!-- Away team -->
-        <div class="flex-1 text-left">
-          <span class="text-sm font-bold text-white leading-tight">{{ jogo.visitante }}</span>
+        <div class="flex-1 flex justify-start items-center gap-2">
+          <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-6 h-4 object-cover rounded-sm shadow-sm" :alt="jogo.visitante" />
+          <span class="text-sm font-bold text-white leading-tight text-left">{{ jogo.visitante }}</span>
         </div>
       </div>
 
@@ -176,6 +184,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useJogos } from '@/composables/useJogos'
+import { getFlagUrl } from '@/utils/flags'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
@@ -200,8 +209,17 @@ watch(() => props.palpite, (newVal) => {
   }
 }, { deep: true })
 
-const gameStarted = computed(() => {
-  return new Date() >= new Date(props.jogo.data) && !props.resultado?.finalizado
+const isLive = computed(() => {
+  if (props.resultado?.finalizado) return false
+  const kickoff = new Date(props.jogo.data).getTime()
+  const now = Date.now()
+  return now >= kickoff && now <= kickoff + (3 * 60 * 60 * 1000)
+})
+
+const isPast = computed(() => {
+  if (props.resultado?.finalizado) return false
+  const kickoff = new Date(props.jogo.data).getTime()
+  return Date.now() > kickoff + (2 * 60 * 60 * 1000)
 })
 
 const formattedTime = computed(() => {
