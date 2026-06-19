@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 );
 
 -- 1.5 Tabela de Jogos
-CREATE TABLE IF NOT EXISTS jogos (
+CREATE TABLE IF NOT EXISTS jogo (
   id INTEGER PRIMARY KEY,
   fase TEXT NOT NULL,
   data TIMESTAMPTZ NOT NULL,
@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS jogos (
 );
 
 -- 2. Tabela de Resultados (preenchida manualmente pelo admin)
-CREATE TABLE IF NOT EXISTS resultados (
-  jogo_id INTEGER PRIMARY KEY REFERENCES jogos(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS resultado (
+  jogo_id INTEGER PRIMARY KEY REFERENCES jogo(id) ON DELETE CASCADE,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
   finalizado BOOLEAN DEFAULT false
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS resultados (
 CREATE TABLE IF NOT EXISTS palpites (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
-  jogo_id INTEGER NOT NULL REFERENCES jogos(id) ON DELETE CASCADE,
+  jogo_id INTEGER NOT NULL REFERENCES jogo(id) ON DELETE CASCADE,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
   pontuacao INTEGER NOT NULL DEFAULT 0,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS palpites (
 -- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_palpites_usuario ON palpites(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_palpites_jogo ON palpites(jogo_id);
-CREATE INDEX IF NOT EXISTS idx_resultados_finalizado ON resultados(finalizado);
+CREATE INDEX IF NOT EXISTS idx_resultado_finalizado ON resultado(finalizado);
 
 -- ============================================
 -- 4. View de Ranking (Classificação)
@@ -58,7 +58,7 @@ SELECT
   -- Estatísticas detalhadas
   COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END)::INTEGER AS acertos_exatos,
   COUNT(CASE WHEN p.pontuacao IN (3, 5) THEN 1 END)::INTEGER AS acertos_vencedor,
-  COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogos_computados,
+  COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogo_computados,
   COUNT(p.id)::INTEGER AS total_palpites,
 
   DENSE_RANK() OVER (
@@ -70,7 +70,7 @@ SELECT
 
 FROM usuarios u
 LEFT JOIN palpites p ON u.id = p.usuario_id
-LEFT JOIN resultados r ON p.jogo_id = r.jogo_id AND r.finalizado = true
+LEFT JOIN resultado r ON p.jogo_id = r.jogo_id AND r.finalizado = true
 GROUP BY u.id, u.nome;
 
 -- ============================================
@@ -79,19 +79,19 @@ GROUP BY u.id, u.nome;
 
 -- Habilitar RLS
 ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
-ALTER TABLE jogos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE jogo ENABLE ROW LEVEL SECURITY;
 ALTER TABLE palpites ENABLE ROW LEVEL SECURITY;
-ALTER TABLE resultados ENABLE ROW LEVEL SECURITY;
+ALTER TABLE resultado ENABLE ROW LEVEL SECURITY;
 
--- Políticas para 'jogos'
-CREATE POLICY "Qualquer um pode ler jogos"
-  ON jogos FOR SELECT TO anon USING (true);
+-- Políticas para 'jogo'
+CREATE POLICY "Qualquer um pode ler jogo"
+  ON jogo FOR SELECT TO anon USING (true);
 
-CREATE POLICY "Qualquer um pode criar jogos"
-  ON jogos FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "Qualquer um pode criar jogo"
+  ON jogo FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "Qualquer um pode atualizar jogos"
-  ON jogos FOR UPDATE TO anon USING (true) WITH CHECK (true);
+CREATE POLICY "Qualquer um pode atualizar jogo"
+  ON jogo FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
 -- Políticas para 'usuarios'
 CREATE POLICY "Qualquer um pode ler usuarios"
@@ -110,15 +110,15 @@ CREATE POLICY "Qualquer um pode criar palpite"
 CREATE POLICY "Qualquer um pode atualizar palpite"
   ON palpites FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
--- Políticas para 'resultados'
-CREATE POLICY "Qualquer um pode ler resultados"
-  ON resultados FOR SELECT TO anon USING (true);
+-- Políticas para 'resultado'
+CREATE POLICY "Qualquer um pode ler resultado"
+  ON resultado FOR SELECT TO anon USING (true);
 
-CREATE POLICY "Qualquer um pode criar resultados"
-  ON resultados FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "Qualquer um pode criar resultado"
+  ON resultado FOR INSERT TO anon WITH CHECK (true);
 
-CREATE POLICY "Qualquer um pode atualizar resultados"
-  ON resultados FOR UPDATE TO anon USING (true) WITH CHECK (true);
+CREATE POLICY "Qualquer um pode atualizar resultado"
+  ON resultado FOR UPDATE TO anon USING (true) WITH CHECK (true);
 
 -- ============================================
 -- 6. Função para upsert de palpites
@@ -175,7 +175,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_atualiza_pontuacao_resultado
-AFTER INSERT OR UPDATE ON resultados
+AFTER INSERT OR UPDATE ON resultado
 FOR EACH ROW EXECUTE FUNCTION trigger_resultado_pontuacao();
 
 -- Função para calcular pontuação quando um palpite é inserido ou atualizado
@@ -188,7 +188,7 @@ DECLARE
 BEGIN
   SELECT finalizado, gols_mandante, gols_visitante 
   INTO r_finalizado, r_gols_mandante, r_gols_visitante
-  FROM resultados WHERE jogo_id = NEW.jogo_id;
+  FROM resultado WHERE jogo_id = NEW.jogo_id;
 
   IF FOUND AND r_finalizado = true THEN
     NEW.pontuacao := (
@@ -222,7 +222,7 @@ SELECT
 
   COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END)::INTEGER AS acertos_exatos,
   COUNT(CASE WHEN p.pontuacao IN (3, 5) THEN 1 END)::INTEGER AS acertos_vencedor,
-  COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogos_computados,
+  COUNT(CASE WHEN r.finalizado = true THEN 1 END)::INTEGER AS jogo_computados,
 
   DENSE_RANK() OVER (
     PARTITION BY DATE(j.data)
@@ -233,7 +233,7 @@ SELECT
 
 FROM usuarios u
 JOIN palpites p ON u.id = p.usuario_id
-JOIN jogos j ON p.jogo_id = j.id
-JOIN resultados r ON j.id = r.jogo_id AND r.finalizado = true
+JOIN jogo j ON p.jogo_id = j.id
+JOIN resultado r ON j.id = r.jogo_id AND r.finalizado = true
 WHERE DATE(j.data) = CURRENT_DATE - INTERVAL '1 day'
 GROUP BY DATE(j.data), u.id, u.nome;

@@ -87,7 +87,7 @@ export function useJogos() {
   // Fetch all results
   async function fetchResultados() {
     const { data, error } = await supabase
-      .from('resultados')
+      .from('resultado')
       .select('*')
 
     if (!error && data) {
@@ -169,7 +169,7 @@ export function useJogos() {
 
     try {
       const { data, error } = await supabase
-        .from('resultados')
+        .from('resultado')
         .upsert({
           jogo_id: jogoId,
           gols_mandante: golsMandante,

@@ -154,7 +154,7 @@ const loadData = async () => {
 
   // Buscar resultados desses jogos
   const { data: resultados } = await supabase
-    .from('resultados')
+    .from('resultado')
     .select('*')
     .in('jogo_id', gameIds)
   

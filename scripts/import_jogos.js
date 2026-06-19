@@ -49,7 +49,7 @@ async function importJogos() {
 
     // Inserir os jogos no banco
     const { data, error } = await supabase
-      .from('jogos')
+      .from('jogo')
       .upsert(jogosFaseGrupos, { onConflict: 'id' })
       .select();
 
