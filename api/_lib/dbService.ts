@@ -28,14 +28,15 @@ export interface JogoPendente {
  */
 export async function getPendingMatches(fromDate: string, toDate: string): Promise<JogoPendente[]> {
   const supabase = getSupabase();
+  
+  // 1. Fetch jogos
   const { data: jogosDoDia, error: errorJogos } = await supabase
     .from('jogos')
     .select(`
       id, 
       mandante, 
       visitante, 
-      data, 
-      resultados ( finalizado, gols_mandante, gols_visitante )
+      data
     `)
     .gte('data', fromDate)
     .lte('data', toDate);
@@ -44,13 +45,33 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
     throw new Error(`Erro ao buscar jogos no Supabase: ${errorJogos.message}`);
   }
 
-  const jogosPendentes = jogosDoDia?.filter(j => {
-    if (!j.resultados) return true;
-    const resultadoInfo = Array.isArray(j.resultados) ? j.resultados[0] : j.resultados;
-    return resultadoInfo?.finalizado !== true;
-  }) || [];
+  if (!jogosDoDia || jogosDoDia.length === 0) {
+    return [];
+  }
 
-  return jogosPendentes;
+  // 2. Fetch resultados para os jogos encontrados
+  const jogoIds = jogosDoDia.map((j: any) => j.id);
+  const { data: resultadosData, error: errorResultados } = await supabase
+    .from('resultados')
+    .select('jogo_id, finalizado, gols_mandante, gols_visitante')
+    .in('jogo_id', jogoIds);
+
+  if (errorResultados) {
+    throw new Error(`Erro ao buscar resultados no Supabase: ${errorResultados.message}`);
+  }
+
+  const resultadosMap = (resultadosData || []).reduce((acc: any, r: any) => {
+    acc[r.jogo_id] = r;
+    return acc;
+  }, {});
+
+  // 3. Filtrar apenas os jogos que ainda não estão finalizados
+  const jogosPendentes = jogosDoDia.filter((j: any) => {
+    const resultadoInfo = resultadosMap[j.id];
+    return resultadoInfo?.finalizado !== true;
+  });
+
+  return jogosPendentes as JogoPendente[];
 }
 
 /**
