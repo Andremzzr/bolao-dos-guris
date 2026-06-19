@@ -29,13 +29,13 @@ export interface JogoPendente {
 export async function getPendingMatches(fromDate: string, toDate: string): Promise<JogoPendente[]> {
   const supabase = getSupabase();
   const { data: jogosDoDia, error: errorJogos } = await supabase
-    .from('jogo')
+    .from('jogos')
     .select(`
       id, 
       mandante, 
       visitante, 
       data, 
-      resultado ( finalizado, gols_mandante, gols_visitante )
+      resultados ( finalizado, gols_mandante, gols_visitante )
     `)
     .gte('data', fromDate)
     .lte('data', toDate);
@@ -45,8 +45,8 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
   }
 
   const jogosPendentes = jogosDoDia?.filter(j => {
-    if (!j.resultado) return true;
-    const resultadoInfo = Array.isArray(j.resultado) ? j.resultado[0] : j.resultado;
+    if (!j.resultados) return true;
+    const resultadoInfo = Array.isArray(j.resultados) ? j.resultados[0] : j.resultados;
     return resultadoInfo?.finalizado !== true;
   }) || [];
 
@@ -59,7 +59,7 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
 export async function updateMatchResult(jogoId: number, homeScore: number, awayScore: number, isFinished: boolean) {
   const supabase = getSupabase();
   return await supabase
-    .from('resultado')
+    .from('resultados')
     .upsert({
       jogo_id: jogoId,
       gols_mandante: homeScore,
