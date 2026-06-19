@@ -79,7 +79,7 @@
               <div class="flex items-center justify-between gap-4">
                 <!-- Mandante -->
                 <div class="flex flex-col items-center flex-1 gap-3">
-                  <img :src="getFlagUrl(item.jogo.mandante)" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.mandante" />
+                  <img :src="getFlagUrl(item.jogo.mandante)" loading="lazy" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.mandante" />
                   <span class="text-white text-lg font-bold text-center leading-tight">{{ item.jogo.mandante }}</span>
                 </div>
                 
@@ -100,7 +100,7 @@
 
                 <!-- Visitante -->
                 <div class="flex flex-col items-center flex-1 gap-3">
-                  <img :src="getFlagUrl(item.jogo.visitante)" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.visitante" />
+                  <img :src="getFlagUrl(item.jogo.visitante)" loading="lazy" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.visitante" />
                   <span class="text-white text-lg font-bold text-center leading-tight">{{ item.jogo.visitante }}</span>
                 </div>
               </div>

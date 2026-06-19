@@ -61,25 +61,25 @@ export default async function handler(req: Request) {
       const visitanteStr = normalize(jogoLocal.visitante);
 
       const matchFifa = matchesFifa.find((m: any) => {
-        const homeFifa = normalize(m.HomeTeam?.TeamName?.[0]?.Description || "");
-        const awayFifa = normalize(m.AwayTeam?.TeamName?.[0]?.Description || "");
+        const homeFifa = normalize(m.Home?.TeamName?.[0]?.Description || "");
+        const awayFifa = normalize(m.Away?.TeamName?.[0]?.Description || "");
         
-        return (
-          (homeFifa.includes(mandanteStr) || mandanteStr.includes(homeFifa)) ||
-          (awayFifa.includes(visitanteStr) || visitanteStr.includes(awayFifa))
-        );
+        const matchHome = homeFifa.length > 0 && mandanteStr.length > 0 && (homeFifa.includes(mandanteStr) || mandanteStr.includes(homeFifa));
+        const matchAway = awayFifa.length > 0 && visitanteStr.length > 0 && (awayFifa.includes(visitanteStr) || visitanteStr.includes(awayFifa));
+
+        return matchHome || matchAway;
       });
 
       if (matchFifa) {
         const statusFifa = matchFifa.MatchStatus;
         
         // Na API da FIFA: 1 = Scheduled (Não começou). Ignoramos se não tiver score.
-        if (statusFifa === 1 || matchFifa.HomeTeam?.Score === null || matchFifa.HomeTeam?.Score === undefined) {
+        if (statusFifa === 1 || matchFifa.Home?.Score === null || matchFifa.Home?.Score === undefined) {
           continue;
         }
 
-        const homeScore = matchFifa.HomeTeam?.Score ?? 0;
-        const awayScore = matchFifa.AwayTeam?.Score ?? 0;
+        const homeScore = matchFifa.Home?.Score ?? 0;
+        const awayScore = matchFifa.Away?.Score ?? 0;
         
         // Determinar se o jogo terminou (Geralmente 4 ou 0 é Finished)
         const isFinished = (statusFifa === 4 || statusFifa === 0);

@@ -1,10 +1,10 @@
 export interface FifaMatch {
   MatchStatus: number;
-  HomeTeam?: {
+  Home?: {
     TeamName?: { Description: string }[];
     Score?: number | null;
   };
-  AwayTeam?: {
+  Away?: {
     TeamName?: { Description: string }[];
     Score?: number | null;
   };

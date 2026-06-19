@@ -2,14 +2,14 @@ import { ref, computed, onMounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 import jogosData from '@/data/jogos.json'
 
-export function useJogos() {
-  const resultados = ref({})
-  const palpites = ref({})
-  const odds = ref({})
-  const loading = ref(false)
-  const saving = ref({})
-  const toast = ref(null)
+const resultados = ref({})
+const palpites = ref({})
+const odds = ref({})
+const loading = ref(false)
+const saving = ref({})
+const toast = ref(null)
 
+export function useJogos() {
   // Group games by phase
   const jogosPorFase = computed(() => {
     const groups = {}
