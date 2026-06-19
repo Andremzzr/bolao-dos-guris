@@ -18,6 +18,63 @@
 
     <!-- Ranking list -->
     <div v-else class="px-3 py-3 space-y-2">
+      <!-- Rei da Rodada Section -->
+      <div v-if="reiDaRodada" class="mb-8 mt-2">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-1">
+          <div class="absolute top-0 right-0 p-4 opacity-20">
+            <span class="text-6xl">👑</span>
+          </div>
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-5 relative z-10">
+            <div class="flex justify-between items-start mb-2">
+              <h2 class="text-sm font-bold text-copa-gold flex items-center gap-2 uppercase tracking-wider">
+                <span>👑</span> Rei da Rodada
+              </h2>
+              <span class="text-xs text-slate-400 font-medium bg-white/5 px-2 py-1 rounded-md">{{ selectedDateFormatted }}</span>
+            </div>
+            
+            <div class="flex items-center gap-4 mt-4">
+              <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-copa-gold to-yellow-200 p-0.5 shadow-lg shadow-copa-gold/20">
+                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-900">
+                  <span class="text-xl font-black text-white">
+                    {{ reiDaRodada.nome?.charAt(0).toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="flex-1">
+                <div class="text-lg font-black text-white leading-tight">
+                  {{ reiDaRodada.nome }}
+                  <span v-if="isCurrentUser(reiDaRodada)" class="text-xs text-copa-gold font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-sm text-slate-300 mt-0.5">
+                  <span class="font-bold text-white">{{ reiDaRodada.pontos }} pts</span> no dia
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Button -->
+            <button 
+              @click="exportStory"
+              :disabled="exporting"
+              class="w-full mt-5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 transition-opacity text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-purple-500/25"
+            >
+              <svg v-if="exporting" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <template v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Postar Vitória
+              </template>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-6">Ranking Geral</h3>
+
       <!-- Podium (top 3) -->
       <div
         v-for="(player, index) in ranking"
@@ -109,17 +166,111 @@
         </div>
       </div>
     </div>
+    <ReiDaRodadaCard 
+      v-if="reiDaRodada" 
+      ref="cardComponent"
+      :player="reiDaRodada" 
+      :date="selectedDate" 
+    />
   </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRanking } from '@/composables/useRanking'
+import { useRankingDiario } from '@/composables/useRankingDiario'
 import { useAuth } from '@/composables/useAuth'
+import { toPng } from 'html-to-image'
+import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 
 const { ranking, loading } = useRanking()
 const { user } = useAuth()
 
+// Usa a data de ontem no formato YYYY-MM-DD
+const ontem = new Date()
+ontem.setDate(ontem.getDate() - 1)
+const selectedDate = ref(ontem.toISOString().split('T')[0])
+const { ranking: rankingDiario, loading: loadingDiario } = useRankingDiario(selectedDate.value)
+
+const reiDaRodada = computed(() => {
+  if (rankingDiario.value && rankingDiario.value.length > 0) {
+    return rankingDiario.value[0]
+  }
+  return null
+})
+
+const selectedDateFormatted = computed(() => {
+  const [y, m, d] = selectedDate.value.split('-')
+  return `${d}/${m}`
+})
+
 function isCurrentUser(player) {
   return player.usuario_id === user.value?.id
+}
+
+const cardComponent = ref(null)
+const exporting = ref(false)
+
+async function exportStory() {
+  if (!cardComponent.value) return
+  
+  exporting.value = true
+  try {
+    const el = cardComponent.value.$el || cardComponent.value
+    
+    // Carrega dados de palpites para a imagem
+    if (typeof cardComponent.value.loadData === 'function') {
+      await cardComponent.value.loadData()
+    }
+
+    // Esperar a fonte carregar, a div estar no DOM e as imagens renderizarem
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    const targetEl = cardComponent.value.cardRef || el.querySelector('.w-\\[1080px\\]') || el
+    
+    // Configurações para o html-to-image ser mais robusto
+    const image = await toPng(targetEl, {
+      pixelRatio: 2,
+      backgroundColor: '#0f172a',
+      cacheBust: true,
+      skipAutoScale: true,
+      // Tenta evitar problemas de fontes externas travando o processo
+      filter: (node) => {
+        // Ignora scripts ou elementos que possam causar problemas
+        return node.tagName !== 'SCRIPT';
+      }
+    })
+    
+    // Tenta compartilhar nativamente
+    if (navigator.share) {
+      try {
+        const blob = await (await fetch(image)).blob()
+        const file = new File([blob], 'rei-da-rodada.png', { type: 'image/png' })
+        
+        await navigator.share({
+          title: 'Eu sou o Rei da Rodada!',
+          text: 'Olha quem mandou bem hoje no Bolão!',
+          files: [file]
+        })
+        return
+      } catch (e) {
+        console.log('Share falhou, tentando fallback', e)
+      }
+    }
+    
+    // Fallback: Download da imagem
+    const link = document.createElement('a')
+    link.download = `rei-da-rodada-${selectedDate.value}.png`
+    link.href = image
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+  } catch (err) {
+    console.error('Erro ao gerar imagem', err)
+    alert('Não foi possível gerar a imagem. Tente novamente.')
+  } finally {
+    exporting.value = false
+  }
 }
 </script>
