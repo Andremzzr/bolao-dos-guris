@@ -54,7 +54,7 @@
 
             <!-- Export Button -->
             <button 
-            v-if="isCurrentUser(user)"
+            v-if="isCurrentUser(reiDaRodada)"
               @click="exportStory"
               :disabled="exporting"
               class="w-full mt-5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 transition-opacity text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-purple-500/25"
