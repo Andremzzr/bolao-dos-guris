@@ -7,7 +7,7 @@
           <div v-if="!hasLiveGame">
             <p class="text-xs text-slate-400">Copa do Mundo 2026</p>
           </div>
-          <span @click="scrollToLiveGame" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"> 🔴 AO VIVO </span>
+          <span v-else @click="scrollToLiveGame" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"> 🔴 AO VIVO </span>
 
           <div class="flex items-center gap-2">
             <!-- Filter buttons -->
