@@ -97,6 +97,18 @@ export function useJogos() {
     }
   }
 
+  // Fetch a single result timeline
+  async function fetchResultadoTimeline(jogoId) {
+    const { data, error } = await supabase
+      .from('resultados')
+      .select('timeline')
+      .eq('jogo_id', jogoId)
+      .single()
+
+    if (!error && data) return data.timeline;
+    return null;
+  }
+
   // Fetch user's predictions
   async function fetchPalpites(userId) {
     if (!userId) return
@@ -243,6 +255,7 @@ export function useJogos() {
     tempoAteBloquear,
     statusJogo,
     fetchResultados,
+    fetchResultadoTimeline,
     fetchPalpites,
     fetchOdds,
     salvarPalpite,

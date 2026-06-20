@@ -184,6 +184,17 @@
       <div class="text-center mt-3">
         <span class="text-[10px] text-slate-600">{{ jogo.estadio }}</span>
       </div>
+
+      <!-- Timeline info for live matches -->
+      <div v-if="timelineData && timelineData.Event && isLive" class="mt-4 p-2 bg-slate-800 rounded-lg">
+        <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Linha do Tempo (Ao Vivo)</h4>
+        <ul class="flex flex-col gap-2 max-h-40 overflow-y-auto">
+          <li v-for="evento in timelineData.Event.slice().reverse()" :key="evento.EventId" class="text-[10px] text-white border-b border-white/5 pb-1 last:border-0">
+            <span class="font-bold text-copa-green">{{ evento.MatchMinute }}</span> - 
+            {{ evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description || 'Evento' }}
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Save button (only when editable and changed) -->
@@ -212,7 +223,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
@@ -228,11 +239,35 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['salvar', 'team-click'])
-const { calcularPontos, tempoAteBloquear } = useJogos()
+const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline } = useJogos()
 
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
 const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
 const justSaved = ref(false)
+
+const timelineData = ref(null)
+let pollInterval = null
+
+async function pollTimeline() {
+  if (isLive.value) {
+    const data = await fetchResultadoTimeline(props.jogo.id)
+    if (data) timelineData.value = data
+  }
+}
+
+watch(isLive, (newVal) => {
+  if (newVal && !pollInterval) {
+    pollTimeline()
+    pollInterval = setInterval(pollTimeline, 60000)
+  } else if (!newVal && pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval)
+})
 
 // Watch for palpite changes (e.g., after save)
 watch(() => props.palpite, (newVal) => {

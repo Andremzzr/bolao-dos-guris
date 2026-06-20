@@ -1,5 +1,5 @@
 import { getWindowTimeBRT, normalize } from './_lib/utils';
-import { fetchFifaMatches } from './_lib/fifaApi';
+import { fetchFifaMatches, fetchFifaMatchTimeline } from './_lib/fifaApi';
 import { getPendingMatches, updateMatchResult } from './_lib/dbService';
 
 export const config = {
@@ -84,8 +84,16 @@ export default async function handler(req: Request) {
         // Determinar se o jogo terminou (Geralmente 4 ou 0 é Finished)
         const isFinished = (statusFifa === 4 || statusFifa === 0);
 
+        // Determinar se o jogo está rolando (Ao Vivo) - Status 3
+        const isLive = statusFifa === 3;
+        let timelineData = null;
+
+        if (isLive && matchFifa.IdMatch) {
+          timelineData = await fetchFifaMatchTimeline(matchFifa.IdMatch);
+        }
+
         // Atualiza ou insere o placar atual na base
-        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished);
+        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData);
 
         if (!upsertError) {
           atualizados++;
