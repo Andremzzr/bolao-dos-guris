@@ -64,6 +64,7 @@
             :locked="isLocked(jogo)"
             :saving="saving[jogo.id]"
             @salvar="onSalvarPalpite"
+            @team-click="openTeamModal"
           />
         </div>
       </div>
@@ -75,6 +76,53 @@
         <p class="text-slate-500 text-sm mt-1">Tente outro filtro</p>
       </div>
     </div>
+
+    <!-- Team Modal -->
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="opacity-0 translate-y-4"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-4"
+    >
+      <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm" @click.self="closeTeamModal">
+        <div class="bg-slate-900 border border-slate-700 w-full max-w-lg max-h-[85vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl relative">
+          <!-- Close button overlay -->
+          <button @click="closeTeamModal" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors z-10">
+            ✕
+          </button>
+          
+          <!-- Header -->
+          <div class="px-5 py-4 border-b border-slate-800 flex items-center gap-3">
+             <img :src="getFlagUrl(selectedTeam)" class="w-8 h-6 object-cover rounded shadow" />
+             <h3 class="text-lg font-bold text-white">{{ selectedTeam }}</h3>
+          </div>
+
+          <!-- Content (Scrollable list of matches) -->
+          <div class="overflow-y-auto p-4 space-y-3 custom-scrollbar flex-1 bg-slate-950">
+            <CardJogo
+              v-for="jogo in teamGames"
+              :key="jogo.id"
+              :id="'modal-jogo-' + jogo.id"
+              :jogo="jogo"
+              :palpite="palpites[jogo.id]"
+              :resultado="resultados[jogo.id]"
+              :odd="odds[jogo.id]"
+              :locked="isLocked(jogo)"
+              :saving="saving[jogo.id]"
+              :viewOnly="true"
+              @click="scrollToMatchFromModal(jogo.id)"
+              @salvar="onSalvarPalpite"
+              @team-click="openTeamModal" 
+            />
+            <div v-if="teamGames.length === 0" class="text-center py-8 text-slate-400">
+              Nenhum jogo encontrado para esta equipe.
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -83,6 +131,7 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
 import CardJogo from '@/components/CardJogo.vue'
+import { getFlagUrl } from '@/utils/flags'
 
 const { user } = useAuth()
 const {
@@ -102,6 +151,49 @@ const {
 
 const initialLoading = ref(true)
 const activeFilter = ref('todos')
+
+const selectedTeam = ref(null)
+const isModalOpen = ref(false)
+
+const teamGames = computed(() => {
+  if (!selectedTeam.value) return []
+  return jogosOrdenados.value.filter(j => j.mandante === selectedTeam.value || j.visitante === selectedTeam.value)
+})
+
+function openTeamModal(team) {
+  selectedTeam.value = team
+  isModalOpen.value = true
+}
+
+function closeTeamModal() {
+  isModalOpen.value = false
+  setTimeout(() => {
+    selectedTeam.value = null
+  }, 300)
+}
+
+function scrollToMatchFromModal(jogoId) {
+  closeTeamModal()
+  setTimeout(() => {
+    const el = document.getElementById(`jogo-${jogoId}`)
+    if (el) {
+      // Temporarily highlight the target element
+      el.classList.add('ring-2', 'ring-copa-accent', 'scale-[1.02]', 'transition-all', 'duration-500')
+      setTimeout(() => {
+        el.classList.remove('ring-2', 'ring-copa-accent', 'scale-[1.02]')
+      }, 2000)
+
+      const headerOffset = 120
+      const elementPosition = el.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.scrollY - headerOffset
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }, 350)
+}
 
 const filters = [
   { label: 'Todos', value: 'todos' },

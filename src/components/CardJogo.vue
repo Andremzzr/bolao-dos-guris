@@ -1,7 +1,7 @@
 <template>
   <div
     class="glass rounded-xl overflow-hidden transition-all duration-300"
-    :class="{ 'ring-1 ring-copa-green/30': justSaved }"
+    :class="[{ 'ring-1 ring-copa-green/30': justSaved }, viewOnly ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01] hover:ring-1 hover:ring-white/20' : '']"
   >
     <!-- Game header: phase + time -->
     <div class="flex items-center justify-between px-3 py-2 border-b border-white/5">
@@ -39,7 +39,10 @@
     <div class="px-3 py-3">
       <div class="flex items-center gap-2">
         <!-- Home team -->
-        <div class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5">
+        <div 
+          class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5 cursor-pointer hover:opacity-80 transition-opacity"
+          @click.stop="$emit('team-click', jogo.mandante)"
+        >
           <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" loading="lazy" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.mandante" />          <span 
             class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
             :title="jogo.mandante"
@@ -51,7 +54,7 @@
         <!-- Score / Input area -->
         <div class="flex items-center gap-1.5 shrink-0">
           <!-- If game is finished or live/locked with a result, show result + user's prediction -->
-          <template v-if="resultado?.finalizado || (locked && resultado)">
+          <template v-if="resultado?.finalizado || ((locked || viewOnly) && resultado)">
             <div class="flex flex-col items-center gap-1">
               <!-- Official result -->
               <div class="flex items-center gap-1">
@@ -77,7 +80,7 @@
           </template>
 
           <!-- If game is live / locked (show prediction readonly) -->
-          <template v-else-if="locked">
+          <template v-else-if="locked || viewOnly">
             <div class="flex items-center gap-1">
               <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
                 {{ palpite?.gols_mandante ?? '-' }}
@@ -150,7 +153,10 @@
         </div>
 
         <!-- Away team -->
-        <div class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5">
+        <div 
+          class="flex-1 flex flex-col justify-center items-center gap-1 sm:gap-1.5 cursor-pointer hover:opacity-80 transition-opacity"
+          @click.stop="$emit('team-click', jogo.visitante)"
+        >
           <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" loading="lazy" class="w-7 h-5 sm:w-6 sm:h-4 object-cover rounded-sm shadow-sm" :alt="jogo.visitante" />
           <span 
             class="text-[9px] sm:text-[11px] font-bold text-white leading-tight text-center"
@@ -183,7 +189,7 @@
     <!-- Save button (only when editable and changed) -->
     <Transition enter-active-class="animate-slide-up">
       <div
-        v-if="!locked && !resultado?.finalizado && hasChanged"
+        v-if="!locked && !viewOnly && !resultado?.finalizado && hasChanged"
         class="px-3 pb-3"
       >
         <button
@@ -218,9 +224,10 @@ const props = defineProps({
   odd: { type: Object, default: null },
   locked: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
+  viewOnly: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['salvar'])
+const emit = defineEmits(['salvar', 'team-click'])
 const { calcularPontos, tempoAteBloquear } = useJogos()
 
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
