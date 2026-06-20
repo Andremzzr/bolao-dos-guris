@@ -5,7 +5,6 @@
       <div class="px-4 py-3">
         <div class="flex items-center justify-between">
           <div>
-            <h1 class="text-lg font-bold text-white">⚽ Jogos</h1>
             <p class="text-xs text-slate-400">Copa do Mundo 2026</p>
           </div>
           <div class="flex items-center gap-2">

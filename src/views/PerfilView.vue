@@ -4,7 +4,6 @@
     <header class="sticky top-0 z-30 glass border-b border-copa-border">
       <div class="px-4 py-3">
         <h1 class="text-lg font-bold text-white">👤 Perfil</h1>
-        <p class="text-xs text-slate-400">Suas informações</p>
       </div>
     </header>
 

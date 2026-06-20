@@ -1,15 +1,14 @@
 <template>
-  <div class="pb-20 min-h-screen">
+  <div class="h-[100dvh] pb-20 flex flex-col">
     <!-- Header -->
-    <header class="sticky top-0 z-30 glass border-b border-copa-border">
+    <header class="shrink-0 z-30 glass border-b border-copa-border">
       <div class="px-4 py-3">
         <h1 class="text-lg font-bold text-white">🏆 Classificação</h1>
-        <p class="text-xs text-slate-400">Quem está na frente?</p>
       </div>
     </header>
 
     <!-- Loading -->
-    <div v-if="loading" class="flex items-center justify-center py-20">
+    <div v-if="loading" class="flex-1 flex items-center justify-center py-20">
       <svg class="animate-spin h-8 w-8 text-copa-accent" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -17,9 +16,10 @@
     </div>
 
     <!-- Ranking list -->
-    <div v-else class="px-3 py-3 space-y-2">
+    <div v-else class="flex-1 flex flex-col min-h-0">
       <!-- Rei da Rodada Section -->
-      <div v-if="reiDaRodada" class="mb-8 mt-2">
+      <div class="shrink-0 px-3 pt-3">
+        <div v-if="reiDaRodada" class="mb-4">
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-1">
           <div class="absolute top-0 right-0 p-4 opacity-20">
             <span class="text-6xl">👑</span>
@@ -73,8 +73,11 @@
           </div>
         </div>
       </div>
+      </div>
 
-      <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-6">Ranking Geral</h3>
+      <!-- Scrollable Area -->
+      <div class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-2">Ranking Geral</h3>
 
       <!-- Podium (top 3) -->
       <div
@@ -145,28 +148,30 @@
         <p class="text-slate-400 font-medium">Nenhum resultado ainda</p>
         <p class="text-slate-500 text-sm mt-1">O ranking será atualizado quando os jogos forem finalizados.</p>
       </div>
-    </div>
 
-    <!-- Scoring legend -->
-    <div class="px-3 mt-4 mb-4">
-      <div class="glass rounded-xl p-4">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Pontuação</h3>
-        <div class="space-y-2">
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-slate-300">🎯 Placar exato</span>
-            <span class="font-bold text-copa-gold">5 pts</span>
-          </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-slate-300">✅ Acertou vencedor/empate</span>
-            <span class="font-bold text-copa-green">3 pts</span>
-          </div>
-          <div class="flex items-center justify-between text-sm">
-            <span class="text-slate-300">❌ Errou</span>
-            <span class="font-bold text-red-400">0 pts</span>
+      <!-- Scoring legend -->
+      <div class="mt-4 mb-4">
+        <div class="glass rounded-xl p-4">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Pontuação</h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">🎯 Placar exato</span>
+              <span class="font-bold text-copa-gold">5 pts</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">✅ Acertou vencedor/empate</span>
+              <span class="font-bold text-copa-green">3 pts</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">❌ Errou</span>
+              <span class="font-bold text-red-400">0 pts</span>
+            </div>
           </div>
         </div>
       </div>
+      </div> <!-- End of Scrollable Area -->
     </div>
+
     <ReiDaRodadaCard 
       v-if="reiDaRodada" 
       ref="cardComponent"
