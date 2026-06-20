@@ -118,9 +118,14 @@
               <span class="text-[10px] text-slate-500">
                 {{ player.jogos_computados || 0 }} jogos
               </span>
-              <span v-if="player.acertos_exatos > 0" class="text-[10px] text-copa-gold">
-                🎯 {{ player.acertos_exatos }}
-              </span>
+              <div class="flex items-center gap-1.5">
+                <span v-if="player.acertos_exatos > 0" class="text-[10px] text-copa-gold">
+                  🎯 {{ player.acertos_exatos }}
+                </span>
+                <span v-if="player.acertos_seguidos > 1" class="text-[10px] text-orange-500 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                  🔥 {{ player.acertos_seguidos }}
+                </span>
+              </div>
             </div>
           </div>
 

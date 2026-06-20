@@ -42,6 +42,10 @@
             <span class="text-sm font-bold text-copa-gold">{{ stats.exatos }}</span>
           </div>
           <div class="flex items-center justify-between">
+            <span class="text-sm text-slate-300">🔥 Sequência de acertos</span>
+            <span class="text-sm font-bold text-orange-500">{{ stats.streak }}</span>
+          </div>
+          <div class="flex items-center justify-between">
             <span class="text-sm text-slate-300">📊 Acerto com saldo</span>
             <span class="text-sm font-bold text-blue-400">{{ stats.saldo }}</span>
           </div>
@@ -95,6 +99,7 @@ const stats = computed(() => {
     saldo: myRank?.acertos_saldo ?? 0,
     vencedor: myRank?.acertos_vencedor ?? 0,
     computados: myRank?.jogos_computados ?? 0,
+    streak: myRank?.acertos_seguidos ?? 0,
   }
 })
 
