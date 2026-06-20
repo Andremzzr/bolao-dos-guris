@@ -1,5 +1,6 @@
 export interface FifaMatch {
   MatchStatus: number;
+  IdMatch?: string;
   Home?: {
     TeamName?: { Description: string }[];
     Score?: number | null;
@@ -28,4 +29,25 @@ export async function fetchFifaMatches(fromDate: string, toDate: string): Promis
 
   const dataFifa = await responseFifa.json();
   return dataFifa.Results || [];
+}
+
+/**
+ * Busca a timeline de um jogo específico na API da FIFA
+ */
+export async function fetchFifaMatchTimeline(idMatch: string): Promise<any> {
+  const url = `https://api.fifa.com/api/v3/timelines/${idMatch}?language=pt`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar timeline do jogo ${idMatch}:`, error);
+    return null;
+  }
 }
