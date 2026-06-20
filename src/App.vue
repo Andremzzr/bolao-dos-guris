@@ -49,7 +49,7 @@
               : 'text-slate-400 hover:text-slate-200'
           ]"
         >
-          <span class="text-2xl mb-0.5">{{ tab.icon }}</span>
+          <component :is="tab.icon" :size="26" :weight="$route.name === tab.name ? 'fill' : 'regular'" class="mb-0.5" />
           <span class="text-[10px] font-semibold tracking-wide uppercase">{{ tab.label }}</span>
         </router-link>
       </div>
@@ -61,13 +61,14 @@
 import { computed, provide } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
+import { PhSoccerBall, PhTrophy, PhUser } from '@phosphor-icons/vue'
 
 const { isLoggedIn } = useAuth()
 const { toast } = useJogos()
 
 const tabs = [
-  { icon: '⚽', label: 'Jogos', to: '/', name: 'jogos' },
-  { icon: '🏆', label: 'Ranking', to: '/ranking', name: 'ranking' },
-  { icon: '👤', label: 'Perfil', to: '/perfil', name: 'perfil' },
+  { icon: PhSoccerBall, label: 'Jogos', to: '/', name: 'jogos' },
+  { icon: PhTrophy, label: 'Ranking', to: '/ranking', name: 'ranking' },
+  { icon: PhUser, label: 'Perfil', to: '/perfil', name: 'perfil' },
 ]
 </script>

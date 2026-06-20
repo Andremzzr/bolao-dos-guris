@@ -294,7 +294,6 @@ const hasChanged = computed(() => {
 
 const pontosInfo = computed(() => {
   if (!props.resultado?.finalizado || !props.palpite) return null
-  console.log(props.palpite.pontuacao)
   return props.palpite.pontuacao
 })
 

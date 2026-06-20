@@ -47,7 +47,10 @@
         <!-- Date header -->
         <div class="sticky top-[68px] z-20 py-2">
           <div class="inline-flex items-center px-3 py-1 rounded-full bg-slate-800/90 backdrop-blur-sm border border-copa-border text-xs font-semibold text-slate-300 capitalize">
-            📅 {{ data }}
+            <PhCalendar class="mr-1" :size="16" />
+            <p>
+              {{ data }}
+            </p>
           </div>
         </div>
 
@@ -132,6 +135,7 @@ import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
 import CardJogo from '@/components/CardJogo.vue'
 import { getFlagUrl } from '@/utils/flags'
+import { PhCalendar } from '@phosphor-icons/vue'
 
 const { user } = useAuth()
 const {

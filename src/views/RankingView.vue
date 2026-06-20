@@ -2,8 +2,9 @@
   <div class="h-[100dvh] pb-20 flex flex-col">
     <!-- Header -->
     <header class="shrink-0 z-30 glass border-b border-copa-border">
-      <div class="px-4 py-3">
-        <h1 class="text-lg font-bold text-white">🏆 Classificação</h1>
+      <div class="px-4 py-3 flex gap-2">
+        <PhTrophy :size="28" />
+        <h1 class="text-lg font-bold text-white">Classificação</h1>
       </div>
     </header>
 
@@ -22,12 +23,13 @@
         <div v-if="reiDaRodada" class="mb-4">
         <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-1">
           <div class="absolute top-0 right-0 p-4 opacity-20">
-            <span class="text-6xl">👑</span>
+              <PhCrownSimple :size="28" />
           </div>
           <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-5 relative z-10">
             <div class="flex justify-between items-start mb-2">
               <h2 class="text-sm font-bold text-copa-gold flex items-center gap-2 uppercase tracking-wider">
-                <span>👑</span> Rei da Rodada
+                <PhCrownSimple :size="28" />
+                Rei da Rodada
               </h2>
               <span class="text-xs text-slate-400 font-medium bg-white/5 px-2 py-1 rounded-md">{{ selectedDateFormatted }}</span>
             </div>
@@ -193,6 +195,8 @@ import { useRankingDiario } from '@/composables/useRankingDiario'
 import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
+import { PhTrophy, PhCrownSimple } from '@phosphor-icons/vue'
+
 
 const { ranking, loading } = useRanking()
 const { user } = useAuth()
