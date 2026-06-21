@@ -31,7 +31,9 @@
         <span v-else class="text-[10px] text-slate-500">
           {{ formattedTime }}
         </span>
-        <span v-if="locked && !resultado?.finalizado" class="text-sm">🔒</span>
+        <span v-if="locked && !resultado?.finalizado" class="text-sm">
+          <PhLockSimple :size="18" />
+        </span>
       </div>
     </div>
 
@@ -227,6 +229,7 @@ import { ref, computed, watch, onUnmounted } from 'vue'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
+import { PhLockSimple } from '@phosphor-icons/vue'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
