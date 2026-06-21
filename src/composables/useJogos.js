@@ -84,11 +84,15 @@ export function useJogos() {
     return 'agendado'
   }
 
-  // Fetch all results
+  // Fetch all results (Optimized for bandwidth: don't fetch heavy JSONs here)
   async function fetchResultados() {
     const { data, error } = await supabase
       .from('resultados')
-      .select('*')
+      .select('jogo_id, gols_mandante, gols_visitante, fifa_match_id, finalizado')
+
+    if (error) {
+      console.error("fetchResultados error:", error)
+    }
 
     if (!error && data) {
       const map = {}
@@ -106,6 +110,18 @@ export function useJogos() {
       .single()
 
     if (!error && data) return data.timeline;
+    return null;
+  }
+
+  // Fetch advanced stats for a single game (heavy JSONs)
+  async function fetchAdvancedStats(jogoId) {
+    const { data, error } = await supabase
+      .from('resultados')
+      .select('team_stats, player_stats, power_rankings')
+      .eq('jogo_id', jogoId)
+      .single()
+
+    if (!error && data) return data;
     return null;
   }
 
@@ -256,6 +272,7 @@ export function useJogos() {
     statusJogo,
     fetchResultados,
     fetchResultadoTimeline,
+    fetchAdvancedStats,
     fetchPalpites,
     fetchOdds,
     salvarPalpite,
