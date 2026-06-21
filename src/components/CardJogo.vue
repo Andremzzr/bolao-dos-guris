@@ -191,7 +191,7 @@
         <ul class="flex flex-col gap-2 max-h-40 overflow-y-auto">
           <li v-for="evento in timelineData.Event.slice().reverse()" :key="evento.EventId" class="text-[10px] text-white border-b border-white/5 pb-1 last:border-0">
             <span class="font-bold text-copa-green">{{ evento.MatchMinute }}</span> - 
-            {{ evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description || 'Evento' }}
+            <span v-html="formatEventDescription(evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description)"></span>
           </li>
         </ul>
       </div>
@@ -248,6 +248,19 @@ const justSaved = ref(false)
 const timelineData = ref(null)
 let pollInterval = null
 
+const isLive = computed(() => {
+  if (props.resultado?.finalizado) return false
+  const kickoff = new Date(props.jogo.data).getTime()
+  const now = Date.now()
+  return now >= kickoff && now <= kickoff + (3 * 60 * 60 * 1000)
+})
+
+const isPast = computed(() => {
+  if (props.resultado?.finalizado) return false
+  const kickoff = new Date(props.jogo.data).getTime()
+  return Date.now() > kickoff + (2 * 60 * 60 * 1000)
+})
+
 async function pollTimeline() {
   if (isLive.value) {
     const data = await fetchResultadoTimeline(props.jogo.id)
@@ -279,19 +292,6 @@ watch(() => props.palpite, (newVal) => {
     localAway.value = ''
   }
 }, { deep: true })
-
-const isLive = computed(() => {
-  if (props.resultado?.finalizado) return false
-  const kickoff = new Date(props.jogo.data).getTime()
-  const now = Date.now()
-  return now >= kickoff && now <= kickoff + (3 * 60 * 60 * 1000)
-})
-
-const isPast = computed(() => {
-  if (props.resultado?.finalizado) return false
-  const kickoff = new Date(props.jogo.data).getTime()
-  return Date.now() > kickoff + (2 * 60 * 60 * 1000)
-})
 
 const formattedTime = computed(() => {
   const date = new Date(props.jogo.data)
@@ -384,5 +384,18 @@ async function save() {
 function truncateName(name) {
   if (!name) return ''
   return name.length > 8 ? name.substring(0, 8) + '...' : name
+}
+
+function formatEventDescription(description) {
+  if (!description) return 'Evento'
+  return description.replace(/\(([^)]+)\)/g, (match, countryName) => {
+    let normalizedName = countryName;
+    if (normalizedName === 'Curaçau') normalizedName = 'Curaçao';
+    const flagUrl = getFlagUrl(normalizedName)
+    if (flagUrl) {
+      return `<img src="${flagUrl}" class="inline-block w-4 h-3 object-cover rounded-[2px] mx-0.5 shadow-sm align-middle" alt="${countryName}" title="${countryName}" />`
+    }
+    return match
+  })
 }
 </script>
