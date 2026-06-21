@@ -326,7 +326,7 @@
   {
     "id": 37,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-21T17:00:00",
+    "data": "2026-06-21T19:00:00",
     "mandante": "Uruguai",
     "visitante": "Cabo Verde",
     "estadio": "Estádio Miami, Miami",
@@ -335,7 +335,7 @@
   {
     "id": 38,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-21T20:00:00",
+    "data": "2026-06-21T13:00:00",
     "mandante": "Espanha",
     "visitante": "Arábia Saudita",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -344,7 +344,7 @@
   {
     "id": 39,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-21T23:00:00",
+    "data": "2026-06-21T16:00:00",
     "mandante": "Bélgica",
     "visitante": "Irã",
     "estadio": "Estádio Los Angeles, Los Angeles",
@@ -353,7 +353,7 @@
   {
     "id": 40,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-22T01:00:00",
+    "data": "2026-06-21T22:00:00",
     "mandante": "Nova Zelândia",
     "visitante": "Egito",
     "estadio": "Estádio Vancouver, Vancouver",
