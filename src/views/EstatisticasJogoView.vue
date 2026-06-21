@@ -56,6 +56,20 @@
         </div>
       </div>
 
+      <!-- Team Stats -->
+      <MatchTeamStats 
+        v-if="advancedStats?.team_stats" 
+        :team-stats="advancedStats.team_stats" 
+        :power-rankings="advancedStats.power_rankings" 
+      />
+
+      <!-- Power Rankings -->
+      <MatchPowerRankings 
+        v-if="advancedStats?.power_rankings" 
+        :power-rankings="advancedStats.power_rankings" 
+        :player-stats="advancedStats.player_stats" 
+      />
+
       <!-- Timeline info -->
       <div v-if="timelineData && timelineData.Event && timelineData.Event.length > 0" class="p-4 glass rounded-2xl shadow-xl">
         <h4 class="text-sm text-slate-300 font-bold mb-4 text-center border-b border-white/5 pb-3">Linha do Tempo</h4>
@@ -100,9 +114,11 @@ import { useRoute } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import MatchPitch from '@/components/MatchPitch.vue'
+import MatchTeamStats from '@/components/MatchTeamStats.vue'
+import MatchPowerRankings from '@/components/MatchPowerRankings.vue'
 
 const route = useRoute()
-const { jogosData, fetchResultados, resultados, fetchResultadoTimeline } = useJogos()
+const { jogosData, fetchResultados, resultados, fetchResultadoTimeline, fetchAdvancedStats } = useJogos()
 
 const jogoId = Number(route.params.id)
 const jogo = computed(() => jogosData.find(j => j.id === jogoId))
@@ -111,6 +127,7 @@ const resultado = computed(() => resultados.value[jogoId])
 const loading = ref(true)
 const loadingTimeline = ref(true)
 const timelineData = ref(null)
+const advancedStats = ref(null)
 const activeEvent = ref(null)
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
@@ -163,9 +180,16 @@ onMounted(async () => {
   loading.value = false
   
   if (jogo.value) {
-    const data = await fetchResultadoTimeline(jogoId)
-    if (data) {
-      timelineData.value = data
+    const [tData, aStats] = await Promise.all([
+      fetchResultadoTimeline(jogoId),
+      fetchAdvancedStats(jogoId)
+    ])
+    
+    if (tData) {
+      timelineData.value = tData
+    }
+    if (aStats) {
+      advancedStats.value = aStats
     }
     loadingTimeline.value = false
   }

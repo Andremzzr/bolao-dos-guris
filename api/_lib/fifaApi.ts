@@ -51,3 +51,66 @@ export async function fetchFifaMatchTimeline(idMatch: string): Promise<any> {
     return null;
   }
 }
+
+/**
+ * Busca as estatísticas por time na API da FIFA FDH
+ */
+export async function fetchFifaTeamStats(idMatch: string): Promise<any> {
+  const url = `https://fdh-api.fifa.com/v1/stats/match/${idMatch}/teams.json`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar team stats do jogo ${idMatch}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Busca as estatísticas por jogador na API da FIFA FDH
+ */
+export async function fetchFifaPlayerStats(idMatch: string): Promise<any> {
+  const url = `https://fdh-api.fifa.com/v1/stats/match/${idMatch}/players.json`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar player stats do jogo ${idMatch}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Busca o Power Ranking na API da FIFA FDH
+ */
+export async function fetchFifaPowerRanking(idMatch: string): Promise<any> {
+  const url = `https://fdh-api.fifa.com/v1/powerranking/match/${idMatch}.json`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) return null;
+    return await response.json();
+  } catch (error) {
+    console.error(`Erro ao buscar power ranking do jogo ${idMatch}:`, error);
+    return null;
+  }
+}
