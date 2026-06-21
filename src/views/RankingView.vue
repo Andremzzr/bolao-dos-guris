@@ -77,6 +77,62 @@
       </div>
       </div>
 
+      <!-- Bobo da Rodada Section -->
+      <div class="shrink-0 px-3 pt-3">
+        <div v-if="boboDaRodada" class="mb-4">
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 to-red-900 p-1">
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-5 relative z-10">
+            <div class="flex justify-between items-start mb-2">
+              <h2 class="text-sm font-bold text-red-400 flex items-center gap-2 uppercase tracking-wider">
+              <PhBone :size="28" />
+                Bobo da Rodada
+              </h2>
+              <span class="text-xs text-slate-400 font-medium bg-white/5 px-2 py-1 rounded-md">{{ selectedDateFormatted }}</span>
+            </div>
+            
+            <div class="flex items-center gap-4 mt-4">
+              <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-red-600 to-orange-400 p-0.5 shadow-lg shadow-red-500/20">
+                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-900">
+                  <span class="text-xl font-black text-white">
+                    {{ boboDaRodada.nome?.charAt(0).toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="flex-1">
+                <div class="text-lg font-black text-white leading-tight">
+                  {{ boboDaRodada.nome }}
+                  <span v-if="isCurrentUser(boboDaRodada)" class="text-xs text-red-400 font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-sm text-slate-300 mt-0.5">
+                  <span class="font-bold text-red-400">{{ (boboDaRodada.jogos_computados || 0) - (boboDaRodada.acertos_vencedor || 0) }} erros</span> no dia
+                </div>
+              </div>
+            </div>
+
+            <!-- Export Button -->
+            <button 
+            v-if="isCurrentUser(boboDaRodada)"
+              @click="exportBoboStory"
+              :disabled="exportingBobo"
+              class="w-full mt-5 bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:opacity-90 transition-opacity text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-red-500/25"
+            >
+              <svg v-if="exportingBobo" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <template v-else>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+                Postar (Tristeza)
+              </template>
+            </button>
+          </div>
+        </div>
+      </div>
+      </div>
+
       <!-- Scrollable Area -->
       <div class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-2">Ranking Geral</h3>
@@ -185,6 +241,12 @@
       :player="reiDaRodada" 
       :date="selectedDate" 
     />
+    <BoboDaRodadaCard 
+      v-if="boboDaRodada" 
+      ref="boboCardComponent"
+      :player="boboDaRodada" 
+      :date="selectedDate" 
+    />
   </div>
 </template>
 
@@ -195,7 +257,8 @@ import { useRankingDiario } from '@/composables/useRankingDiario'
 import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple } from '@phosphor-icons/vue'
+import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
+import { PhTrophy, PhCrownSimple, PhBone } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()
@@ -214,6 +277,32 @@ const reiDaRodada = computed(() => {
   return null
 })
 
+const boboDaRodada = computed(() => {
+  if (!rankingDiario.value || rankingDiario.value.length === 0) return null
+  
+  let bobo = null
+  let maxErros = -1
+
+  for (const player of rankingDiario.value) {
+    const jogosComputados = player.jogos_computados || 0
+    const acertosVencedor = player.acertos_vencedor || 0
+    const erros = jogosComputados - acertosVencedor
+    
+    if (erros > maxErros) {
+      maxErros = erros
+      bobo = player
+    } else if (erros === maxErros) {
+      if (bobo && player.pontos < bobo.pontos) {
+        bobo = player
+      }
+    }
+  }
+
+  if (maxErros > 0) return bobo
+
+  return null
+})
+
 const selectedDateFormatted = computed(() => {
   const [y, m, d] = selectedDate.value.split('-')
   return `${d}/${m}`
@@ -225,6 +314,9 @@ function isCurrentUser(player) {
 
 const cardComponent = ref(null)
 const exporting = ref(false)
+
+const boboCardComponent = ref(null)
+const exportingBobo = ref(false)
 
 async function exportStory() {
   if (!cardComponent.value) return
@@ -286,6 +378,60 @@ async function exportStory() {
     alert('Não foi possível gerar a imagem. Tente novamente.')
   } finally {
     exporting.value = false
+  }
+}
+
+async function exportBoboStory() {
+  if (!boboCardComponent.value) return
+  
+  exportingBobo.value = true
+  try {
+    const el = boboCardComponent.value.$el || boboCardComponent.value
+    
+    if (typeof boboCardComponent.value.loadData === 'function') {
+      await boboCardComponent.value.loadData()
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    const targetEl = boboCardComponent.value.cardRef || el.querySelector('.w-\\[1080px\\]') || el
+    
+    const image = await toPng(targetEl, {
+      pixelRatio: 2,
+      backgroundColor: '#0f172a',
+      cacheBust: true,
+      skipAutoScale: true,
+      filter: (node) => node.tagName !== 'SCRIPT'
+    })
+    
+    if (navigator.share) {
+      try {
+        const blob = await (await fetch(image)).blob()
+        const file = new File([blob], 'bobo-da-rodada.png', { type: 'image/png' })
+        
+        await navigator.share({
+          title: 'Eu sou o Bobo da Rodada!',
+          text: 'Não foi dessa vez...',
+          files: [file]
+        })
+        return
+      } catch (e) {
+        console.log('Share falhou, tentando fallback', e)
+      }
+    }
+    
+    const link = document.createElement('a')
+    link.download = `bobo-da-rodada-${selectedDate.value}.png`
+    link.href = image
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    
+  } catch (err) {
+    console.error('Erro ao gerar imagem', err)
+    alert('Não foi possível gerar a imagem. Tente novamente.')
+  } finally {
+    exportingBobo.value = false
   }
 }
 </script>
