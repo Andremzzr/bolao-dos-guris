@@ -28,7 +28,7 @@ export async function fetchFifaMatches(fromDate: string, toDate: string): Promis
   }
 
   const dataFifa = await responseFifa.json();
-  return dataFifa.Results || [];
+  return dataFifa?.Results || [];
 }
 
 /**

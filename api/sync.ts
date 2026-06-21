@@ -93,7 +93,7 @@ export default async function handler(req: Request) {
         }
 
         // Atualiza ou insere o placar atual na base
-        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData);
+        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch);
 
         if (!upsertError) {
           atualizados++;

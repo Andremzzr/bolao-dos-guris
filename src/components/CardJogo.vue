@@ -1,7 +1,8 @@
 <template>
   <div
-    class="glass rounded-xl overflow-hidden transition-all duration-300"
-    :class="[{ 'ring-1 ring-copa-green/30': justSaved }, viewOnly ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01] hover:ring-1 hover:ring-white/20' : '']"
+    class="glass rounded-xl overflow-hidden transition-all duration-300 relative"
+    :class="[{ 'ring-1 ring-copa-green/30': justSaved }, (viewOnly || resultado?.finalizado) ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01] hover:ring-1 hover:ring-white/20' : '']"
+    @click="handleCardClick"
   >
     <!-- Game header: phase + time -->
     <div class="flex items-center justify-between px-3 py-2 border-b border-white/5">
@@ -237,6 +238,7 @@
 
 <script setup>
 import { ref, computed, watch, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
@@ -255,6 +257,14 @@ const props = defineProps({
 
 const emit = defineEmits(['salvar', 'team-click'])
 const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline } = useJogos()
+const router = useRouter()
+
+function handleCardClick() {
+  if (props.viewOnly) return; // parent handles it
+  if (props.resultado?.finalizado) {
+    router.push(`/jogos/${props.jogo.id}/estatisticas`);
+  }
+}
 
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
 const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')

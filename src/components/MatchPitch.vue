@@ -85,7 +85,7 @@ watch(() => props.activeEvent, (newEvent) => {
           currentPositionX.value = targetX
           currentPositionY.value = targetY
         }
-      }, 50)
+      }, 800)
     }
   }
 }, { immediate: true })

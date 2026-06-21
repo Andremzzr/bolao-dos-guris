@@ -224,7 +224,7 @@ const filteredJogosPorData = computed(() => {
 })
 
 const hasLiveGame = computed(() => {
-  return jogosOrdenados.value.find(j => statusJogo(j) === 'em_andamento')
+  return jogosOrdenados.value.length >0 && jogosOrdenados.value.find(j => statusJogo(j) === 'em_andamento')
 })
 
 function scrollToLiveGame() {

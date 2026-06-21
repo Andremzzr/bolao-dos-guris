@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS resultados (
   jogo_id INTEGER PRIMARY KEY REFERENCES jogos(id) ON DELETE CASCADE,
   gols_mandante INTEGER NOT NULL DEFAULT 0,
   gols_visitante INTEGER NOT NULL DEFAULT 0,
-  finalizado BOOLEAN DEFAULT false
+  finalizado BOOLEAN DEFAULT false,
+  timeline JSONB,
+  fifa_match_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS palpites (

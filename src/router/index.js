@@ -20,6 +20,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/jogos/:id/estatisticas',
+    name: 'estatisticas-jogo',
+    component: () => import('@/views/EstatisticasJogoView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
