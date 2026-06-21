@@ -18,119 +18,143 @@
 
     <!-- Ranking list -->
     <div v-else class="flex-1 flex flex-col min-h-0">
-      <!-- Rei da Rodada Section -->
-      <div class="shrink-0 px-3 pt-3">
-        <div v-if="reiDaRodada" class="mb-4">
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-1">
-          <div class="absolute top-0 right-0 p-4 opacity-20">
-              <PhCrownSimple :size="28" />
+      <!-- Highlights Section -->
+      <div class="shrink-0 px-3 pt-3 flex flex-col gap-2">
+        <!-- Rei da Rodada -->
+        <div v-if="reiDaRodada" class="relative overflow-hidden rounded-xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-[1px]">
+          <div class="absolute top-0 right-0 p-2 opacity-20">
+            <PhCrownSimple :size="48" />
           </div>
-          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-5 relative z-10">
-            <div class="flex justify-between items-start mb-2">
-              <h2 class="text-sm font-bold text-copa-gold flex items-center gap-2 uppercase tracking-wider">
-                <PhCrownSimple :size="28" />
-                Rei da Rodada
-              </h2>
-              <span class="text-xs text-slate-400 font-medium bg-white/5 px-2 py-1 rounded-md">{{ selectedDateFormatted }}</span>
-            </div>
-            
-            <div class="flex items-center gap-4 mt-4">
-              <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-copa-gold to-yellow-200 p-0.5 shadow-lg shadow-copa-gold/20">
-                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-900">
-                  <span class="text-xl font-black text-white">
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-copa-gold to-yellow-200 p-[1px] shadow-sm shadow-copa-gold/20">
+                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                  <span class="text-sm font-black text-white">
                     {{ reiDaRodada.nome?.charAt(0).toUpperCase() }}
                   </span>
                 </div>
               </div>
               
-              <div class="flex-1">
-                <div class="text-lg font-black text-white leading-tight">
-                  {{ reiDaRodada.nome }}
-                  <span v-if="isCurrentUser(reiDaRodada)" class="text-xs text-copa-gold font-bold ml-1">(Você)</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-[10px] font-bold text-copa-gold uppercase tracking-wider flex items-center gap-1">
+                    <PhCrownSimple :size="12" /> Rei da Rodada
+                  </h2>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ selectedDateFormatted }}</span>
                 </div>
-                <div class="text-sm text-slate-300 mt-0.5">
+                <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
+                  {{ reiDaRodada.nome }}
+                  <span v-if="isCurrentUser(reiDaRodada)" class="text-[10px] text-copa-gold font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-[10px] text-slate-300 mt-0.5">
                   <span class="font-bold text-white">{{ reiDaRodada.pontos }} pts</span> no dia
                 </div>
               </div>
-            </div>
 
-            <!-- Export Button -->
-            <button 
-            v-if="isCurrentUser(reiDaRodada)"
-              @click="exportStory"
-              :disabled="exporting"
-              class="w-full mt-5 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 transition-opacity text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-purple-500/25"
-            >
-              <svg v-if="exporting" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <template v-else>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <!-- Export Button -->
+              <button 
+                v-if="isCurrentUser(reiDaRodada)"
+                @click="exportStory"
+                :disabled="exporting"
+                class="shrink-0 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 transition-opacity text-white p-2 rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/25"
+                title="Postar Vitória"
+              >
+                <svg v-if="exporting" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                Postar Vitória
-              </template>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      </div>
 
-      <!-- Bobo da Rodada Section -->
-      <div class="shrink-0 px-3 pt-3">
-        <div v-if="boboDaRodada" class="mb-4">
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 to-red-900 p-1">
-          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-5 relative z-10">
-            <div class="flex justify-between items-start mb-2">
-              <h2 class="text-sm font-bold text-red-400 flex items-center gap-2 uppercase tracking-wider">
-              <PhBone :size="28" />
-                Bobo da Rodada
-              </h2>
-              <span class="text-xs text-slate-400 font-medium bg-white/5 px-2 py-1 rounded-md">{{ selectedDateFormatted }}</span>
-            </div>
-            
-            <div class="flex items-center gap-4 mt-4">
-              <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-red-600 to-orange-400 p-0.5 shadow-lg shadow-red-500/20">
-                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-2 border-slate-900">
-                  <span class="text-xl font-black text-white">
+        <!-- Bobo da Rodada -->
+        <div v-if="boboDaRodada" class="relative overflow-hidden rounded-xl bg-gradient-to-br from-red-500 to-red-900 p-[1px]">
+          <div class="absolute top-0 right-0 p-2 opacity-20">
+            <PhBone :size="48" />
+          </div>
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-orange-400 p-[1px] shadow-sm shadow-red-500/20">
+                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                  <span class="text-sm font-black text-white">
                     {{ boboDaRodada.nome?.charAt(0).toUpperCase() }}
                   </span>
                 </div>
               </div>
               
-              <div class="flex-1">
-                <div class="text-lg font-black text-white leading-tight">
-                  {{ boboDaRodada.nome }}
-                  <span v-if="isCurrentUser(boboDaRodada)" class="text-xs text-red-400 font-bold ml-1">(Você)</span>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-[10px] font-bold text-red-400 uppercase tracking-wider flex items-center gap-1">
+                    <PhBone :size="12" /> Bobo da Rodada
+                  </h2>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ selectedDateFormatted }}</span>
                 </div>
-                <div class="text-sm text-slate-300 mt-0.5">
+                <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
+                  {{ boboDaRodada.nome }}
+                  <span v-if="isCurrentUser(boboDaRodada)" class="text-[10px] text-red-400 font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-[10px] text-slate-300 mt-0.5">
                   <span class="font-bold text-red-400">{{ (boboDaRodada.jogos_computados || 0) - (boboDaRodada.acertos_vencedor || 0) }} erros</span> no dia
                 </div>
               </div>
-            </div>
 
-            <!-- Export Button -->
-            <button 
-            v-if="isCurrentUser(boboDaRodada)"
-              @click="exportBoboStory"
-              :disabled="exportingBobo"
-              class="w-full mt-5 bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:opacity-90 transition-opacity text-white font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-red-500/25"
-            >
-              <svg v-if="exportingBobo" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <template v-else>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <!-- Export Button -->
+              <button 
+                v-if="isCurrentUser(boboDaRodada)"
+                @click="exportBoboStory"
+                :disabled="exportingBobo"
+                class="shrink-0 bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:opacity-90 transition-opacity text-white p-2 rounded-lg flex items-center justify-center shadow-lg shadow-red-500/25"
+                title="Postar (Tristeza)"
+              >
+                <svg v-if="exportingBobo" class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
-                Postar (Tristeza)
-              </template>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- On Fire -->
+        <div v-if="onFirePlayer" class="relative overflow-hidden rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 p-[1px]">
+          <div class="absolute top-0 right-0 p-2 opacity-20">
+            <PhFire :size="48" />
+          </div>
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-yellow-500 p-[1px] shadow-sm shadow-orange-500/20">
+                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                  <span class="text-sm font-black text-white">
+                    {{ onFirePlayer.nome?.charAt(0).toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-[10px] font-bold text-orange-400 uppercase tracking-wider flex items-center gap-1">
+                    <PhFire :size="12" /> On Fire
+                  </h2>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">Agora</span>
+                </div>
+                <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
+                  {{ onFirePlayer.nome }}
+                  <span v-if="isCurrentUser(onFirePlayer)" class="text-[10px] text-orange-400 font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-[10px] text-slate-300 mt-0.5">
+                  <span class="font-bold text-orange-400">{{ onFirePlayer.acertos_seguidos }} acertos</span> seguidos
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Scrollable Area -->
@@ -258,7 +282,7 @@ import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple, PhBone } from '@phosphor-icons/vue'
+import { PhTrophy, PhCrownSimple, PhBone, PhFire } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()
@@ -300,6 +324,27 @@ const boboDaRodada = computed(() => {
 
   if (maxErros > 0) return bobo
 
+  return null
+})
+
+const onFirePlayer = computed(() => {
+  if (!ranking.value || ranking.value.length === 0) return null
+  
+  let onFire = null
+  let maxStreak = 0
+
+  for (const player of ranking.value) {
+    if ((player.acertos_seguidos || 0) > maxStreak) {
+      maxStreak = player.acertos_seguidos
+      onFire = player
+    } else if ((player.acertos_seguidos || 0) === maxStreak && maxStreak > 0) {
+      if (onFire && player.pontos > onFire.pontos) {
+        onFire = player
+      }
+    }
+  }
+
+  if (maxStreak > 1) return onFire
   return null
 })
 
