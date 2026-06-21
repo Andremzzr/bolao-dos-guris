@@ -190,8 +190,19 @@
       <!-- Timeline info for live matches -->
       <div v-if="timelineData && timelineData.Event && isLive" class="mt-4 p-2 bg-slate-800 rounded-lg">
         <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Linha do Tempo (Ao Vivo)</h4>
-        <ul class="flex flex-col gap-2 max-h-40 overflow-y-auto">
-          <li v-for="evento in timelineData.Event.slice().reverse()" :key="evento.EventId" class="text-[10px] text-white border-b border-white/5 pb-1 last:border-0">
+        
+        <MatchPitch :active-event="activeEvent" class="mb-3" />
+
+        <ul class="flex flex-col gap-1 max-h-40 overflow-y-auto pr-1">
+          <li 
+            v-for="evento in events" 
+            :key="evento.EventId" 
+            class="text-[10px] text-white border-b border-white/5 pb-1 last:border-0 cursor-pointer p-1.5 rounded transition-colors"
+            :class="{'bg-white/10': activeEvent?.EventId === evento.EventId, 'hover:bg-white/5': activeEvent?.EventId !== evento.EventId}"
+            @mouseenter="pauseEventLoop(evento)"
+            @mouseleave="resumeEventLoop"
+            @click="pauseEventLoop(evento)"
+          >
             <span class="font-bold text-copa-green">{{ evento.MatchMinute }}</span> - 
             <span v-html="formatEventDescription(evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description)"></span>
           </li>
@@ -230,6 +241,7 @@ import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
 import { PhLockSimple } from '@phosphor-icons/vue'
+import MatchPitch from '@/components/MatchPitch.vue'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
@@ -249,6 +261,7 @@ const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
 const justSaved = ref(false)
 
 const timelineData = ref(null)
+const activeEvent = ref(null)
 let pollInterval = null
 
 const isLive = computed(() => {
@@ -258,6 +271,53 @@ const isLive = computed(() => {
   return now >= kickoff && now <= kickoff + (3 * 60 * 60 * 1000)
 })
 
+const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
+
+let eventLoopInterval = null;
+
+let currentIndex = 0;
+
+const startEventLoop = () => {
+  if (eventLoopInterval) clearInterval(eventLoopInterval);
+  if (events.value.length === 0) return;
+  
+  // Only initialize with first event if we don't have an active event
+  if (!activeEvent.value) {
+    activeEvent.value = events.value[currentIndex];
+  }
+  
+  eventLoopInterval = setInterval(() => {
+    if (events.value.length === 0) return;
+    currentIndex = (currentIndex + 1) % events.value.length;
+    activeEvent.value = events.value[currentIndex];
+  }, 4000); // 4 seconds per event
+}
+
+const pauseEventLoop = (evento) => {
+  if (eventLoopInterval) {
+    clearInterval(eventLoopInterval);
+    eventLoopInterval = null;
+  }
+  activeEvent.value = evento;
+  
+  // Update currentIndex to match the hovered event
+  const index = events.value.findIndex(e => e.EventId === evento.EventId);
+  if (index !== -1) {
+    currentIndex = index;
+  }
+}
+
+const resumeEventLoop = () => {
+  if (!eventLoopInterval && events.value.length > 0) {
+    startEventLoop();
+  }
+}
+
+watch(events, (newEvents) => {
+  if (newEvents.length > 0 && !eventLoopInterval) {
+    startEventLoop();
+  }
+}, { deep: true })
 const isPast = computed(() => {
   if (props.resultado?.finalizado) return false
   const kickoff = new Date(props.jogo.data).getTime()
@@ -283,6 +343,7 @@ watch(isLive, (newVal) => {
 
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
+  if (eventLoopInterval) clearInterval(eventLoopInterval)
 })
 
 // Watch for palpite changes (e.g., after save)
