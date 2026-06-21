@@ -141,8 +141,8 @@
 
             <div class="w-full mt-2" v-if="playerSpecificStats.length > 0">
                <h4 class="text-xs font-semibold text-slate-300 uppercase tracking-wider border-b border-white/10 pb-2 mb-3">Estatísticas Específicas</h4>
-               <div class="space-y-2">
-                  <div v-for="stat in playerSpecificStats" :key="stat.label" class="flex justify-between items-center text-sm bg-white/5 px-3 py-2 rounded-lg">
+               <div class="flex flex-col gap-2 max-h-[140px] overflow-y-auto pr-2 custom-scrollbar">
+                  <div v-for="stat in playerSpecificStats" :key="stat.label" class="flex justify-between items-center text-sm bg-white/5 px-3 py-2 rounded-lg shrink-0">
                     <span class="text-slate-400">{{ stat.label }}</span>
                     <span class="text-white font-bold">{{ stat.value }}</span>
                   </div>
@@ -206,7 +206,7 @@ const playerSpecificStats = computed(() => {
     'PassesCompleted': 'Passes Completos',
     'Goals': 'Gols',
     'Assists': 'Assistências',
-    'DistanceCovered': 'Distância Percorrida (m)',
+    'DistanceCovered': 'Distância (km)',
     'TopSpeed': 'Velocidade Máx. (km/h)',
     'AttemptAtGoal': 'Finalizações',
     'AttemptAtGoalOnTarget': 'No Alvo',
@@ -215,12 +215,19 @@ const playerSpecificStats = computed(() => {
     'YellowCards': 'Cartões Amarelos'
   }
 
+  const formatValue = (key, val) => {
+    if (key === 'DistanceCovered' && typeof val === 'number') {
+      return (val / 1000).toFixed(2);
+    }
+    return typeof val === 'number' && val > 100 ? Math.round(val) : (Math.round(val * 10) / 10);
+  }
+
   let parsed = []
   if (Array.isArray(statsRaw)) {
     if (statsRaw.length > 0 && Array.isArray(statsRaw[0])) {
       parsed = statsRaw.filter(s => STATS_DICT[s[0]]).map(s => ({
         label: STATS_DICT[s[0]],
-        value: typeof s[1] === 'number' && s[1] > 100 ? Math.round(s[1]) : (Math.round(s[1] * 10) / 10)
+        value: formatValue(s[0], s[1])
       }))
     }
   } else if (typeof statsRaw === 'object') {
@@ -228,13 +235,26 @@ const playerSpecificStats = computed(() => {
         if (STATS_DICT[key]) {
            parsed.push({ 
              label: STATS_DICT[key], 
-             value: typeof val === 'number' && val > 100 ? Math.round(val) : (Math.round(val * 10) / 10) 
+             value: formatValue(key, val)
            })
         }
      }
   }
 
-  return parsed.slice(0, 6)
+  // Prioritize some stats to show up if there are too many
+  const priorityStats = ['Goals', 'Assists', 'DistanceCovered', 'TopSpeed', 'AttemptAtGoal'];
+  parsed.sort((a, b) => {
+    const aKey = Object.keys(STATS_DICT).find(k => STATS_DICT[k] === a.label);
+    const bKey = Object.keys(STATS_DICT).find(k => STATS_DICT[k] === b.label);
+    const aIndex = priorityStats.indexOf(aKey);
+    const bIndex = priorityStats.indexOf(bKey);
+    if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+    if (aIndex !== -1) return -1;
+    if (bIndex !== -1) return 1;
+    return 0;
+  });
+
+  return parsed.slice(0, 8)
 })
 
 const topPlayers = computed(() => {
