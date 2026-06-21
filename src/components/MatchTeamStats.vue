@@ -66,11 +66,17 @@ const STATS_TO_SHOW = [
 const processedStats = computed(() => {
   if (!props.teamStats || !props.powerRankings?.outfieldPlayers?.length) return []
   
-  const teamIds = [...new Set(props.powerRankings.outfieldPlayers.map(p => p.teamId))]
-  if (teamIds.length < 2) return []
+  let homeId, awayId;
   
-  const homeId = teamIds[0]
-  const awayId = teamIds[1]
+  if (props.teamStats?.home_team_id && props.teamStats?.away_team_id) {
+    homeId = props.teamStats.home_team_id;
+    awayId = props.teamStats.away_team_id;
+  } else {
+    const teamIds = [...new Set(props.powerRankings.outfieldPlayers.map(p => p.teamId))]
+    if (teamIds.length < 2) return []
+    homeId = teamIds[0]
+    awayId = teamIds[1]
+  }
   
   const homeStatsData = props.teamStats[homeId] || []
   const awayStatsData = props.teamStats[awayId] || []
