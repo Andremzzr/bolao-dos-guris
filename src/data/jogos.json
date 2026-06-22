@@ -362,7 +362,7 @@
   {
     "id": 41,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-22T17:00:00",
+    "data": "2026-06-22T21:00:00",
     "mandante": "Noruega",
     "visitante": "Senegal",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -371,7 +371,7 @@
   {
     "id": 42,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-22T20:00:00",
+    "data": "2026-06-22T18:00:00",
     "mandante": "França",
     "visitante": "Iraque",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -380,7 +380,7 @@
   {
     "id": 43,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-22T23:00:00",
+    "data": "2026-06-22T14:00:00",
     "mandante": "Argentina",
     "visitante": "Áustria",
     "estadio": "Estádio Dallas, Arlington",
@@ -389,7 +389,7 @@
   {
     "id": 44,
     "fase": "Fase de Grupos - Grupo J",
-    "data": "2026-06-23T01:00:00",
+    "data": "2026-06-23T00:00:00",
     "mandante": "Jordânia",
     "visitante": "Argélia",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
@@ -398,7 +398,7 @@
   {
     "id": 45,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-23T17:00:00",
+    "data": "2026-06-23T14:00:00",
     "mandante": "Portugal",
     "visitante": "Uzbequistão",
     "estadio": "Estádio Houston, Houston",
@@ -407,7 +407,7 @@
   {
     "id": 46,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-23T20:00:00",
+    "data": "2026-06-23T23:00:00",
     "mandante": "Colômbia",
     "visitante": "RD Congo",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -416,7 +416,7 @@
   {
     "id": 47,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-23T20:00:00",
+    "data": "2026-06-23T17:00:00",
     "mandante": "Inglaterra",
     "visitante": "Gana",
     "estadio": "Estádio Boston, Foxborough",
@@ -425,7 +425,7 @@
   {
     "id": 48,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-23T23:00:00",
+    "data": "2026-06-23T20:00:00",
     "mandante": "Panamá",
     "visitante": "Croácia",
     "estadio": "Estádio Toronto, Toronto",

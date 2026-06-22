@@ -137,7 +137,21 @@ SECURITY DEFINER
 AS $$
 DECLARE
   resultado palpites;
+  v_finalizado BOOLEAN;
+  v_jogo_existe BOOLEAN;
 BEGIN
+  -- Verifica se o jogo existe
+  SELECT EXISTS(SELECT 1 FROM jogos WHERE id = p_jogo_id) INTO v_jogo_existe;
+  IF NOT v_jogo_existe THEN
+    RAISE EXCEPTION 'O jogo informado não existe.';
+  END IF;
+
+  -- Verifica se o jogo já está finalizado
+  SELECT finalizado INTO v_finalizado FROM resultados WHERE jogo_id = p_jogo_id;
+  IF v_finalizado = true THEN
+    RAISE EXCEPTION 'Não é possível palpitar em um jogo com resultado finalizado.';
+  END IF;
+
   INSERT INTO palpites (usuario_id, jogo_id, gols_mandante, gols_visitante, atualizado_em)
   VALUES (p_usuario_id, p_jogo_id, p_gols_mandante, p_gols_visitante, now())
   ON CONFLICT (usuario_id, jogo_id)
@@ -180,37 +194,8 @@ CREATE TRIGGER trigger_atualiza_pontuacao_resultado
 AFTER INSERT OR UPDATE ON resultados
 FOR EACH ROW EXECUTE FUNCTION trigger_resultado_pontuacao();
 
--- Função para calcular pontuação quando um palpite é inserido ou atualizado
-CREATE OR REPLACE FUNCTION trigger_palpite_pontuacao()
-RETURNS TRIGGER AS $$
-DECLARE
-  r_finalizado BOOLEAN;
-  r_gols_mandante INTEGER;
-  r_gols_visitante INTEGER;
-BEGIN
-  SELECT finalizado, gols_mandante, gols_visitante 
-  INTO r_finalizado, r_gols_mandante, r_gols_visitante
-  FROM resultados WHERE jogo_id = NEW.jogo_id;
-
-  IF FOUND AND r_finalizado = true THEN
-    NEW.pontuacao := (
-      CASE
-        WHEN NEW.gols_mandante = r_gols_mandante AND NEW.gols_visitante = r_gols_visitante THEN 5
-        WHEN SIGN(NEW.gols_mandante - NEW.gols_visitante) = SIGN(r_gols_mandante - r_gols_visitante) THEN 3
-        ELSE 0
-      END
-    );
-  ELSE
-    NEW.pontuacao := 0;
-  END IF;
-  
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_calcula_pontuacao_palpite
-BEFORE INSERT OR UPDATE ON palpites
-FOR EACH ROW EXECUTE FUNCTION trigger_palpite_pontuacao();
+-- A trigger que calculava pontuação ao criar ou atualizar palpites foi removida.
+-- Apenas o trigger `trigger_atualiza_pontuacao_resultado` (ao atualizar os resultados) agora é responsável por calcular os pontos.
 
 -- ============================================
 -- 8. View de Ranking Diário (Rei da Rodada)
