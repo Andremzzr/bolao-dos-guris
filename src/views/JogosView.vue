@@ -224,6 +224,7 @@ const filteredJogosPorData = computed(() => {
 })
 
 const hasLiveGame = computed(() => {
+  if (initialLoading.value) return false;
   return jogosOrdenados.value.length >0 && jogosOrdenados.value.find(j => statusJogo(j) === 'em_andamento')
 })
 
