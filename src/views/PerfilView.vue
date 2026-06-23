@@ -3,7 +3,9 @@
     <!-- Header -->
     <header class="sticky top-0 z-30 glass border-b border-copa-border">
       <div class="px-4 py-3">
-        <h1 class="text-lg font-bold text-white">👤 Perfil</h1>
+        <h1 class="text-lg font-bold text-white flex items-center gap-1.5">
+          <PhUser :size="20" class="text-white" /> Perfil
+        </h1>
       </div>
     </header>
 
@@ -33,28 +35,41 @@
         </div>
       </div>
 
+      <!-- Gráfico de Pontos por Dia de Jogo -->
+      <PontosChart />
+
       <!-- Detailed stats -->
       <div class="glass rounded-xl p-4 space-y-3">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Detalhamento</h3>
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-300">🎯 Placares exatos</span>
+            <span class="text-sm text-slate-300 flex items-center gap-1.5">
+              <PhTarget :size="18" class="text-copa-gold" /> Placares exatos
+            </span>
             <span class="text-sm font-bold text-copa-gold">{{ stats.exatos }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-300">🔥 Sequência de acertos</span>
+            <span class="text-sm text-slate-300 flex items-center gap-1.5">
+              <PhFire :size="18" class="text-orange-500" /> Sequência de acertos
+            </span>
             <span class="text-sm font-bold text-orange-500">{{ stats.streak }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-300">📊 Acerto com saldo</span>
+            <span class="text-sm text-slate-300 flex items-center gap-1.5">
+              <PhChartBar :size="18" class="text-blue-400" /> Acerto com saldo
+            </span>
             <span class="text-sm font-bold text-blue-400">{{ stats.saldo }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-300">✅ Acerto do vencedor</span>
+            <span class="text-sm text-slate-300 flex items-center gap-1.5">
+              <PhCheckCircle :size="18" class="text-copa-green" /> Acerto do vencedor
+            </span>
             <span class="text-sm font-bold text-copa-green">{{ stats.vencedor }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="text-sm text-slate-300">📋 Jogos computados</span>
+            <span class="text-sm text-slate-300 flex items-center gap-1.5">
+              <PhClipboardText :size="18" class="text-slate-400" /> Jogos computados
+            </span>
             <span class="text-sm font-bold text-slate-300">{{ stats.computados }}</span>
           </div>
         </div>
@@ -63,18 +78,18 @@
       <!-- Share link -->
       <button
         @click="compartilhar"
-        class="w-full glass rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-copa-green font-semibold text-sm tap-scale hover:bg-copa-green/10 transition-colors"
+        class="w-full glass rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-copa-green font-semibold text-sm tap-scale hover:bg-copa-green/10 transition-colors cursor-pointer"
       >
-        <span>📤</span>
+        <PhShareNetwork :size="18" />
         <span>Compartilhar no WhatsApp</span>
       </button>
 
       <!-- Logout -->
       <button
         @click="handleLogout"
-        class="w-full glass rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-red-400 font-semibold text-sm tap-scale hover:bg-red-500/10 transition-colors"
+        class="w-full glass rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-red-400 font-semibold text-sm tap-scale hover:bg-red-500/10 transition-colors cursor-pointer"
       >
-        <span>🚪</span>
+        <PhSignOut :size="18" />
         <span>Sair do Bolão</span>
       </button>
     </div>
@@ -85,9 +100,12 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useRanking } from '@/composables/useRanking'
+import PontosChart from '@/components/PontosChart.vue'
+import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut } from '@phosphor-icons/vue'
 
 const { user, logout } = useAuth()
 const { ranking, fetchRanking } = useRanking()
+
 
 const stats = computed(() => {
   const myRank = ranking.value.find(r => r.usuario_id === user.value?.id)
