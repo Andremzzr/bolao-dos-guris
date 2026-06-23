@@ -23,12 +23,7 @@
         >
           🔴 AO VIVO
         </span>
-        <span
-          v-else-if="isPast"
-          class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-700/50 text-slate-400"
-        >
-          FINALIZADO
-        </span>
+
         <span v-else class="text-[10px] text-slate-500">
           {{ formattedTime }}
         </span>
@@ -277,8 +272,7 @@ let pollInterval = null
 const isLive = computed(() => {
   if (props.resultado?.finalizado) return false
   const kickoff = new Date(props.jogo.data).getTime()
-  const now = Date.now()
-  return now >= kickoff && now <= kickoff + (3 * 60 * 60 * 1000)
+  return Date.now() >= kickoff
 })
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
@@ -328,11 +322,7 @@ watch(events, (newEvents) => {
     startEventLoop();
   }
 }, { deep: true })
-const isPast = computed(() => {
-  if (props.resultado?.finalizado) return false
-  const kickoff = new Date(props.jogo.data).getTime()
-  return Date.now() > kickoff + (2 * 60 * 60 * 1000)
-})
+
 
 async function pollTimeline() {
   if (isLive.value) {
