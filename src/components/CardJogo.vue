@@ -226,6 +226,16 @@
           </li>
         </ul>
       </div>
+
+      <!-- Palpites da Galera Button -->
+      <div v-if="locked || resultado?.finalizado" class="mt-4">
+        <button 
+          @click.stop="showPalpitesModal = true"
+          class="w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold border border-white/5 hover:bg-slate-700 transition-colors tap-scale"
+        >
+          <span class="text-lg">👀</span> Ver Palpites da Galera
+        </button>
+      </div>
     </div>
 
     <!-- Save button (only when editable and changed) -->
@@ -250,6 +260,13 @@
         </button>
       </div>
     </Transition>
+
+    <PalpitesDaGaleraModal
+      :show="showPalpitesModal"
+      :jogo="jogo"
+      :resultado="resultado"
+      @close="showPalpitesModal = false"
+    />
   </div>
 </template>
 
@@ -261,6 +278,7 @@ import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
 import { PhLockSimple } from '@phosphor-icons/vue'
 import MatchPitch from '@/components/MatchPitch.vue'
+import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
@@ -286,6 +304,7 @@ function handleCardClick() {
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
 const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
 const justSaved = ref(false)
+const showPalpitesModal = ref(false)
 
 const timelineData = ref(null)
 const activeEvent = ref(null)
