@@ -119,11 +119,27 @@ function getPointsColor(palpite) {
   return 'text-slate-500'
 }
 
+function isPalpiteImpossible(palpite) {
+  // Only applies during live matches (started but not yet finalizado)
+  if (!props.resultado || props.resultado.finalizado) return false
+  const kickoff = new Date(props.jogo?.data).getTime()
+  if (Date.now() < kickoff) return false
+
+  const rm = props.resultado.gols_mandante
+  const rv = props.resultado.gols_visitante
+  const pm = palpite.gols_mandante
+  const pv = palpite.gols_visitante
+
+  // Impossible if current score already exceeds the predicted score for either team
+  return rm > pm || rv > pv
+}
+
 function getHighlightClass(palpite) {
   if (!isLiveOrFinished.value) return ''
   const pts = getPoints(palpite)
   if (pts === 25 || pts === 18) return 'ring-1 ring-copa-gold/40 bg-copa-gold/5'
   if (pts === 10) return 'ring-1 ring-copa-green/30 bg-copa-green/5'
+  if (isPalpiteImpossible(palpite)) return 'ring-1 ring-red-500/30 bg-red-500/10 opacity-60'
   return ''
 }
 
