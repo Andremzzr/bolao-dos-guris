@@ -28,7 +28,8 @@
           <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-copa-gold to-yellow-200 p-[1px] shadow-sm shadow-copa-gold/20">
-                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                <img v-if="reiDaRodada.avatar_url" :src="reiDaRodada.avatar_url" class="w-full h-full object-cover rounded-full border border-slate-900" />
+                <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
                   <span class="text-sm font-black text-white">
                     {{ reiDaRodada.nome?.charAt(0).toUpperCase() }}
                   </span>
@@ -79,7 +80,8 @@
           <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-orange-400 p-[1px] shadow-sm shadow-red-500/20">
-                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                <img v-if="boboDaRodada.avatar_url" :src="boboDaRodada.avatar_url" class="w-full h-full object-cover rounded-full border border-slate-900" />
+                <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
                   <span class="text-sm font-black text-white">
                     {{ boboDaRodada.nome?.charAt(0).toUpperCase() }}
                   </span>
@@ -130,7 +132,8 @@
           <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orange-400 to-yellow-500 p-[1px] shadow-sm shadow-orange-500/20">
-                <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                <img v-if="onFirePlayer.avatar_url" :src="onFirePlayer.avatar_url" class="w-full h-full object-cover rounded-full border border-slate-900" />
+                <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
                   <span class="text-sm font-black text-white">
                     {{ onFirePlayer.nome?.charAt(0).toUpperCase() }}
                   </span>
@@ -186,16 +189,28 @@
           </div>
 
           <!-- Name + stats -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5">
-              <span
-                class="font-bold text-sm truncate"
-                :class="isCurrentUser(player) ? 'text-copa-accent-light' : 'text-white'"
-              >
-                {{ player.nome }}
-              </span>
-              <span v-if="isCurrentUser(player)" class="text-[10px] text-copa-accent font-semibold">(você)</span>
+          <div class="flex-1 min-w-0 flex items-center gap-2">
+            <!-- Avatar -->
+            <div class="w-8 h-8 rounded-full bg-slate-800 shrink-0 border border-slate-700 overflow-hidden flex items-center justify-center"
+                 :class="{
+                   'border-copa-gold ring-1 ring-copa-gold/50': player.posicao === 1,
+                   'border-copa-silver ring-1 ring-copa-silver/50': player.posicao === 2,
+                   'border-copa-bronze ring-1 ring-copa-bronze/50': player.posicao === 3,
+                 }">
+              <img v-if="player.avatar_url" :src="player.avatar_url" class="w-full h-full object-cover" />
+              <span v-else class="text-xs font-bold text-slate-400">{{ player.nome?.charAt(0).toUpperCase() }}</span>
             </div>
+            
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span
+                  class="font-bold text-sm truncate"
+                  :class="isCurrentUser(player) ? 'text-copa-accent-light' : 'text-white'"
+                >
+                  {{ player.nome }}
+                </span>
+                <span v-if="isCurrentUser(player)" class="text-[10px] text-copa-accent font-semibold">(você)</span>
+              </div>
             <div class="flex items-center gap-2 mt-0.5">
               <span class="text-[10px] text-slate-500">
                 {{ player.jogos_computados || 0 }} jogos
@@ -207,8 +222,9 @@
                 <span v-if="player.acertos_seguidos > 1" class="text-[10px] text-orange-500 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   🔥 {{ player.acertos_seguidos }}
                 </span>
-              </div>
             </div>
+          </div>
+          </div>
           </div>
 
           <!-- Points -->
