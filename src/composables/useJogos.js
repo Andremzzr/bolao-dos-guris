@@ -141,6 +141,28 @@ export function useJogos() {
     }
   }
 
+  // Fetch all predictions for a specific game (for "Palpites da Galera")
+  async function fetchPalpitesDaGalera(jogoId) {
+    const { data, error } = await supabase
+      .from('palpites')
+      .select(`
+        usuario_id,
+        gols_mandante,
+        gols_visitante,
+        pontuacao,
+        usuarios ( nome )
+      `)
+      .eq('jogo_id', jogoId)
+
+    if (!error && data) {
+      return data.map(p => ({
+        ...p,
+        nome: p.usuarios?.nome || 'Usuário',
+      }))
+    }
+    return []
+  }
+
   // Fetch all odds
   async function fetchOdds() {
     const { data, error } = await supabase
@@ -274,6 +296,7 @@ export function useJogos() {
     fetchResultadoTimeline,
     fetchAdvancedStats,
     fetchPalpites,
+    fetchPalpitesDaGalera,
     fetchOdds,
     salvarPalpite,
     upsertResultado,
