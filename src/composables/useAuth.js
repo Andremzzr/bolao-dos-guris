@@ -12,7 +12,8 @@ const savedNome = localStorage.getItem('bolao_user_nome')
 const savedAvatar = localStorage.getItem('bolao_user_avatar')
 
 if (savedId && savedNome) {
-  user.value = { id: savedId, nome: savedNome, avatar_url: savedAvatar }
+  // Treat stored "null" string as no avatar
+  user.value = { id: savedId, nome: savedNome, avatar_url: savedAvatar || null }
 }
 
 export function useAuth() {
@@ -84,8 +85,8 @@ export function useAuth() {
 
       if (updateError) throw updateError
 
-      // Atualiza o estado local
-      user.value.avatar_url = newAvatarUrl
+      // Atualiza o estado local (reassign para garantir reatividade)
+      user.value = { ...user.value, avatar_url: newAvatarUrl }
       if (newAvatarUrl) {
         localStorage.setItem('bolao_user_avatar', newAvatarUrl)
       } else {
