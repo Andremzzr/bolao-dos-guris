@@ -166,6 +166,27 @@
         </div>
       </div>
 
+      <!-- Goal Scorers Area -->
+      <div v-if="golsMandanteList.length || golsVisitanteList.length" class="flex justify-between px-2 mt-2 text-[10px] text-slate-400">
+        <!-- Gols Mandante -->
+        <div class="flex-1 flex flex-col items-end pr-3 border-r border-white/5 gap-0.5">
+          <div v-for="gol in golsMandanteList" :key="gol.EventId" class="flex items-center gap-1">
+            <span class="truncate max-w-[80px] sm:max-w-[100px]">{{ gol.playerName }}</span>
+            <span class="text-copa-green font-bold shrink-0">{{ gol.MatchMinute }}'</span>
+            <span class="shrink-0 text-[10px]">⚽️</span>
+          </div>
+        </div>
+        
+        <!-- Gols Visitante -->
+        <div class="flex-1 flex flex-col items-start pl-3 gap-0.5">
+          <div v-for="gol in golsVisitanteList" :key="gol.EventId" class="flex items-center gap-1">
+            <span class="shrink-0 text-[10px]">⚽️</span>
+            <span class="text-copa-green font-bold shrink-0">{{ gol.MatchMinute }}'</span>
+            <span class="truncate max-w-[80px] sm:max-w-[100px]">{{ gol.playerName }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Odds Bar -->
       <div class="mt-3 px-2">
         <div class="flex items-center justify-between text-[10px] text-slate-400 font-semibold mb-1">
@@ -201,7 +222,7 @@
             @click="pauseEventLoop(evento)"
           >
             <span class="font-bold text-copa-green">{{ evento.MatchMinute }}</span> - 
-            <span v-html="formatEventDescription(evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description)"></span>
+            <span v-html="formatEventDescription(evento)"></span>
           </li>
         </ul>
       </div>
@@ -282,6 +303,61 @@ const currentMinute = computed(() => {
   if (events.value.length === 0) return ''
   return events.value[0].MatchMinute
 })
+
+const golsMandanteList = computed(() => {
+  return extractGols(props.jogo.mandante);
+});
+
+const golsVisitanteList = computed(() => {
+  return extractGols(props.jogo.visitante);
+});
+
+function extractGols(teamName) {
+  if (!timelineData.value?.Event) return [];
+  
+  const gols = [];
+  const chronologicalEvents = timelineData.value.Event || [];
+  
+  for (const evento of chronologicalEvents) {
+    const description = evento?.EventDescription?.[0]?.Description || evento?.TypeLocalized?.[0]?.Description;
+    if (!description) continue;
+    
+    const descLower = description.toLowerCase();
+    const isGoal = (evento.Type === 0) || 
+                   (evento.TypeLocalized?.[0]?.Description?.toLowerCase().includes('marca o gol')) || 
+                   descLower.includes('marca o gol');
+                   
+    if (isGoal) {
+      let eventTeam = null;
+      let playerName = "Jogador";
+      
+      const match = description.match(/\(([^)]+)\)/);
+      if (match) {
+        eventTeam = match[1];
+        if (eventTeam === 'Curaçau') eventTeam = 'Curaçao';
+        playerName = description.substring(0, match.index).trim();
+      } else {
+        const idx = descLower.indexOf('marca o gol');
+        if (idx !== -1) {
+          playerName = description.substring(0, idx).trim();
+        }
+      }
+      
+      const isThisTeam = (eventTeam === teamName) || 
+                         (evento.TeamName === teamName) || 
+                         (evento.TeamName && evento.TeamName[0]?.Description === teamName);
+                         
+      if (isThisTeam) {
+        gols.push({
+          EventId: evento.EventId || Math.random(),
+          MatchMinute: evento.MatchMinute,
+          playerName: playerName
+        });
+      }
+    }
+  }
+  return gols;
+}
 
 let eventLoopInterval = null;
 
@@ -456,7 +532,8 @@ function truncateName(name) {
   return name.length > 8 ? name.substring(0, 8) + '...' : name
 }
 
-function formatEventDescription(description) {
+function formatEventDescription(evento) {
+  const description = evento?.EventDescription?.[0]?.Description || evento?.TypeLocalized?.[0]?.Description;
   if (!description) return 'Evento'
   
   let desc = description
@@ -468,7 +545,7 @@ function formatEventDescription(description) {
   desc = desc.replace(/\(entra\)/gi, '<span class="text-copa-green font-bold px-0.5">↑</span>')
   desc = desc.replace(/\(sai\)/gi, '<span class="text-red-500 font-bold px-0.5">↓</span>')
 
-  return desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
+  desc = desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
     let normalizedName = countryName;
     if (normalizedName === 'Curaçau') normalizedName = 'Curaçao';
     const flagUrl = getFlagUrl(normalizedName)
@@ -477,5 +554,16 @@ function formatEventDescription(description) {
     }
     return match
   })
+
+  const descLower = desc.toLowerCase();
+  const isGoal = (evento.Type === 0) || 
+                 (evento.TypeLocalized?.[0]?.Description?.toLowerCase().includes('marca o gol')) || 
+                 descLower.includes('marca o gol');
+  
+  if (isGoal) {
+    desc = `⚽️ <span class="font-bold">${desc}</span>`;
+  }
+
+  return desc
 }
 </script>
