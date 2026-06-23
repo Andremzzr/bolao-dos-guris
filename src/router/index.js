@@ -31,6 +31,12 @@ const routes = [
     component: () => import('@/views/LoginView.vue'),
   },
   {
+    path: '/estatisticas-equipes',
+    name: 'estatisticas-equipes',
+    component: () => import('@/views/EstatisticasEquipesView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/admin',
     name: 'admin',
     component: () => import('@/views/AdminView.vue'),
