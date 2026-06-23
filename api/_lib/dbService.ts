@@ -79,14 +79,19 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
  */
 export async function updateMatchResult(jogoId: number, homeScore: number, awayScore: number, isFinished: boolean, timeline: any = null, fifaMatchId: string | null = null) {
   const supabase = getSupabase();
-  return await supabase
-    .from('resultados')
-    .upsert({
+  const payload: any = {
       jogo_id: jogoId,
       gols_mandante: homeScore,
       gols_visitante: awayScore,
       finalizado: isFinished,
-      timeline: timeline,
       fifa_match_id: fifaMatchId
-    });
+  };
+
+  if (timeline !== null) {
+      payload.timeline = timeline;
+  }
+
+  return await supabase
+    .from('resultados')
+    .upsert(payload);
 }

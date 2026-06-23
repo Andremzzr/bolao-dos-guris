@@ -88,7 +88,7 @@ export default async function handler(req: Request) {
         const isLive = statusFifa === 3;
         let timelineData = null;
 
-        if (isLive && matchFifa.IdMatch) {
+        if ((isLive || isFinished) && matchFifa.IdMatch) {
           timelineData = await fetchFifaMatchTimeline(matchFifa.IdMatch);
         }
 
