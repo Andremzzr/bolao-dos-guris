@@ -87,7 +87,7 @@
             @click="pauseEventLoop(evento)"
           >
             <span class="font-black text-copa-green inline-block">{{ evento.MatchMinute }}</span>
-            <span class="text-slate-200" v-html="formatEventDescription(evento.EventDescription?.[0]?.Description || evento.TypeLocalized?.[0]?.Description)"></span>
+            <span class="text-slate-200" v-html="formatEventDescription(evento)"></span>
           </li>
         </ul>
       </div>
@@ -211,7 +211,8 @@ const formattedDate = computed(() => {
   })
 })
 
-function formatEventDescription(description) {
+function formatEventDescription(evento) {
+  const description = evento?.EventDescription?.[0]?.Description || evento?.TypeLocalized?.[0]?.Description;
   if (!description) return 'Evento'
   
   let desc = description
@@ -223,7 +224,7 @@ function formatEventDescription(description) {
   desc = desc.replace(/\(entra\)/gi, '<span class="text-copa-green font-bold px-0.5">↑</span>')
   desc = desc.replace(/\(sai\)/gi, '<span class="text-red-500 font-bold px-0.5">↓</span>')
 
-  return desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
+  desc = desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
     let normalizedName = countryName;
     if (normalizedName === 'Curaçau') normalizedName = 'Curaçao';
     const flagUrl = getFlagUrl(normalizedName)
@@ -232,5 +233,16 @@ function formatEventDescription(description) {
     }
     return match
   })
+
+  const descLower = desc.toLowerCase();
+  const isGoal = (evento.Type === 0) || 
+                 (evento.TypeLocalized?.[0]?.Description?.toLowerCase().includes('marca o gol')) || 
+                 descLower.includes('marca o gol');
+  
+  if (isGoal) {
+    desc = `⚽️ <span class="font-bold">${desc}</span>`;
+  }
+
+  return desc
 }
 </script>
