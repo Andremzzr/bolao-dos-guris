@@ -213,7 +213,17 @@ const formattedDate = computed(() => {
 
 function formatEventDescription(description) {
   if (!description) return 'Evento'
-  return description.replace(/\(([^)]+)\)/g, (match, countryName) => {
+  
+  let desc = description
+  
+  if (desc.includes("sai do banco para substituir")) {
+    desc = desc.replace(/\s*sai do banco para substituir\s*/g, " ")
+  }
+  
+  desc = desc.replace(/\(entra\)/gi, '<span class="text-copa-green font-bold px-0.5">↑</span>')
+  desc = desc.replace(/\(sai\)/gi, '<span class="text-red-500 font-bold px-0.5">↓</span>')
+
+  return desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
     let normalizedName = countryName;
     if (normalizedName === 'Curaçau') normalizedName = 'Curaçao';
     const flagUrl = getFlagUrl(normalizedName)

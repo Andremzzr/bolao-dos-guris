@@ -19,9 +19,10 @@
         </span>
         <span
           v-else-if="isLive"
-          class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"
+          class="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"
         >
-          🔴 AO VIVO
+          <span>🔴 AO VIVO</span>
+          <span v-if="currentMinute">{{ currentMinute }}'</span>
         </span>
 
         <span v-else class="text-[10px] text-slate-500">
@@ -277,6 +278,11 @@ const isLive = computed(() => {
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
 
+const currentMinute = computed(() => {
+  if (events.value.length === 0) return ''
+  return events.value[0].MatchMinute
+})
+
 let eventLoopInterval = null;
 
 let currentIndex = 0;
@@ -452,7 +458,17 @@ function truncateName(name) {
 
 function formatEventDescription(description) {
   if (!description) return 'Evento'
-  return description.replace(/\(([^)]+)\)/g, (match, countryName) => {
+  
+  let desc = description
+  
+  if (desc.includes("sai do banco para substituir")) {
+    desc = desc.replace(/\s*sai do banco para substituir\s*/g, " ")
+  }
+  
+  desc = desc.replace(/\(entra\)/gi, '<span class="text-copa-green font-bold px-0.5">↑</span>')
+  desc = desc.replace(/\(sai\)/gi, '<span class="text-red-500 font-bold px-0.5">↓</span>')
+
+  return desc.replace(/\(([^)]+)\)/g, (match, countryName) => {
     let normalizedName = countryName;
     if (normalizedName === 'Curaçau') normalizedName = 'Curaçao';
     const flagUrl = getFlagUrl(normalizedName)
