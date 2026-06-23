@@ -28,7 +28,8 @@
       <div class="relative z-10 flex flex-col items-center justify-center flex-1">
         <!-- Avatar Placeholder or Initials -->
         <div class="w-64 h-64 rounded-full bg-gradient-to-tr from-copa-accent to-copa-gold p-2 mb-6 shadow-2xl shadow-copa-gold/20">
-          <div class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-4 border-slate-900">
+          <img v-if="player.avatar_url" :src="player.avatar_url" class="w-full h-full object-cover rounded-full border-4 border-slate-900" alt="Avatar" />
+          <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-4 border-slate-900">
             <span class="text-8xl font-black text-white">
               {{ player.nome?.charAt(0).toUpperCase() || '?' }}
             </span>

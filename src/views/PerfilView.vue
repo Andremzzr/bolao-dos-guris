@@ -12,9 +12,29 @@
     <div class="px-4 py-6 space-y-4">
       <!-- Profile card -->
       <div class="glass rounded-2xl p-6 text-center">
-        <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-copa-accent to-copa-accent-light flex items-center justify-center text-3xl font-black text-white mb-4">
-          {{ userInitial }}
+        <div class="relative w-24 h-24 mx-auto mb-4 group cursor-pointer tap-scale" @click="triggerFileInput">
+          <!-- Avatar Image -->
+          <img v-if="user?.avatar_url" :src="user.avatar_url" alt="Avatar" class="w-full h-full object-cover rounded-full border-2 border-copa-accent/50 shadow-lg" />
+          <!-- Initials Fallback -->
+          <div v-else class="w-full h-full rounded-full bg-gradient-to-br from-copa-accent to-copa-accent-light flex items-center justify-center text-4xl font-black text-white shadow-lg">
+            {{ userInitial }}
+          </div>
+          
+          <!-- Hover Overlay -->
+          <div class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <PhCamera :size="24" class="text-white" />
+            <span class="text-[10px] text-white font-semibold mt-1">Alterar</span>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div v-if="uploadingAvatar" class="absolute inset-0 bg-black/80 rounded-full flex items-center justify-center backdrop-blur-sm">
+            <svg class="animate-spin h-8 w-8 text-copa-accent" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          </div>
         </div>
+        <input type="file" ref="fileInput" accept="image/*" class="hidden" @change="handleFileChange" />
         <h2 class="text-xl font-bold text-white">{{ user?.nome }}</h2>
         <p class="text-sm text-slate-400 mt-1">Membro do bolão</p>
       </div>
@@ -100,11 +120,15 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useRanking } from '@/composables/useRanking'
+import { supabase } from '@/lib/supabaseClient'
 import PontosChart from '@/components/PontosChart.vue'
-import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut } from '@phosphor-icons/vue'
+import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera } from '@phosphor-icons/vue'
 
-const { user, logout } = useAuth()
+const { user, logout, updateAvatar } = useAuth()
 const { ranking, fetchRanking } = useRanking()
+
+const fileInput = ref(null)
+const uploadingAvatar = ref(false)
 
 
 const stats = computed(() => {
@@ -124,6 +148,82 @@ const stats = computed(() => {
 const userInitial = computed(() => {
   return user.value?.nome?.charAt(0)?.toUpperCase() || '?'
 })
+
+function triggerFileInput() {
+  if (!uploadingAvatar.value) {
+    fileInput.value?.click()
+  }
+}
+
+async function handleFileChange(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+
+  if (!file.type.startsWith('image/')) {
+    alert('Por favor, selecione uma imagem válida.')
+    return
+  }
+
+  uploadingAvatar.value = true
+
+  try {
+    const compressedBlob = await compressImage(file, 400)
+    const fileName = `${user.value.id}-${Date.now()}.jpeg`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, compressedBlob, {
+        cacheControl: '3600',
+        upsert: false
+      })
+      
+    if (uploadError) throw uploadError
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(fileName)
+    
+    await updateAvatar(data.publicUrl)
+    
+  } catch (err) {
+    console.error('Erro ao enviar avatar:', err)
+    alert('Falha ao atualizar a foto de perfil. Tente novamente.')
+  } finally {
+    uploadingAvatar.value = false
+    if (fileInput.value) fileInput.value.value = ''
+  }
+}
+
+function compressImage(file, maxWidth) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = (event) => {
+      const img = new Image()
+      img.src = event.target.result
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let width = img.width
+        let height = img.height
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width)
+          width = maxWidth
+        }
+
+        canvas.width = width
+        canvas.height = height
+
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+
+        canvas.toBlob((blob) => {
+          resolve(blob)
+        }, 'image/jpeg', 0.85)
+      }
+      img.onerror = (err) => reject(err)
+    }
+    reader.onerror = (err) => reject(err)
+  })
+}
 
 function compartilhar() {
   const text = `⚽ Bolão Copa 2026 ⚽\n\n🏆 ${user.value?.nome} está em ${stats.value.posicao} com ${stats.value.pontos} pontos!\n\nEntra no bolão: ${window.location.origin}`

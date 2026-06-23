@@ -9,8 +9,10 @@ const error = ref(null)
 // Restore user from localStorage on init
 const savedId = localStorage.getItem('bolao_user_id')
 const savedNome = localStorage.getItem('bolao_user_nome')
+const savedAvatar = localStorage.getItem('bolao_user_avatar')
+
 if (savedId && savedNome) {
-  user.value = { id: savedId, nome: savedNome }
+  user.value = { id: savedId, nome: savedNome, avatar_url: savedAvatar }
 }
 
 export function useAuth() {
@@ -46,6 +48,11 @@ export function useAuth() {
       // Persist to localStorage
       localStorage.setItem('bolao_user_id', user.value.id)
       localStorage.setItem('bolao_user_nome', user.value.nome)
+      if (user.value.avatar_url) {
+        localStorage.setItem('bolao_user_avatar', user.value.avatar_url)
+      } else {
+        localStorage.removeItem('bolao_user_avatar')
+      }
       
       router.push({ name: 'jogos' })
       return true
@@ -62,7 +69,34 @@ export function useAuth() {
     user.value = null
     localStorage.removeItem('bolao_user_id')
     localStorage.removeItem('bolao_user_nome')
+    localStorage.removeItem('bolao_user_avatar')
     router.push({ name: 'login' })
+  }
+
+  async function updateAvatar(newAvatarUrl) {
+    if (!user.value) return false
+
+    try {
+      const { error: updateError } = await supabase
+        .from('usuarios')
+        .update({ avatar_url: newAvatarUrl })
+        .eq('id', user.value.id)
+
+      if (updateError) throw updateError
+
+      // Atualiza o estado local
+      user.value.avatar_url = newAvatarUrl
+      if (newAvatarUrl) {
+        localStorage.setItem('bolao_user_avatar', newAvatarUrl)
+      } else {
+        localStorage.removeItem('bolao_user_avatar')
+      }
+
+      return true
+    } catch (err) {
+      console.error('Erro ao atualizar avatar:', err)
+      return false
+    }
   }
 
   return {
@@ -72,5 +106,6 @@ export function useAuth() {
     isLoggedIn,
     login,
     logout,
+    updateAvatar,
   }
 }

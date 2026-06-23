@@ -7,6 +7,7 @@
 CREATE TABLE IF NOT EXISTS usuarios (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT UNIQUE NOT NULL,
+  avatar_url TEXT,
   criado_em TIMESTAMPTZ DEFAULT now()
 );
 
@@ -55,6 +56,7 @@ CREATE OR REPLACE VIEW view_ranking AS
 SELECT
   u.id AS usuario_id,
   u.nome,
+  u.avatar_url,
   COALESCE(SUM(p.pontuacao), 0)::INTEGER AS pontos,
 
   -- Estatísticas detalhadas
@@ -73,7 +75,7 @@ SELECT
 FROM usuarios u
 LEFT JOIN palpites p ON u.id = p.usuario_id
 LEFT JOIN resultados r ON p.jogo_id = r.jogo_id AND r.finalizado = true
-GROUP BY u.id, u.nome;
+GROUP BY u.id, u.nome, u.avatar_url;
 
 -- ============================================
 -- 5. Row Level Security (RLS)
@@ -205,6 +207,7 @@ SELECT
   DATE(j.data) AS data_jogo,
   u.id AS usuario_id,
   u.nome,
+  u.avatar_url,
   COALESCE(SUM(p.pontuacao), 0)::INTEGER AS pontos,
 
   COUNT(CASE WHEN p.pontuacao = 5 THEN 1 END)::INTEGER AS acertos_exatos,
@@ -223,4 +226,4 @@ JOIN palpites p ON u.id = p.usuario_id
 JOIN jogos j ON p.jogo_id = j.id
 JOIN resultados r ON j.id = r.jogo_id AND r.finalizado = true
 WHERE DATE(j.data) = CURRENT_DATE - INTERVAL '1 day'
-GROUP BY DATE(j.data), u.id, u.nome;
+GROUP BY DATE(j.data), u.id, u.nome, u.avatar_url;
