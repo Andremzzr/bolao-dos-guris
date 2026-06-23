@@ -41,12 +41,17 @@ export const countryCodes = {
   "Jordânia": "jo",
   "Portugal": "pt",
   "RD Congo": "cd",
+  "RD do Congo": "cd",
   "Uzbequistão": "uz",
   "Colômbia": "co",
   "Inglaterra": "gb-eng",
   "Croácia": "hr",
   "Gana": "gh",
-  "Panamá": "pa"
+  "Panamá": "pa",
+  "República da Coreia": "kr",
+  "RI do Irã": "ir",
+  "EUA": "us",
+  "Curaçau": "cw"
 }
 
 export function getFlagUrl(countryName) {
