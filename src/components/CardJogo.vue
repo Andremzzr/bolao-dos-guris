@@ -1,7 +1,11 @@
 <template>
   <div
-    class="glass rounded-xl overflow-hidden transition-all duration-300 relative"
-    :class="[{ 'ring-1 ring-copa-green/30': justSaved }, (viewOnly || resultado?.finalizado) ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01] hover:ring-1 hover:ring-white/20' : '']"
+    class="rounded-xl overflow-hidden transition-all duration-300 relative"
+    :class="[
+      coringa ? 'coringa-card' : 'glass',
+      { 'ring-1 ring-copa-green/30': justSaved },
+      (viewOnly || resultado?.finalizado) ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01]' : ''
+    ]"
     @click="handleCardClick"
   >
     <!-- Game header: phase + time -->
@@ -10,6 +14,15 @@
         {{ jogo.fase?.replace('Fase de Grupos - ', '') }}
       </span>
       <div class="flex items-center gap-1.5 shrink-0">
+        <!-- Coringa badge -->
+        <span
+          v-if="coringa"
+          class="flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30"
+        >
+          <PhLightning :size="11" weight="fill" />
+          CORINGA
+        </span>
+
         <!-- Status badge -->
         <span
           v-if="resultado?.finalizado"
@@ -276,7 +289,7 @@ import { useRouter } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
-import { PhLockSimple } from '@phosphor-icons/vue'
+import { PhLockSimple, PhLightning } from '@phosphor-icons/vue'
 import MatchPitch from '@/components/MatchPitch.vue'
 import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
 
@@ -285,6 +298,7 @@ const props = defineProps({
   palpite: { type: Object, default: null },
   resultado: { type: Object, default: null },
   odd: { type: Object, default: null },
+  coringa: { type: Boolean, default: false },
   locked: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
   viewOnly: { type: Boolean, default: false },
@@ -498,15 +512,20 @@ const pontosInfo = computed(() => {
 })
 
 const pontosClass = computed(() => {
+  const pts = pontosInfo.value
 
-  if(pontosInfo.value == 0 ) return 'bg-red-500/20 text-red-400'
+  // Negativo (erro em coringa)
+  if (pts !== null && pts < 0) return 'bg-red-500/20 text-red-400'
 
-  if(pontosInfo.value == 3) return 'bg-copa-green/20 text-copa-green'
+  if (pts === 0) return 'bg-red-500/20 text-red-400'
 
-  if(pontosInfo.value == 5) return 'bg-copa-gold/20 text-copa-gold'
+  // Acertou resultado (normal=3, coringa=6)
+  if (pts === 3 || pts === 6) return 'bg-copa-green/20 text-copa-green'
+
+  // Placar exato (normal=5, coringa=10)
+  if (pts === 5 || pts === 10) return 'bg-copa-gold/20 text-copa-gold'
 
   return 'bg-slate-700 text-slate-400'
-  
 })
 
 function incrementHome() {

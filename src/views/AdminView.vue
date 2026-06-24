@@ -117,6 +117,19 @@
                 </span>
               </label>
 
+              <!-- Coringa Toggle -->
+              <label class="flex items-center gap-2 cursor-pointer tap-scale">
+                <div class="relative flex items-center">
+                  <input type="checkbox" v-model="inputs[jogo.id].coringa" class="sr-only peer" />
+                  <div class="w-9 h-5 bg-slate-700 rounded-full peer peer-checked:bg-purple-600 peer-focus:ring-2 peer-focus:ring-purple-500/30 transition-all"></div>
+                  <div class="absolute left-[2px] top-[2px] w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-full"></div>
+                </div>
+                <span class="text-xs font-bold text-slate-300 peer-checked:text-purple-400 transition-colors flex items-center gap-1">
+                  <PhLightning :size="12" weight="fill" />
+                  CORINGA
+                </span>
+              </label>
+
               <button
                 @click="salvar(jogo.id)"
                 :disabled="saving['admin_'+jogo.id]"
@@ -143,6 +156,7 @@
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { useJogos } from '@/composables/useJogos'
+import { PhLightning } from '@phosphor-icons/vue'
 
 const { 
   jogosPorData, 
@@ -150,6 +164,9 @@ const {
   resultados, 
   fetchResultados, 
   upsertResultado,
+  coringaMap,
+  fetchCoringaJogos,
+  updateJogoCoringa,
   saving 
 } = useJogos()
 
@@ -181,7 +198,7 @@ async function login() {
 
 async function initAdmin() {
   loading.value = true
-  await fetchResultados()
+  await Promise.all([fetchResultados(), fetchCoringaJogos()])
   
   // Populate inputs with existing results or defaults
   jogosData.forEach(jogo => {
@@ -190,6 +207,7 @@ async function initAdmin() {
       home: r?.gols_mandante ?? 0,
       away: r?.gols_visitante ?? 0,
       finalizado: r?.finalizado ?? false,
+      coringa: coringaMap.value[jogo.id] ?? false,
     }
   })
   
@@ -199,16 +217,27 @@ async function initAdmin() {
 function hasChanges(jogoId) {
   const r = resultados.value[jogoId]
   const i = inputs[jogoId]
+  const currentCoringa = coringaMap.value[jogoId] ?? false
   if (!r) {
-    return i.home !== 0 || i.away !== 0 || i.finalizado !== false
+    return i.home !== 0 || i.away !== 0 || i.finalizado !== false || i.coringa !== currentCoringa
   }
   return r.gols_mandante !== i.home || 
          r.gols_visitante !== i.away || 
-         r.finalizado !== i.finalizado
+         r.finalizado !== i.finalizado ||
+         currentCoringa !== i.coringa
 }
 
 async function salvar(jogoId) {
   const i = inputs[jogoId]
-  await upsertResultado(jogoId, i.home, i.away, i.finalizado)
+  const currentCoringa = coringaMap.value[jogoId] ?? false
+
+  const promises = [upsertResultado(jogoId, i.home, i.away, i.finalizado)]
+  
+  // Save coringa only if it changed
+  if (i.coringa !== currentCoringa) {
+    promises.push(updateJogoCoringa(jogoId, i.coringa))
+  }
+
+  await Promise.all(promises)
 }
 </script>

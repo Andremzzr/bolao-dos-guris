@@ -64,6 +64,7 @@
             :palpite="palpites[jogo.id]"
             :resultado="resultados[jogo.id]"
             :odd="odds[jogo.id]"
+            :coringa="!!coringaMap[jogo.id]"
             :locked="isLocked(jogo)"
             :saving="saving[jogo.id]"
             @salvar="onSalvarPalpite"
@@ -112,6 +113,7 @@
               :palpite="palpites[jogo.id]"
               :resultado="resultados[jogo.id]"
               :odd="odds[jogo.id]"
+              :coringa="!!coringaMap[jogo.id]"
               :locked="isLocked(jogo)"
               :saving="saving[jogo.id]"
               :viewOnly="true"
@@ -144,11 +146,13 @@ const {
   resultados,
   palpites,
   odds,
+  coringaMap,
   isLocked,
   saving,
   fetchResultados,
   fetchPalpites,
   fetchOdds,
+  fetchCoringaJogos,
   salvarPalpite,
   statusJogo,
 } = useJogos()
@@ -259,6 +263,7 @@ onMounted(async () => {
     fetchResultados(),
     fetchPalpites(user.value?.id),
     fetchOdds(),
+    fetchCoringaJogos(),
   ])
   initialLoading.value = false
   scrollToLiveGame()

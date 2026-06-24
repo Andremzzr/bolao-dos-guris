@@ -5,6 +5,7 @@ import jogosData from '@/data/jogos.json'
 const resultados = ref({})
 const palpites = ref({})
 const odds = ref({})
+const coringaMap = ref({}) // map of jogoId -> boolean
 const loading = ref(false)
 const saving = ref({})
 const toast = ref(null)
@@ -99,6 +100,43 @@ export function useJogos() {
       data.forEach(r => { map[r.jogo_id] = r })
       resultados.value = map
     }
+  }
+
+  // Fetch coringa flags for all games from the DB
+  async function fetchCoringaJogos() {
+    const { data, error } = await supabase
+      .from('jogos')
+      .select('id, coringa')
+      .eq('coringa', true)
+
+    if (error) {
+      console.error("fetchCoringaJogos error:", error)
+      return
+    }
+
+    const map = {}
+    if (data) {
+      data.forEach(j => { map[j.id] = true })
+    }
+    coringaMap.value = map
+  }
+
+  // Toggle coringa status for a game (Admin only)
+  async function updateJogoCoringa(jogoId, isCoringa) {
+    const { error } = await supabase
+      .from('jogos')
+      .update({ coringa: isCoringa })
+      .eq('id', jogoId)
+
+    if (error) {
+      console.error('Erro ao atualizar coringa:', error)
+      showToast('Erro ao salvar coringa 😕', 'error')
+      return false
+    }
+
+    coringaMap.value = { ...coringaMap.value, [jogoId]: isCoringa }
+    if (!isCoringa) delete coringaMap.value[jogoId]
+    return true
   }
 
   // Fetch a single result timeline
@@ -253,6 +291,7 @@ export function useJogos() {
   }
 
   // Calculate points for a prediction
+  // Note: for display purposes; the authoritative value is palpite.pontuacao from the DB
   function calcularPontos(palpite, resultado) {
     if (!resultado?.finalizado || !palpite) return null
 
@@ -286,6 +325,7 @@ export function useJogos() {
     resultados,
     palpites,
     odds,
+    coringaMap,
     loading,
     saving,
     toast,
@@ -298,6 +338,8 @@ export function useJogos() {
     fetchPalpites,
     fetchPalpitesDaGalera,
     fetchOdds,
+    fetchCoringaJogos,
+    updateJogoCoringa,
     salvarPalpite,
     upsertResultado,
     calcularPontos,
