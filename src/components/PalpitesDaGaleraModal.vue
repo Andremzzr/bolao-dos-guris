@@ -122,8 +122,8 @@ const isLiveOrFinished = computed(() => {
 /**
  * Retorna a "chave de estado" de um palpite. Prioridade top-down:
  *   'exato'     — placar bate exatamente com o resultado atual
- *   'eliminado' — placar já não pode mais se concretizar
- *   'default'   — jogo ainda não começou ou palpite ainda é possível
+ *   'vencedor'  — acertou quem ganhou ou empate
+ *   'eliminado' — errou o palpite
  *
  * Para jogos finalizados, usamos calcularPontos para estados baseados em pontos.
  */
@@ -135,13 +135,10 @@ function getPalpiteStatus(palpite) {
   const pm = Number(palpite.gols_mandante)
   const pv = Number(palpite.gols_visitante)
 
-  // Resultado exato (parcial ou final)
   if (rm === pm && rv === pv) return 'exato'
+  if (Math.sign(pm - pv) === Math.sign(rm - rv)) return 'vencedor'
 
-  // Eliminado: qualquer time já tem mais gols do que o palpite previa
-  if (rm > pm || rv > pv) return 'eliminado'
-
-  return 'default'
+  return 'eliminado'
 }
 
 /**
@@ -173,17 +170,29 @@ const STATE_STYLES = {
     scoreTextClass:  'text-red-400',
     separatorClass:  'text-red-600',
   },
-  exato: {
+  vencedor: {
     rowClass:        'ring-1 ring-emerald-400/40 bg-emerald-500/10',
     avatarClass:     'bg-emerald-900/40 border-emerald-400/50',
     avatarTextClass: 'text-emerald-300',
-    avatarIcon:      '★',
+    avatarIcon:      '✓',
     nameClass:       'text-emerald-200',
-    label:           'Resultado Exato!',
+    label:           'Acertou Vencedor',
     labelClass:      'text-emerald-400/90',
     bubbleClass:     'bg-emerald-900/30 ring-1 ring-emerald-400/40',
     scoreTextClass:  'text-emerald-300',
     separatorClass:  'text-emerald-600',
+  },
+  exato: {
+    rowClass:        'ring-1 ring-amber-400/40 bg-amber-500/10',
+    avatarClass:     'bg-amber-900/40 border-amber-400/50',
+    avatarTextClass: 'text-amber-300',
+    avatarIcon:      '★',
+    nameClass:       'text-amber-200',
+    label:           'Resultado Exato!',
+    labelClass:      'text-amber-400/90',
+    bubbleClass:     'bg-amber-900/30 ring-1 ring-amber-400/40',
+    scoreTextClass:  'text-amber-300',
+    separatorClass:  'text-amber-600',
   },
 }
 
@@ -207,8 +216,9 @@ function getPoints(palpite) {
 function getSortWeight(palpite) {
   const status = getPalpiteStatus(palpite)
   if (status === 'exato')     return 0
-  if (status === 'eliminado') return 2
-  return 1
+  if (status === 'vencedor')  return 1
+  if (status === 'eliminado') return 3
+  return 2
 }
 
 const sortedPalpites = computed(() => {
