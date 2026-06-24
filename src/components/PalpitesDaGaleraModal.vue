@@ -50,30 +50,39 @@
 
           <div
             v-else
-            v-for="(palpite, index) in sortedPalpites"
+            v-for="palpite in sortedPalpites"
             :key="palpite.usuario_id"
             class="glass rounded-xl px-4 py-3 flex items-center gap-3 transition-all duration-200"
-            :class="[getHighlightClass(palpite)]"
+            :class="getPalpiteState(palpite).rowClass"
           >
             <!-- Avatar -->
-            <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 shrink-0">
-              <span class="text-xs font-black text-white">
-                {{ palpite.nome?.charAt(0).toUpperCase() }}
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center border shrink-0"
+              :class="getPalpiteState(palpite).avatarClass"
+            >
+              <span class="text-xs font-black" :class="getPalpiteState(palpite).avatarTextClass">
+                {{ getPalpiteState(palpite).avatarIcon ?? palpite.nome?.charAt(0).toUpperCase() }}
               </span>
             </div>
 
-            <!-- Name -->
+            <!-- Name + label -->
             <div class="flex-1 min-w-0">
-              <div class="font-bold text-sm text-white truncate">
+              <div class="font-bold text-sm truncate" :class="getPalpiteState(palpite).nameClass">
                 {{ palpite.nome }}
+              </div>
+              <div v-if="getPalpiteState(palpite).label" class="text-[10px] font-semibold mt-0.5" :class="getPalpiteState(palpite).labelClass">
+                {{ getPalpiteState(palpite).label }}
               </div>
             </div>
 
-            <!-- Palpite -->
-            <div class="flex items-center gap-1.5 bg-slate-800/80 px-2 py-1 rounded-lg">
-              <span class="text-white font-black text-sm">{{ palpite.gols_mandante }}</span>
-              <span class="text-slate-500 font-bold text-xs">×</span>
-              <span class="text-white font-black text-sm">{{ palpite.gols_visitante }}</span>
+            <!-- Score bubble -->
+            <div
+              class="flex items-center gap-1.5 px-2 py-1 rounded-lg"
+              :class="getPalpiteState(palpite).bubbleClass"
+            >
+              <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_mandante }}</span>
+              <span class="font-bold text-xs" :class="getPalpiteState(palpite).separatorClass">×</span>
+              <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_visitante }}</span>
             </div>
           </div>
         </div>
@@ -106,41 +115,100 @@ const isLiveOrFinished = computed(() => {
   return Date.now() >= kickoff || props.resultado?.finalizado
 })
 
+// ---------------------------------------------------------------------------
+// Estado centralizado — adicione novos estados aqui
+// ---------------------------------------------------------------------------
+
+/**
+ * Retorna a "chave de estado" de um palpite. Prioridade top-down:
+ *   'exato'     — placar bate exatamente com o resultado atual
+ *   'eliminado' — placar já não pode mais se concretizar
+ *   'default'   — jogo ainda não começou ou palpite ainda é possível
+ *
+ * Para jogos finalizados, usamos calcularPontos para estados baseados em pontos.
+ */
+function getPalpiteStatus(palpite) {
+  if (!isLiveOrFinished.value || !props.resultado || !props.jogo) return 'default'
+
+  const rm = Number(props.resultado.gols_mandante)
+  const rv = Number(props.resultado.gols_visitante)
+  const pm = Number(palpite.gols_mandante)
+  const pv = Number(palpite.gols_visitante)
+
+  // Resultado exato (parcial ou final)
+  if (rm === pm && rv === pv) return 'exato'
+
+  // Eliminado: qualquer time já tem mais gols do que o palpite previa
+  if (rm > pm || rv > pv) return 'eliminado'
+
+  return 'default'
+}
+
+/**
+ * Mapa de estados → aparência visual.
+ * Para adicionar um novo estado, basta inserir uma entrada aqui.
+ */
+const STATE_STYLES = {
+  default: {
+    rowClass:        '',
+    avatarClass:     'bg-slate-800 border-slate-700',
+    avatarTextClass: 'text-white',
+    avatarIcon:      null,
+    nameClass:       'text-white',
+    label:           null,
+    labelClass:      '',
+    bubbleClass:     'bg-slate-800/80',
+    scoreTextClass:  'text-white',
+    separatorClass:  'text-slate-500',
+  },
+  eliminado: {
+    rowClass:        'ring-1 ring-red-500/30 bg-red-500/10 opacity-60',
+    avatarClass:     'bg-red-900/40 border-red-500/40',
+    avatarTextClass: 'text-red-400',
+    avatarIcon:      '✗',
+    nameClass:       'text-red-300',
+    label:           'Errou',
+    labelClass:      'text-red-500/80',
+    bubbleClass:     'bg-red-900/30 ring-1 ring-red-500/30',
+    scoreTextClass:  'text-red-400',
+    separatorClass:  'text-red-600',
+  },
+  exato: {
+    rowClass:        'ring-1 ring-emerald-400/40 bg-emerald-500/10',
+    avatarClass:     'bg-emerald-900/40 border-emerald-400/50',
+    avatarTextClass: 'text-emerald-300',
+    avatarIcon:      '★',
+    nameClass:       'text-emerald-200',
+    label:           'Resultado Exato!',
+    labelClass:      'text-emerald-400/90',
+    bubbleClass:     'bg-emerald-900/30 ring-1 ring-emerald-400/40',
+    scoreTextClass:  'text-emerald-300',
+    separatorClass:  'text-emerald-600',
+  },
+}
+
+/** Retorna o objeto de estilos para o palpite. */
+function getPalpiteState(palpite) {
+  const status = getPalpiteStatus(palpite)
+  return STATE_STYLES[status] ?? STATE_STYLES.default
+}
+
+// ---------------------------------------------------------------------------
+// Ordenação
+// ---------------------------------------------------------------------------
+
 function getPoints(palpite) {
   if (!props.resultado) return null
   const calc = calcularPontos(palpite, props.resultado)
   return calc ? calc.pontos : 0
 }
 
-function getPointsColor(palpite) {
-  const pts = getPoints(palpite)
-  if (pts === 25 || pts === 18) return 'text-copa-gold'
-  if (pts === 10) return 'text-copa-green'
-  return 'text-slate-500'
-}
-
-function isPalpiteImpossible(palpite) {
-  // Only applies during live matches (started but not yet finalizado)
-  if (!props.resultado || props.resultado.finalizado) return false
-  const kickoff = new Date(props.jogo?.data).getTime()
-  if (Date.now() < kickoff) return false
-
-  const rm = props.resultado.gols_mandante
-  const rv = props.resultado.gols_visitante
-  const pm = palpite.gols_mandante
-  const pv = palpite.gols_visitante
-
-  // Impossible if current score already exceeds the predicted score for either team
-  return rm > pm || rv > pv
-}
-
-function getHighlightClass(palpite) {
-  if (!isLiveOrFinished.value) return ''
-  const pts = getPoints(palpite)
-  if (pts === 25 || pts === 18) return 'ring-1 ring-copa-gold/40 bg-copa-gold/5'
-  if (pts === 10) return 'ring-1 ring-copa-green/30 bg-copa-green/5'
-  if (isPalpiteImpossible(palpite)) return 'ring-1 ring-red-500/30 bg-red-500/10 opacity-60'
-  return ''
+/** Peso de ordenação: exato > outros possíveis > eliminado */
+function getSortWeight(palpite) {
+  const status = getPalpiteStatus(palpite)
+  if (status === 'exato')     return 0
+  if (status === 'eliminado') return 2
+  return 1
 }
 
 const sortedPalpites = computed(() => {
@@ -148,12 +216,16 @@ const sortedPalpites = computed(() => {
     return [...palpitesList.value].sort((a, b) => a.nome.localeCompare(b.nome))
   }
   return [...palpitesList.value].sort((a, b) => {
-    const ptsA = getPoints(a) || 0
-    const ptsB = getPoints(b) || 0
-    if (ptsA !== ptsB) return ptsB - ptsA
+    const wA = getSortWeight(a)
+    const wB = getSortWeight(b)
+    if (wA !== wB) return wA - wB
     return a.nome.localeCompare(b.nome)
   })
 })
+
+// ---------------------------------------------------------------------------
+// Data fetching
+// ---------------------------------------------------------------------------
 
 watch(() => props.show, async (newVal) => {
   if (newVal && props.jogo) {
