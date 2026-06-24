@@ -202,14 +202,15 @@
 
       <!-- Odds Bar -->
       <div class="mt-3 px-2">
-        <div class="flex items-center justify-between text-[10px] text-slate-400 font-semibold mb-1">
-          <span :style="{ color: colorMandante }">{{ percMandante }}%</span>
-          <span>Odds</span>
-          <span :style="{ color: colorVisitante }">{{ percVisitante }}%</span>
+        <div class="flex items-center justify-between text-[10px] font-semibold mb-1">
+          <span :style="{ color: colorMandante }">{{ percOdds.mandante }}%</span>
+          <span class="text-slate-500">{{ percOdds.empate }}%</span>
+          <span :style="{ color: colorVisitante }">{{ percOdds.visitante }}%</span>
         </div>
-        <div class="flex w-full h-1.5 rounded-full overflow-hidden bg-slate-800">
-          <div :style="{ width: percMandante + '%', backgroundColor: colorMandante }" class="h-full transition-all duration-500"></div>
-          <div :style="{ width: percVisitante + '%', backgroundColor: colorVisitante }" class="h-full transition-all duration-500"></div>
+        <div class="flex w-full h-1.5 rounded-full overflow-hidden bg-slate-800 gap-px">
+          <div :style="{ width: percOdds.mandante + '%', backgroundColor: colorMandante }" class="h-full transition-all duration-500 rounded-l-full"></div>
+          <div :style="{ width: percOdds.empate + '%', backgroundColor: '#64748b' }" class="h-full transition-all duration-500"></div>
+          <div :style="{ width: percOdds.visitante + '%', backgroundColor: colorVisitante }" class="h-full transition-all duration-500 rounded-r-full"></div>
         </div>
       </div>
 
@@ -480,22 +481,17 @@ const formattedTime = computed(() => {
 const colorMandante = computed(() => getFlagColor(props.jogo.mandante))
 const colorVisitante = computed(() => getFlagColor(props.jogo.visitante))
 
-const percMandante = computed(() => {
-  if (!props.odd) return 50
+const percOdds = computed(() => {
+  if (!props.odd) return { mandante: 33, empate: 34, visitante: 33 }
   const vM = props.odd.votos_mandante || 0
   const vV = props.odd.votos_visitante || 0
-  const total = vM + vV
-  if (total === 0) return 50
-  return Math.round((vM / total) * 100)
-})
-
-const percVisitante = computed(() => {
-  if (!props.odd) return 50
-  const vM = props.odd.votos_mandante || 0
-  const vV = props.odd.votos_visitante || 0
-  const total = vM + vV
-  if (total === 0) return 50
-  return 100 - percMandante.value
+  const vE = props.odd.votos_empate || 0
+  const total = vM + vV + vE
+  if (total === 0) return { mandante: 33, empate: 34, visitante: 33 }
+  const mandante = Math.round((vM / total) * 100)
+  const empate = Math.round((vE / total) * 100)
+  const visitante = 100 - mandante - empate
+  return { mandante, empate, visitante }
 })
 
 const hasChanged = computed(() => {
