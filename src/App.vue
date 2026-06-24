@@ -61,7 +61,7 @@
 import { computed, provide } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
-import { PhSoccerBall, PhTrophy, PhUser, PhChartBar } from '@phosphor-icons/vue'
+import { PhSoccerBall, PhTrophy, PhUser, PhChartBar, PhGridFour } from '@phosphor-icons/vue'
 
 const { isLoggedIn } = useAuth()
 const { toast } = useJogos()
@@ -69,6 +69,7 @@ const { toast } = useJogos()
 const tabs = [
   { icon: PhSoccerBall, label: 'Jogos', to: '/', name: 'jogos' },
   { icon: PhTrophy, label: 'Ranking', to: '/ranking', name: 'ranking' },
+  { icon: PhGridFour, label: 'Grupos', to: '/grupos', name: 'grupos' },
   { icon: PhChartBar, label: 'Stats', to: '/estatisticas-equipes', name: 'estatisticas-equipes' },
   { icon: PhUser, label: 'Perfil', to: '/perfil', name: 'perfil' },
 ]
