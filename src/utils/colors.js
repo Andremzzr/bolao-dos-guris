@@ -3,7 +3,7 @@ export const countryColors = {
   "África do Sul": "#007749",
   "Coreia do Sul": "#C60C30",
   "Tchéquia": "#11457E",
-  "Canadá": "#FF0000",
+  "Canadá": "#f68080ff",
   "Bósnia e Herzegovina": "#002395",
   "Estados Unidos": "#B31942",
   "Paraguai": "#0038A8",

@@ -67,50 +67,58 @@ input[type="number"] {
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-/* Coringa (Joker) card — animated purple glowing border */
-@keyframes coringa-border-spin {
-  0%   { --coringa-angle: 0deg; }
-  100% { --coringa-angle: 360deg; }
-}
+/* ── Coringa (Joker) card — Animated Rainbow Border ───────────── */
 @property --coringa-angle {
   syntax: '<angle>';
   initial-value: 0deg;
   inherits: false;
 }
-.coringa-card {
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid transparent;
-  background-clip: padding-box;
-  position: relative;
-  animation: coringa-border-spin 3s linear infinite;
+
+@keyframes coringa-border-spin {
+  to { --coringa-angle: 360deg; }
 }
-.coringa-card::before {
-  content: '';
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  padding: 1.5px;
+
+/*
+ * How this works:
+ *   1. .coringa-card has a conic-gradient as its OWN background (rainbow).
+ *      The 2px padding creates the visible "border" gap.
+ *   2. ::before sits inside at inset: 2px, painting the dark card interior.
+ *   3. Children sit above ::before via z-index.
+ * This way the gradient ONLY shows in the 2px ring around the edge.
+ */
+.coringa-card {
+  position: relative;
+  border-radius: 0.7rem;
+  padding: 2px; /* ← this IS the border thickness */
   background: conic-gradient(
     from var(--coringa-angle),
-    #a855f7,
-    #7c3aed,
-    #c026d3,
-    #6d28d9,
-    #a855f7
+    #ff0000,
+    #ff8800,
+    #ffff00,
+    #00ff88,
+    #00aaff,
+    #aa00ff,
+    #ff0000
   );
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+  animation: coringa-border-spin 4s linear infinite;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+/* Paints the dark card interior, leaving the 2px gradient ring visible */
+.coringa-card::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(0.7rem - 2px);
+  background: rgba(12, 19, 36, 0.97);
   z-index: 0;
 }
+
+/* All card children must sit above ::before */
 .coringa-card > * {
   position: relative;
   z-index: 1;
