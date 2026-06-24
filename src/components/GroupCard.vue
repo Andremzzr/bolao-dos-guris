@@ -80,18 +80,14 @@
             class="flex items-center h-[46px] border-b border-copa-border/40 last:border-0"
             :class="rowBg(time)"
           >
+            <span class="text-xs font-black text-center shrink-0" style="width:2.2rem" :class="time.pts > 0 ? 'text-emerald-400' : 'text-slate-400'">{{ time.pts }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.pj }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.vit }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.e }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.der }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.gm }}</span>
             <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.gc }}</span>
-            <span
-              class="text-xs font-semibold text-center shrink-0"
-              style="width:2.2rem"
-              :class="time.sg > 0 ? 'text-emerald-400' : time.sg < 0 ? 'text-red-400' : 'text-slate-400'"
-            >{{ time.sg > 0 ? '+' : '' }}{{ time.sg }}</span>
-            <span class="text-xs font-black text-white text-center shrink-0" style="width:2.2rem">{{ time.pts }}</span>
+            <span class="text-xs font-semibold text-slate-300 text-center shrink-0" style="width:2.2rem">{{ time.sg > 0 ? '+' : '' }}{{ time.sg }}</span>
           </div>
         </div>
       </div>
@@ -112,6 +108,7 @@ const props = defineProps({
 })
 
 const statCols = [
+  { key: 'pts', label: 'Pts', title: 'Pontos',             w: '2.2rem' },
   { key: 'pj',  label: 'PJ',  title: 'Partidas Jogadas', w: '2rem' },
   { key: 'vit', label: 'VIT', title: 'Vitórias',          w: '2rem' },
   { key: 'e',   label: 'E',   title: 'Empates',           w: '2rem' },
@@ -119,7 +116,6 @@ const statCols = [
   { key: 'gm',  label: 'GM',  title: 'Gols Marcados',     w: '2rem' },
   { key: 'gc',  label: 'GC',  title: 'Gols Contra',       w: '2rem' },
   { key: 'sg',  label: 'SG',  title: 'Saldo de Gols',     w: '2.2rem' },
-  { key: 'pts', label: 'Pts', title: 'Pontos',             w: '2.2rem' },
 ]
 
 function rowBg(time) {

@@ -119,6 +119,7 @@
               <div class="min-w-[224px]">
                 <!-- Header -->
                 <div class="flex items-center h-8 border-b border-copa-border bg-copa-surface-light/30">
+                  <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2.2rem">Pts</span>
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2rem">PJ</span>
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2rem">VIT</span>
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2rem">E</span>
@@ -126,7 +127,6 @@
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2rem">GM</span>
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2rem">GC</span>
                   <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2.2rem">SG</span>
-                  <span class="text-[9px] text-slate-500 font-semibold text-center shrink-0" style="width:2.2rem">Pts</span>
                 </div>
 
                 <!-- Rows -->
@@ -137,6 +137,7 @@
                   class="flex items-center h-[46px] border-b border-copa-border/40 last:border-0 transition-all duration-150 cursor-pointer hover:bg-white/5 active:bg-white/10"
                   :class="idx < 8 ? 'bg-emerald-500/5' : ''"
                 >
+                  <span class="text-xs font-bold text-white text-center shrink-0" style="width:2.2rem">{{ time.pts }}</span>
                   <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.pj }}</span>
                   <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.vit }}</span>
                   <span class="text-xs text-slate-300 text-center shrink-0" style="width:2rem">{{ time.e }}</span>
@@ -146,7 +147,6 @@
                   <span class="text-xs font-semibold text-center shrink-0" style="width:2.2rem" :class="time.sg > 0 ? 'text-emerald-400' : time.sg < 0 ? 'text-red-400' : 'text-slate-400'">
                     {{ time.sg > 0 ? '+' : '' }}{{ time.sg }}
                   </span>
-                  <span class="text-xs font-bold text-white text-center shrink-0" style="width:2.2rem">{{ time.pts }}</span>
                 </div>
               </div>
             </div>
