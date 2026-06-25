@@ -28,7 +28,7 @@
       <div class="relative z-10 flex flex-col items-center justify-center flex-1">
         <!-- Avatar Placeholder or Initials -->
         <div class="w-64 h-64 rounded-full bg-gradient-to-tr from-copa-accent to-copa-gold p-2 mb-6 shadow-2xl shadow-copa-gold/20">
-          <img v-if="player.avatar_url" :src="player.avatar_url" class="w-full h-full object-cover rounded-full border-4 border-slate-900" alt="Avatar" />
+          <img v-if="player.avatar_url" :src="player.avatar_url" class="w-full h-full object-cover rounded-full border-4 border-slate-900" alt="Avatar" crossorigin="anonymous" />
           <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border-4 border-slate-900">
             <span class="text-8xl font-black text-white">
               {{ player.nome?.charAt(0).toUpperCase() || '?' }}
@@ -80,7 +80,7 @@
               <div class="flex items-center justify-between gap-4">
                 <!-- Mandante -->
                 <div class="flex flex-col items-center flex-1 gap-3">
-                  <img :src="getFlagUrl(item.jogo.mandante)" loading="lazy" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.mandante" />
+                  <img :src="getFlagUrl(item.jogo.mandante)" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.mandante" crossorigin="anonymous" />
                   <span class="text-white text-lg font-bold text-center leading-tight">{{ item.jogo.mandante }}</span>
                 </div>
                 
@@ -101,7 +101,7 @@
 
                 <!-- Visitante -->
                 <div class="flex flex-col items-center flex-1 gap-3">
-                  <img :src="getFlagUrl(item.jogo.visitante)" loading="lazy" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.visitante" />
+                  <img :src="getFlagUrl(item.jogo.visitante)" class="w-20 h-14 object-cover rounded-md shadow-lg" :alt="item.jogo.visitante" crossorigin="anonymous" />
                   <span class="text-white text-lg font-bold text-center leading-tight">{{ item.jogo.visitante }}</span>
                 </div>
               </div>
