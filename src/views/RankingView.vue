@@ -6,20 +6,97 @@
         <PhTrophy :size="28" />
         <h1 class="text-lg font-bold text-white">Classificação</h1>
       </div>
+
+      <!-- Tabs -->
+      <div class="px-4 flex gap-4 mt-2">
+        <button
+          class="pb-2 text-sm font-bold border-b-2 transition-colors"
+          :class="activeTab === 'tops' ? 'border-copa-accent text-white' : 'border-transparent text-slate-400 hover:text-slate-300'"
+          @click="activeTab = 'tops'"
+        >
+          Tops
+        </button>
+        <button
+          class="pb-2 text-sm font-bold border-b-2 transition-colors"
+          :class="activeTab === 'geral' ? 'border-copa-accent text-white' : 'border-transparent text-slate-400 hover:text-slate-300'"
+          @click="activeTab = 'geral'"
+        >
+          Geral
+        </button>
+        <button
+          class="pb-2 text-sm font-bold border-b-2 transition-colors"
+          :class="activeTab === 'diario' ? 'border-copa-accent text-white' : 'border-transparent text-slate-400 hover:text-slate-300'"
+          @click="activeTab = 'diario'"
+        >
+          Diário
+        </button>
+      </div>
     </header>
 
     <!-- Loading -->
-    <div v-if="loading" class="flex-1 flex items-center justify-center py-20">
+    <div v-if="isDisplayedLoading" class="flex-1 flex items-center justify-center py-20">
       <svg class="animate-spin h-8 w-8 text-copa-accent" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
       </svg>
     </div>
 
-    <!-- Ranking list -->
+    <!-- Main Content Area -->
     <div v-else class="flex-1 flex flex-col min-h-0">
-      <!-- Highlights Section -->
-      <div class="shrink-0 px-3 pt-3 flex flex-col gap-2">
+      
+      <!-- TOPS VIEW -->
+      <div v-if="activeTab === 'tops'" class="flex-1 overflow-y-auto px-3 pb-6 pt-3 space-y-4">
+        <!-- Podium Top 3 -->
+        <div class="pt-8 pb-4" v-if="ranking.length > 0">
+          <div class="flex justify-center items-end h-40 px-2">
+            <!-- Segundo Lugar (2) -->
+            <div class="flex flex-col items-center justify-end w-[30%]">
+               <div class="relative w-14 h-14 rounded-full border-2 border-copa-silver bg-slate-800 flex items-center justify-center overflow-hidden z-10 -mb-4 shadow-[0_0_10px_rgba(148,163,184,0.3)]">
+                 <img v-if="ranking[1].avatar_url" :src="ranking[1].avatar_url" class="w-full h-full object-cover" />
+                 <span v-else class="text-xl font-bold text-slate-400">{{ ranking[1].nome?.charAt(0).toUpperCase() }}</span>
+               </div>
+               <div class="bg-gradient-to-t from-slate-800 to-copa-silver/20 border border-slate-700 border-b-0 w-full rounded-tl-xl pt-6 pb-2 text-center shadow-lg">
+                 <div class="text-xs font-bold text-white truncate px-1">{{ ranking[1].nome.split(' ')[0] }}</div>
+                 <div class="text-sm font-black text-copa-silver">{{ ranking[1].pontos }}</div>
+               </div>
+            </div>
+            
+            <!-- Primeiro Lugar (1) -->
+            <div class="flex flex-col items-center justify-end w-[40%] z-10">
+               <div class="relative">
+                 <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-3xl z-20 drop-shadow-md">👑</div>
+                 <div class="w-20 h-20 rounded-full border-4 border-copa-gold bg-slate-800 flex items-center justify-center overflow-hidden z-10 -mb-6 shadow-[0_0_15px_rgba(250,204,21,0.5)]">
+                   <img v-if="ranking[0].avatar_url" :src="ranking[0].avatar_url" class="w-full h-full object-cover" />
+                   <span v-else class="text-2xl font-bold text-slate-400">{{ ranking[0].nome?.charAt(0).toUpperCase() }}</span>
+                 </div>
+               </div>
+               <div class="bg-gradient-to-t from-slate-800 to-copa-gold/30 border border-slate-700 border-b-0 w-full h-28 rounded-t-xl pt-8 pb-2 text-center shadow-lg">
+                 <div class="text-sm font-bold text-white truncate px-1">{{ ranking[0].nome.split(' ')[0] }}</div>
+                 <div class="text-lg font-black text-copa-gold">{{ ranking[0].pontos }}</div>
+               </div>
+            </div>
+            
+            <!-- Terceiro Lugar (3) -->
+            <div class="flex flex-col items-center justify-end w-[30%]">
+               <div class="relative w-12 h-12 rounded-full border-2 border-copa-bronze bg-slate-800 flex items-center justify-center overflow-hidden z-10 -mb-3 shadow-[0_0_10px_rgba(217,119,6,0.3)]">
+                 <img v-if="ranking[2].avatar_url" :src="ranking[2].avatar_url" class="w-full h-full object-cover" />
+                 <span v-else class="text-lg font-bold text-slate-400">{{ ranking[2].nome?.charAt(0).toUpperCase() }}</span>
+               </div>
+               <div class="bg-gradient-to-t from-slate-800 to-copa-bronze/20 border border-slate-700 border-b-0 w-full h-16 rounded-tr-xl pt-4 pb-2 text-center shadow-lg">
+                 <div class="text-xs font-bold text-white truncate px-1">{{ ranking[2].nome.split(' ')[0] }}</div>
+                 <div class="text-sm font-black text-copa-bronze">{{ ranking[2].pontos }}</div>
+               </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Empty state for podium -->
+        <div v-else-if="!loading" class="text-center py-6">
+           <p class="text-slate-400 font-medium">Aguardando mais jogadores para o pódio</p>
+        </div>
+
+        <!-- Highlights Section -->
+        <div class="flex flex-col gap-2">
         <!-- Rei da Rodada -->
         <div v-if="reiDaRodada" class="relative overflow-hidden rounded-xl bg-gradient-to-br from-copa-accent to-copa-accent-dark p-[1px]">
           <div class="absolute top-0 right-0 p-2 opacity-20">
@@ -41,7 +118,7 @@
                   <h2 class="text-[10px] font-bold text-copa-gold uppercase tracking-wider flex items-center gap-1">
                     <PhCrownSimple :size="12" /> Rei da Rodada
                   </h2>
-                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ selectedDateFormatted }}</span>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ highlightsDateFormatted }}</span>
                 </div>
                 <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
                   {{ reiDaRodada.nome }}
@@ -93,7 +170,7 @@
                   <h2 class="text-[10px] font-bold text-red-400 uppercase tracking-wider flex items-center gap-1">
                     <PhBone :size="12" /> Bobo da Rodada
                   </h2>
-                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ selectedDateFormatted }}</span>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">{{ highlightsDateFormatted }}</span>
                 </div>
                 <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
                   {{ boboDaRodada.nome }}
@@ -158,15 +235,18 @@
             </div>
           </div>
         </div>
+        </div>
       </div>
 
-      <!-- Scrollable Area -->
-      <div class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-2">Ranking Geral</h3>
+      <!-- GERAL E DIÁRIO VIEWS -->
+      <div v-else-if="activeTab === 'geral' || activeTab === 'diario'" class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-2">
+          {{ activeTab === 'geral' ? 'Ranking Geral' : 'Ranking Diário (' + selectedDateFormatted + ')' }}
+        </h3>
 
       <!-- Podium (top 3) -->
       <div
-        v-for="(player, index) in ranking"
+        v-for="(player, index) in displayedRanking"
         :key="player.usuario_id"
         class="animate-slide-up"
         :style="{ animationDelay: `${index * 50}ms` }"
@@ -246,7 +326,7 @@
       </div>
 
       <!-- Empty state -->
-      <div v-if="ranking.length === 0 && !loading" class="text-center py-16">
+      <div v-if="displayedRanking.length === 0 && !isDisplayedLoading" class="text-center py-16">
         <div class="text-4xl mb-3">🏟️</div>
         <p class="text-slate-400 font-medium">Nenhum resultado ainda</p>
         <p class="text-slate-500 text-sm mt-1">O ranking será atualizado quando os jogos forem finalizados.</p>
@@ -304,26 +384,40 @@ import { PhTrophy, PhCrownSimple, PhBone, PhFire } from '@phosphor-icons/vue'
 const { ranking, loading } = useRanking()
 const { user } = useAuth()
 
-// Usa a data de ontem no formato YYYY-MM-DD
+const activeTab = ref('tops')
+
+// Usa a data de hoje no formato YYYY-MM-DD
+const hoje = new Date()
+const selectedDate = ref(hoje.toISOString().split('T')[0])
+const { ranking: rankingDiario, loading: loadingDiario } = useRankingDiario(selectedDate)
+
+// Busca ranking de ontem como fallback para os destaques caso não tenha jogos hoje
 const ontem = new Date()
 ontem.setDate(ontem.getDate() - 1)
-const selectedDate = ref(ontem.toISOString().split('T')[0])
-const { ranking: rankingDiario, loading: loadingDiario } = useRankingDiario(selectedDate.value)
+const dataOntem = ref(ontem.toISOString().split('T')[0])
+const { ranking: rankingOntem } = useRankingDiario(dataOntem)
+
+const highlightsRanking = computed(() => {
+  return rankingDiario.value && rankingDiario.value.length > 0 ? rankingDiario.value : rankingOntem.value
+})
+
+const displayedRanking = computed(() => activeTab.value === 'geral' ? ranking.value : rankingDiario.value)
+const isDisplayedLoading = computed(() => activeTab.value === 'geral' ? loading.value : loadingDiario.value)
 
 const reiDaRodada = computed(() => {
-  if (rankingDiario.value && rankingDiario.value.length > 0) {
-    return rankingDiario.value[0]
+  if (highlightsRanking.value && highlightsRanking.value.length > 0) {
+    return highlightsRanking.value[0]
   }
   return null
 })
 
 const boboDaRodada = computed(() => {
-  if (!rankingDiario.value || rankingDiario.value.length === 0) return null
+  if (!highlightsRanking.value || highlightsRanking.value.length === 0) return null
   
   let bobo = null
   let minPontos = Infinity
 
-  for (const player of rankingDiario.value) {
+  for (const player of highlightsRanking.value) {
     const jogosComputados = player.jogos_computados || 0
     
     // Ignora pessoas que não deram palpites
@@ -368,6 +462,12 @@ const onFirePlayer = computed(() => {
 
   if (maxStreak > 1) return onFire
   return null
+})
+
+const highlightsDateFormatted = computed(() => {
+  const dateStr = (rankingDiario.value && rankingDiario.value.length > 0) ? selectedDate.value : dataOntem.value
+  const [y, m, d] = dateStr.split('-')
+  return `${d}/${m}`
 })
 
 const selectedDateFormatted = computed(() => {

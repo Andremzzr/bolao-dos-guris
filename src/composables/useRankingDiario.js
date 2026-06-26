@@ -1,7 +1,7 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, isRef, unref, onMounted, onUnmounted } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
 
-export function useRankingDiario(dateStr) {
+export function useRankingDiario(dateRef) {
   const ranking = ref([])
   const loading = ref(false)
   const error = ref(null)
@@ -12,6 +12,7 @@ export function useRankingDiario(dateStr) {
     error.value = null
 
     try {
+      const dateStr = unref(dateRef)
       const { data, error: fetchError } = await supabase
         .from('view_ranking_diario')
         .select('*')
@@ -29,8 +30,9 @@ export function useRankingDiario(dateStr) {
   }
 
   function subscribe() {
+    const uniqueId = Math.random().toString(36).substring(7)
     channel = supabase
-      .channel('ranking-diario-updates')
+      .channel('ranking-diario-updates-' + uniqueId)
       .on(
         'postgres_changes',
         {
@@ -56,8 +58,14 @@ export function useRankingDiario(dateStr) {
       .subscribe()
   }
 
+  if (isRef(dateRef)) {
+    watch(dateRef, () => {
+      fetchRankingDiario()
+    })
+  }
+
   onMounted(() => {
-    if (dateStr) {
+    if (unref(dateRef)) {
       fetchRankingDiario()
       subscribe()
     }

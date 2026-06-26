@@ -62,8 +62,9 @@ export function useRanking() {
   }
 
   function subscribe() {
+    const uniqueId = Math.random().toString(36).substring(7)
     channel = supabase
-      .channel('ranking-updates')
+      .channel('ranking-updates-' + uniqueId)
       .on(
         'postgres_changes',
         {
