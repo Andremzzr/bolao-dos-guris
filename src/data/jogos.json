@@ -542,7 +542,7 @@
   {
     "id": 61,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-26T17:00:00",
+    "data": "2026-06-26T16:00:00",
     "mandante": "Noruega",
     "visitante": "França",
     "estadio": "Estádio Boston, Foxborough",
@@ -551,7 +551,7 @@
   {
     "id": 62,
     "fase": "Fase de Grupos - Grupo I",
-    "data": "2026-06-26T17:00:00",
+    "data": "2026-06-26T16:00:00",
     "mandante": "Senegal",
     "visitante": "Iraque",
     "estadio": "Estádio Toronto, Toronto",
@@ -560,7 +560,7 @@
   {
     "id": 63,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-26T20:00:00",
+    "data": "2026-06-27T00:00:00",
     "mandante": "Egito",
     "visitante": "Irã",
     "estadio": "Estádio Seattle, Seattle",
@@ -569,7 +569,7 @@
   {
     "id": 64,
     "fase": "Fase de Grupos - Grupo G",
-    "data": "2026-06-26T20:00:00",
+    "data": "2026-06-27T00:00:00",
     "mandante": "Nova Zelândia",
     "visitante": "Bélgica",
     "estadio": "Estádio Vancouver, Vancouver",
@@ -578,7 +578,7 @@
   {
     "id": 65,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-26T23:00:00",
+    "data": "2026-06-26T21:00:00",
     "mandante": "Cabo Verde",
     "visitante": "Arábia Saudita",
     "estadio": "Estádio Houston, Houston",
@@ -587,7 +587,7 @@
   {
     "id": 66,
     "fase": "Fase de Grupos - Grupo H",
-    "data": "2026-06-26T23:00:00",
+    "data": "2026-06-26T21:00:00",
     "mandante": "Uruguai",
     "visitante": "Espanha",
     "estadio": "Estádio Guadalajara, Guadalajara",
@@ -596,7 +596,7 @@
   {
     "id": 67,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-27T17:00:00",
+    "data": "2026-06-27T18:00:00",
     "mandante": "Panamá",
     "visitante": "Inglaterra",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
@@ -605,7 +605,7 @@
   {
     "id": 68,
     "fase": "Fase de Grupos - Grupo L",
-    "data": "2026-06-27T17:00:00",
+    "data": "2026-06-27T18:00:00",
     "mandante": "Croácia",
     "visitante": "Gana",
     "estadio": "Estádio Filadélfia, Filadélfia",
@@ -614,7 +614,7 @@
   {
     "id": 69,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-27T20:00:00",
+    "data": "2026-06-27T20:30:00",
     "mandante": "Colômbia",
     "visitante": "Portugal",
     "estadio": "Estádio Miami, Miami",
@@ -623,7 +623,7 @@
   {
     "id": 70,
     "fase": "Fase de Grupos - Grupo K",
-    "data": "2026-06-27T20:00:00",
+    "data": "2026-06-27T20:30:00",
     "mandante": "RD Congo",
     "visitante": "Uzbequistão",
     "estadio": "Estádio Atlanta, Atlanta",
@@ -650,9 +650,9 @@
   {
     "id": 73,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-28T19:00:00",
-    "mandante": "2º Grupo A",
-    "visitante": "2º Grupo B",
+    "data": "2026-06-28T16:00:00",
+    "mandante": "África do Sul",
+    "visitante": "Canadá",
     "estadio": "Estádio Los Angeles, Los Angeles",
     "grupo": null
   },
