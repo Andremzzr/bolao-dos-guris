@@ -100,7 +100,7 @@
                   <span v-if="isCurrentUser(boboDaRodada)" class="text-[10px] text-red-400 font-bold ml-1">(Você)</span>
                 </div>
                 <div class="text-[10px] text-slate-300 mt-0.5">
-                  <span class="font-bold text-red-400">{{ (boboDaRodada.jogos_computados || 0) - (boboDaRodada.acertos_vencedor || 0) }} erros</span> no dia
+                  <span class="font-bold text-red-400">{{ boboDaRodada.pontos }} pts</span> no dia
                 </div>
               </div>
 
@@ -321,26 +321,32 @@ const boboDaRodada = computed(() => {
   if (!rankingDiario.value || rankingDiario.value.length === 0) return null
   
   let bobo = null
-  let maxErros = -1
+  let minPontos = Infinity
 
   for (const player of rankingDiario.value) {
     const jogosComputados = player.jogos_computados || 0
-    const acertosVencedor = player.acertos_vencedor || 0
-    const erros = jogosComputados - acertosVencedor
     
-    if (erros > maxErros) {
-      maxErros = erros
+    // Ignora pessoas que não deram palpites
+    if (jogosComputados === 0) continue
+
+    const pontos = player.pontos || 0
+    
+    if (pontos < minPontos) {
+      minPontos = pontos
       bobo = player
-    } else if (erros === maxErros) {
-      if (bobo && player.pontos < bobo.pontos) {
+    } else if (pontos === minPontos && bobo) {
+      // Desempate: quem errou mais (maior proporção de erros, etc)
+      // Como simplificação, se tiverem os mesmos pontos, escolhemos quem tem mais erros
+      const erros = jogosComputados - (player.acertos_vencedor || 0)
+      const boboErros = (bobo.jogos_computados || 0) - (bobo.acertos_vencedor || 0)
+      
+      if (erros > boboErros) {
         bobo = player
       }
     }
   }
 
-  if (maxErros > 0) return bobo
-
-  return null
+  return bobo
 })
 
 const onFirePlayer = computed(() => {
