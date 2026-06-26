@@ -65,6 +65,7 @@
             :resultado="resultados[jogo.id]"
             :odd="odds[jogo.id]"
             :coringa="!!coringaMap[jogo.id]"
+            :weather="weatherMap[jogo.estadio]"
             :locked="isLocked(jogo)"
             :saving="saving[jogo.id]"
             @salvar="onSalvarPalpite"
@@ -114,6 +115,7 @@
               :resultado="resultados[jogo.id]"
               :odd="odds[jogo.id]"
               :coringa="!!coringaMap[jogo.id]"
+              :weather="weatherMap[jogo.estadio]"
               :locked="isLocked(jogo)"
               :saving="saving[jogo.id]"
               :viewOnly="true"
@@ -135,6 +137,7 @@
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useJogos } from '@/composables/useJogos'
+import { useWeather } from '@/composables/useWeather'
 import CardJogo from '@/components/CardJogo.vue'
 import { getFlagUrl } from '@/utils/flags'
 import { PhCalendar } from '@phosphor-icons/vue'
@@ -156,6 +159,8 @@ const {
   salvarPalpite,
   statusJogo,
 } = useJogos()
+
+const { fetchWeatherForToday, weatherMap } = useWeather()
 
 const initialLoading = ref(true)
 const activeFilter = ref('todos')
@@ -267,6 +272,12 @@ onMounted(async () => {
   ])
   initialLoading.value = false
   scrollToLiveGame()
+
+  const today = new Date().toLocaleDateString('pt-BR')
+  const jogosDeHoje = jogosOrdenados.value.filter(j => new Date(j.data).toLocaleDateString('pt-BR') === today)
+  if (jogosDeHoje.length > 0) {
+    fetchWeatherForToday(jogosDeHoje)
+  }
 })
 
 watch(activeFilter, (newVal) => {

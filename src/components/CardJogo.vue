@@ -214,9 +214,13 @@
         </div>
       </div>
 
-      <!-- Stadium info -->
-      <div class="text-center mt-3">
+      <!-- Stadium info & Weather -->
+      <div class="flex items-center justify-center gap-2 mt-3">
         <span class="text-[10px] text-slate-600">{{ jogo.estadio }}</span>
+        <div v-if="weather" class="flex items-center gap-1 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded-full border border-white/5" :title="weather.description">
+          <img :src="`https://openweathermap.org/img/wn/${weather.icon}.png`" :alt="weather.description" class="w-4 h-4 object-contain" />
+          <span class="font-medium">{{ weather.temp }}°C</span>
+        </div>
       </div>
 
       <!-- Timeline info for live matches -->
@@ -300,6 +304,7 @@ const props = defineProps({
   resultado: { type: Object, default: null },
   odd: { type: Object, default: null },
   coringa: { type: Boolean, default: false },
+  weather: { type: Object, default: null },
   locked: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
   viewOnly: { type: Boolean, default: false },
