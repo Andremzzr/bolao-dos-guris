@@ -659,18 +659,18 @@
   {
     "id": 74,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-29T17:00:00",
-    "mandante": "Venc. Grupo E",
-    "visitante": "3º Grupo A/B/C/D/F",
+    "data": "2026-06-29T14:00:00",
+    "mandante": "Brasil",
+    "visitante": "Japão",
     "estadio": "Estádio Boston, Foxborough",
     "grupo": null
   },
   {
     "id": 75,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-29T20:00:00",
-    "mandante": "Venc. Grupo F",
-    "visitante": "2º Grupo C",
+    "data": "2026-06-29T22:00:00",
+    "mandante": "Holanda",
+    "visitante": "Marrocos",
     "estadio": "Estádio Monterrey, Monterrey",
     "grupo": null
   },
@@ -686,9 +686,9 @@
   {
     "id": 77,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-06-30T17:00:00",
-    "mandante": "Venc. Grupo I",
-    "visitante": "3º Grupo C/D/F/G/H",
+    "data": "2026-06-30T14:00:00",
+    "mandante": "Costa do Marfim",
+    "visitante": "Noruega",
     "estadio": "Estádio Nova York Nova Jersey, East Rutherford",
     "grupo": null
   },
@@ -722,9 +722,9 @@
   {
     "id": 81,
     "fase": "Oitavas de Final (32 avos)",
-    "data": "2026-07-01T20:00:00",
-    "mandante": "Venc. Grupo D",
-    "visitante": "3º Grupo B/E/F/I/J",
+    "data": "2026-07-01T21:00:00",
+    "mandante": "Estados Unidos",
+    "visitante": "Bósnia e Herzegovina",
     "estadio": "Estádio Baía de São Francisco, Santa Clara",
     "grupo": null
   },

@@ -67,7 +67,10 @@ export default async function handler(req: Request) {
         const matchHome = homeFifa.length > 0 && mandanteStr.length > 0 && (homeFifa.includes(mandanteStr) || mandanteStr.includes(homeFifa));
         const matchAway = awayFifa.length > 0 && visitanteStr.length > 0 && (awayFifa.includes(visitanteStr) || visitanteStr.includes(awayFifa));
 
-        return matchHome || matchAway;
+        const matchHomeReverse = awayFifa.length > 0 && mandanteStr.length > 0 && (awayFifa.includes(mandanteStr) || mandanteStr.includes(awayFifa));
+        const matchAwayReverse = homeFifa.length > 0 && visitanteStr.length > 0 && (homeFifa.includes(visitanteStr) || visitanteStr.includes(homeFifa));
+
+        return (matchHome && matchAway) || (matchHomeReverse && matchAwayReverse);
       });
 
       if (matchFifa) {
