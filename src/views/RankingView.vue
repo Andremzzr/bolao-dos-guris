@@ -240,9 +240,19 @@
 
       <!-- GERAL E DIÁRIO VIEWS -->
       <div v-else-if="activeTab === 'geral' || activeTab === 'diario'" class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-1 mt-2">
-          {{ activeTab === 'geral' ? 'Ranking Geral' : 'Ranking Diário (' + selectedDateFormatted + ')' }}
-        </h3>
+        <div class="flex items-center justify-between mb-3 px-1 mt-2">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {{ activeTab === 'geral' ? 'Ranking Geral' : 'Ranking Diário' }}
+          </h3>
+          
+          <div v-if="activeTab === 'diario'" class="relative">
+            <input 
+              type="date" 
+              v-model="selectedDate" 
+              class="bg-slate-800 text-xs text-white border border-slate-700 rounded-md px-2 py-1 focus:outline-none focus:border-copa-accent"
+            />
+          </div>
+        </div>
 
       <!-- Podium (top 3) -->
       <div
@@ -261,11 +271,26 @@
           }"
         >
           <!-- Position -->
-          <div class="shrink-0 w-8 text-center">
+          <div class="shrink-0 w-10 flex flex-col items-center justify-center">
             <span v-if="player.posicao === 1" class="text-2xl">🥇</span>
             <span v-else-if="player.posicao === 2" class="text-2xl">🥈</span>
             <span v-else-if="player.posicao === 3" class="text-2xl">🥉</span>
             <span v-else class="text-lg font-bold text-slate-500">{{ player.posicao }}º</span>
+            
+            <!-- Position Change Indicator -->
+            <div v-if="activeTab === 'geral' && player.mudanca_posicao !== undefined" class="flex items-center text-[10px] font-bold mt-0.5" title="Mudança de posição em relação aos jogos anteriores">
+              <template v-if="player.mudanca_posicao > 0">
+                <PhCaretUp weight="bold" class="text-green-500" />
+                <span class="text-green-500">{{ player.mudanca_posicao }}</span>
+              </template>
+              <template v-else-if="player.mudanca_posicao < 0">
+                <PhCaretDown weight="bold" class="text-red-500" />
+                <span class="text-red-500">{{ Math.abs(player.mudanca_posicao) }}</span>
+              </template>
+              <template v-else>
+                <PhMinus weight="bold" class="text-slate-500" />
+              </template>
+            </div>
           </div>
 
           <!-- Name + stats -->
@@ -378,7 +403,7 @@ import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple, PhBone, PhFire } from '@phosphor-icons/vue'
+import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()

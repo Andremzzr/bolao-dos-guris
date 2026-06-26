@@ -50,6 +50,55 @@ export function useRanking() {
           }
           player.acertos_seguidos = streak
         })
+
+        // Calculate previous position
+        if (sortedFinishedJogos.length > 0) {
+          const latestGameDate = new Date(sortedFinishedJogos[0].data).toISOString().split('T')[0]
+          const latestJogos = sortedFinishedJogos.filter(j => new Date(j.data).toISOString().split('T')[0] === latestGameDate)
+          const latestJogosIds = new Set(latestJogos.map(j => j.id))
+
+          finalRanking.forEach(player => {
+            let pontosHoje = 0
+            let exatosHoje = 0
+            
+            latestJogosIds.forEach(jogoId => {
+              const palpite = palpitesData.find(p => p.jogo_id === jogoId && p.usuario_id === player.usuario_id)
+              if (palpite) {
+                pontosHoje += palpite.pontuacao
+                if (palpite.pontuacao === 5 || palpite.pontuacao === 10) {
+                  exatosHoje += 1
+                }
+              }
+            })
+            
+            player.pontos_anteriores = player.pontos - pontosHoje
+            player.acertos_exatos_anteriores = player.acertos_exatos - exatosHoje
+          })
+
+          const previousRanking = [...finalRanking].sort((a, b) => {
+            if (b.pontos_anteriores !== a.pontos_anteriores) {
+              return b.pontos_anteriores - a.pontos_anteriores
+            }
+            return b.acertos_exatos_anteriores - a.acertos_exatos_anteriores
+          })
+
+          let currentRank = 1
+          previousRanking.forEach((player, index) => {
+            if (index > 0) {
+              const prev = previousRanking[index - 1]
+              if (prev.pontos_anteriores !== player.pontos_anteriores || prev.acertos_exatos_anteriores !== player.acertos_exatos_anteriores) {
+                currentRank++
+              }
+            }
+            player._computed_posicao_anterior = currentRank
+          })
+
+          previousRanking.forEach((player) => {
+            const p = finalRanking.find(p => p.usuario_id === player.usuario_id)
+            p.posicao_anterior = player._computed_posicao_anterior
+            p.mudanca_posicao = p.posicao_anterior - p.posicao
+          })
+        }
       }
 
       ranking.value = finalRanking
