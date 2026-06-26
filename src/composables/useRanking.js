@@ -53,8 +53,8 @@ export function useRanking() {
 
         // Calculate previous position
         if (sortedFinishedJogos.length > 0) {
-          const latestGameDate = new Date(sortedFinishedJogos[0].data).toISOString().split('T')[0]
-          const latestJogos = sortedFinishedJogos.filter(j => new Date(j.data).toISOString().split('T')[0] === latestGameDate)
+          const latestGameTime = sortedFinishedJogos[0].data
+          const latestJogos = sortedFinishedJogos.filter(j => j.data === latestGameTime)
           const latestJogosIds = new Set(latestJogos.map(j => j.id))
 
           finalRanking.forEach(player => {
