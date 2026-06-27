@@ -6,13 +6,20 @@
         <div class="flex items-center gap-2 mb-3">
           <PhGridFour :size="22" weight="fill" class="text-copa-gold" />
           <div>
-            <h1 class="text-base font-bold text-white leading-tight">Grupos</h1>
+            <h1 class="text-base font-bold text-white leading-tight">Fase do Torneio</h1>
             <p class="text-[10px] text-slate-400">Copa do Mundo 2026</p>
           </div>
         </div>
 
+        <!-- View Tabs -->
+        <div class="flex gap-2 mb-3">
+          <button @click="viewMode = 'grupos'" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all border" :class="viewMode === 'grupos' ? 'bg-copa-accent text-white border-copa-accent shadow-lg shadow-copa-accent/30' : 'bg-copa-surface text-slate-400 border-copa-border'">Grupos</button>
+          <button @click="viewMode = 'matamata'" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all border" :class="viewMode === 'matamata' ? 'bg-copa-accent text-white border-copa-accent shadow-lg shadow-copa-accent/30' : 'bg-copa-surface text-slate-400 border-copa-border'">Mata-Mata</button>
+        </div>
+
         <!-- Group tabs scrollable -->
         <div
+          v-show="viewMode === 'grupos'"
           ref="tabsContainer"
           class="flex gap-1.5 overflow-x-auto pb-3 scrollbar-none snap-x"
           style="scrollbar-width: none; -ms-overflow-style: none;"
@@ -35,8 +42,13 @@
       </div>
     </header>
 
-    <!-- Content -->
-    <div class="px-3 pt-4 space-y-4">
+    <!-- Mata-Mata Content -->
+    <div v-if="viewMode === 'matamata'" class="pt-4 animate-fade-in">
+      <MataMataBracket />
+    </div>
+
+    <!-- Grupos Content -->
+    <div v-show="viewMode === 'grupos'" class="px-3 pt-4 space-y-4">
       <!-- Group standings card -->
       <div
         v-for="g in GRUPOS"
@@ -197,10 +209,12 @@ import { useGrupos } from '@/composables/useGrupos'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import GroupCard from '@/components/GroupCard.vue'
+import MataMataBracket from '@/components/MataMataBracket.vue'
 
 const { GRUPOS, gruposCalculados, terceirosOrdenados, gruposComTerceiroClassificado, statusTime, grupoCompleto, jogosPorGrupo } = useGrupos()
 const { fetchResultados } = useJogos()
 
+const viewMode = ref('grupos')
 const grupoAtivo = ref('A')
 const tabsContainer = ref(null)
 
