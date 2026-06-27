@@ -317,6 +317,18 @@ export function useJogos() {
     return { pontos: 0, tipo: 'erro' }
   }
 
+  function isFutureLocked(jogo) {
+    const kickoff = new Date(jogo.data)
+    const now = new Date()
+    
+    // Create tomorrow's end of day (23:59:59)
+    const tomorrowEnd = new Date(now)
+    tomorrowEnd.setHours(23, 59, 59, 999)
+    tomorrowEnd.setDate(tomorrowEnd.getDate() + 1)
+
+    return kickoff.getTime() > tomorrowEnd.getTime()
+  }
+
   return {
     jogosData,
     jogosOrdenados,
@@ -330,6 +342,7 @@ export function useJogos() {
     saving,
     toast,
     isLocked,
+    isFutureLocked,
     tempoAteBloquear,
     statusJogo,
     fetchResultados,

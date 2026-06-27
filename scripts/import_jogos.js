@@ -42,15 +42,15 @@ async function importJogos() {
     const rawData = fs.readFileSync(jsonPath, 'utf-8');
     const jogos = JSON.parse(rawData);
 
-    // Filtrar apenas os jogos da fase de grupos conforme solicitado
-    const jogosFaseGrupos = jogos.filter(j => j.fase && j.fase.startsWith('Fase de Grupos'));
+    // Filtrar apenas os jogos de mata-mata conforme solicitado (id >= 73)
+    const jogosMataMata = jogos.filter(j => j.id >= 73);
 
-    console.log(`Encontrados ${jogosFaseGrupos.length} jogos da fase de grupos em jogos.json.`);
+    console.log(`Encontrados ${jogosMataMata.length} jogos do mata-mata em jogos.json.`);
 
     // Inserir os jogos no banco
     const { data, error } = await supabase
       .from('jogos')
-      .upsert(jogosFaseGrupos, { onConflict: 'id' })
+      .upsert(jogosMataMata, { onConflict: 'id' })
       .select();
 
     if (error) {

@@ -41,7 +41,7 @@
         <span v-else class="text-[10px] text-slate-500">
           {{ formattedTime }}
         </span>
-        <span v-if="locked && !resultado?.finalizado" class="text-sm">
+        <span v-if="(locked || futureLocked) && !resultado?.finalizado" class="text-sm">
           <PhLockSimple :size="18" />
         </span>
       </div>
@@ -66,7 +66,7 @@
         <!-- Score / Input area -->
         <div class="flex items-center gap-1.5 shrink-0">
           <!-- If game is finished or live/locked with a result, show result + user's prediction -->
-          <template v-if="resultado?.finalizado || ((locked || viewOnly) && resultado)">
+          <template v-if="resultado?.finalizado || ((locked || futureLocked || viewOnly) && resultado)">
             <div class="flex flex-col items-center gap-1">
               <!-- Official result -->
               <div class="flex items-center gap-1">
@@ -91,8 +91,8 @@
             </div>
           </template>
 
-          <!-- If game is live / locked (show prediction readonly) -->
-          <template v-else-if="locked || viewOnly">
+          <!-- If game is live / locked / futureLocked (show prediction readonly) -->
+          <template v-else-if="locked || futureLocked || viewOnly">
             <div class="flex items-center gap-1">
               <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
                 {{ palpite?.gols_mandante ?? '-' }}
@@ -254,12 +254,17 @@
           <span class="text-lg">👀</span> Ver Palpites da Galera
         </button>
       </div>
+
+      <!-- Future Locked message -->
+      <div v-else-if="futureLocked && !viewOnly && !resultado?.finalizado" class="mt-4 text-center">
+        <p class="text-xs font-medium text-slate-500 bg-slate-800/50 py-2 rounded-lg border border-slate-700/50">Palpites liberam dia {{ dataLiberacaoPalpite }}</p>
+      </div>
     </div>
 
     <!-- Save button (only when editable and changed) -->
     <Transition enter-active-class="animate-slide-up">
       <div
-        v-if="!locked && !viewOnly && !resultado?.finalizado && hasChanged"
+        v-if="!locked && !futureLocked && !viewOnly && !resultado?.finalizado && hasChanged"
         class="px-3 pb-3"
       >
         <button
@@ -306,11 +311,19 @@ const props = defineProps({
   coringa: { type: Boolean, default: false },
   weather: { type: Object, default: null },
   locked: { type: Boolean, default: false },
+  futureLocked: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },
   viewOnly: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['salvar', 'team-click'])
+
+const dataLiberacaoPalpite = computed(() => {
+  if (!props.jogo?.data) return ''
+  const date = new Date(props.jogo.data)
+  date.setDate(date.getDate() - 1)
+  return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
+})
 const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline } = useJogos()
 const router = useRouter()
 

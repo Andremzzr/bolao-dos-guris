@@ -67,6 +67,7 @@
             :coringa="!!coringaMap[jogo.id]"
             :weather="weatherMap[jogo.estadio]"
             :locked="isLocked(jogo)"
+            :future-locked="isFutureLocked(jogo)"
             :saving="saving[jogo.id]"
             @salvar="onSalvarPalpite"
             @team-click="openTeamModal"
@@ -117,6 +118,7 @@
               :coringa="!!coringaMap[jogo.id]"
               :weather="weatherMap[jogo.estadio]"
               :locked="isLocked(jogo)"
+              :future-locked="isFutureLocked(jogo)"
               :saving="saving[jogo.id]"
               :viewOnly="true"
               @click="scrollToMatchFromModal(jogo.id)"
@@ -151,6 +153,7 @@ const {
   odds,
   coringaMap,
   isLocked,
+  isFutureLocked,
   saving,
   fetchResultados,
   fetchPalpites,
