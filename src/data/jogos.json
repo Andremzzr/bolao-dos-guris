@@ -715,7 +715,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-01T13:00:00",
     "mandante": "Inglaterra",
-    "visitante": "3º Grupo E/H/I/J/K",
+    "visitante": "RD Congo",
     "estadio": "Estádio de Atlanta, Atlanta",
     "grupo": null
   },
@@ -733,7 +733,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-01T17:00:00",
     "mandante": "Bélgica",
-    "visitante": "3º Grupo A/E/H/I/J",
+    "visitante": "Senegal",
     "estadio": "Estádio de Seattle, Seattle",
     "grupo": null
   },
@@ -741,7 +741,7 @@
     "id": 83,
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-02T20:00:00",
-    "mandante": "2º Grupo K",
+    "mandante": "Portugal",
     "visitante": "Croácia",
     "estadio": "Estádio de Toronto , Toronto",
     "grupo": null
@@ -751,7 +751,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-02T16:00:00",
     "mandante": "Espanha",
-    "visitante": "2º Grupo J",
+    "visitante": "Áustria",
     "estadio": "Estádio de Los Angeles, Los Angeles",
     "grupo": null
   },
@@ -760,7 +760,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-03T00:00:00",
     "mandante": "Suíça",
-    "visitante": "3º Grupo E/F/G/I/J",
+    "visitante": "Argélia",
     "estadio": "BC Place de Vancouver, Vancouver",
     "grupo": null
   },
@@ -777,7 +777,7 @@
     "id": 87,
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-03T22:30:00",
-    "mandante": "Venc. Grupo K",
+    "mandante": "Colômbia",
     "visitante": "Gana",
     "estadio": "Estádio de Kansas City, Kansas City",
     "grupo": null
