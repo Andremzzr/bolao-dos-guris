@@ -3,7 +3,14 @@
  */
 export const normalize = (str: string) => {
   if (!str) return '';
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  let n = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  const aliases: Record<string, string> = {
+    'rd do congo': 'rd congo',
+    'ri do ira': 'ira',
+    'republica da coreia': 'coreia do sul',
+    'eua': 'estados unidos'
+  };
+  return aliases[n] || n;
 };
 
 /**
