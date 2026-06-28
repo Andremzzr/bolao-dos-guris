@@ -706,7 +706,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-06-30T22:00:00",
     "mandante": "México",
-    "visitante": "3º Grupo C/E/F/H/I",
+    "visitante": "Equador",
     "estadio": "Estádio da Cidade do México, Cidade do México",
     "grupo": null
   },
@@ -714,7 +714,7 @@
     "id": 80,
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-01T13:00:00",
-    "mandante": "Venc. Grupo L",
+    "mandante": "Inglaterra",
     "visitante": "3º Grupo E/H/I/J/K",
     "estadio": "Estádio de Atlanta, Atlanta",
     "grupo": null
@@ -732,7 +732,7 @@
     "id": 82,
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-01T17:00:00",
-    "mandante": "Venc. Grupo G",
+    "mandante": "Bélgica",
     "visitante": "3º Grupo A/E/H/I/J",
     "estadio": "Estádio de Seattle, Seattle",
     "grupo": null
@@ -742,7 +742,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-02T20:00:00",
     "mandante": "2º Grupo K",
-    "visitante": "2º Grupo L",
+    "visitante": "Croácia",
     "estadio": "Estádio de Toronto , Toronto",
     "grupo": null
   },
@@ -778,7 +778,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-03T22:30:00",
     "mandante": "Venc. Grupo K",
-    "visitante": "3º Grupo D/E/I/J/L",
+    "visitante": "Gana",
     "estadio": "Estádio de Kansas City, Kansas City",
     "grupo": null
   },
@@ -787,7 +787,7 @@
     "fase": "Oitavas de Final (32 avos)",
     "data": "2026-07-03T15:00:00",
     "mandante": "Austrália",
-    "visitante": "2º Grupo G",
+    "visitante": "Egito",
     "estadio": "Estádio de Dallas, Dallas",
     "grupo": null
   },
