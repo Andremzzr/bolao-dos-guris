@@ -310,7 +310,7 @@ watch(activeFilter, (newVal) => {
   }
 })
 
-async function onSalvarPalpite({ jogoId, golsMandante, golsVisitante }) {
-  await salvarPalpite(user.value.id, jogoId, golsMandante, golsVisitante)
+async function onSalvarPalpite({ jogoId, golsMandante, golsVisitante, vencedorPenaltis }) {
+  await salvarPalpite(user.value.id, jogoId, golsMandante, golsVisitante, vencedorPenaltis)
 }
 </script>

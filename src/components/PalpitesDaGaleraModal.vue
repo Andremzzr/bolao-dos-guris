@@ -76,13 +76,18 @@
             </div>
 
             <!-- Score bubble -->
-            <div
-              class="flex items-center gap-1.5 px-2 py-1 rounded-lg"
-              :class="getPalpiteState(palpite).bubbleClass"
-            >
-              <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_mandante }}</span>
-              <span class="font-bold text-xs" :class="getPalpiteState(palpite).separatorClass">×</span>
-              <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_visitante }}</span>
+            <div class="flex flex-col items-center">
+              <div
+                class="flex items-center gap-1.5 px-2 py-1 rounded-lg"
+                :class="getPalpiteState(palpite).bubbleClass"
+              >
+                <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_mandante }}</span>
+                <span class="font-bold text-xs" :class="getPalpiteState(palpite).separatorClass">×</span>
+                <span class="font-black text-sm" :class="getPalpiteState(palpite).scoreTextClass">{{ palpite.gols_visitante }}</span>
+              </div>
+              <span v-if="palpite.vencedor_penaltis" class="text-[9px] mt-0.5 text-slate-500 font-semibold" :title="palpite.vencedor_penaltis === 'mandante' ? jogo?.mandante : jogo?.visitante">
+                (P: {{ truncateName(palpite.vencedor_penaltis === 'mandante' ? jogo?.mandante : jogo?.visitante) }})
+              </span>
             </div>
           </div>
         </div>
@@ -114,6 +119,11 @@ const isLiveOrFinished = computed(() => {
   const kickoff = new Date(props.jogo.data).getTime()
   return Date.now() >= kickoff || props.resultado?.finalizado
 })
+
+function truncateName(name) {
+  if (!name) return ''
+  return name.length > 8 ? name.substring(0, 8) + '...' : name
+}
 
 // ---------------------------------------------------------------------------
 // Estado centralizado — adicione novos estados aqui
