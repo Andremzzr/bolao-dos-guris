@@ -214,7 +214,7 @@ import MataMataBracket from '@/components/MataMataBracket.vue'
 const { GRUPOS, gruposCalculados, terceirosOrdenados, gruposComTerceiroClassificado, statusTime, grupoCompleto, jogosPorGrupo } = useGrupos()
 const { fetchResultados } = useJogos()
 
-const viewMode = ref('grupos')
+const viewMode = ref('matamata')
 const grupoAtivo = ref('A')
 const tabsContainer = ref(null)
 

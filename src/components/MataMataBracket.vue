@@ -10,37 +10,98 @@
         
         <!-- Column content with justify-around creates the bracket shape -->
         <div class="flex-1 flex flex-col justify-around">
-          <div v-for="jogo in round.matches" :key="jogo.id" class="relative group my-2">
-            
+          
+          <!-- Non-final rounds (paired with lines) -->
+          <template v-if="index < rounds.length - 1">
             <div 
-              class="glass border border-copa-border rounded-xl p-3 shadow-lg w-full cursor-pointer hover:border-copa-accent hover:bg-copa-surface-light transition-all duration-200"
-              @click="goToEstatisticas(jogo.id)"
+              v-for="(pair, pairIndex) in getPairs(round.matches)" 
+              :key="pairIndex" 
+              class="relative flex-1 flex flex-col justify-around"
             >
-              <div class="text-[10px] text-slate-400 mb-2 flex justify-between items-center">
-                <span class="font-mono bg-black/20 px-1.5 py-0.5 rounded">J{{ jogo.id }}</span>
-                <span>{{ formatDate(jogo.data) }}</span>
+              <div 
+                v-for="jogo in pair" 
+                :key="jogo.id" 
+                class="relative group my-2 z-10"
+              >
+                <div 
+                  class="glass border border-copa-border rounded-xl p-3 shadow-lg w-full cursor-pointer hover:border-copa-accent hover:bg-copa-surface-light transition-all duration-200"
+                  @click="goToMatch(jogo.id)"
+                >
+                  <div class="text-[10px] text-slate-400 mb-2 flex justify-between items-center">
+                    <span class="font-mono bg-black/20 px-1.5 py-0.5 rounded">J{{ jogo.id }}</span>
+                    <span>{{ formatDate(jogo.data) }}</span>
+                  </div>
+                  
+                  <div class="flex flex-col gap-2">
+                    <!-- Mandante -->
+                    <div class="flex items-center gap-2">
+                      <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
+                      <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
+                      <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.mandante)}">{{ formatName(jogo.mandante) }}</span>
+                      <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_mandante }}</span>
+                    </div>
+                    
+                    <!-- Visitante -->
+                    <div class="flex items-center gap-2">
+                      <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
+                      <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
+                      <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.visitante)}">{{ formatName(jogo.visitante) }}</span>
+                      <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_visitante }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              
-              <div class="flex flex-col gap-2">
-                <!-- Mandante -->
-                <div class="flex items-center gap-2">
-                  <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
-                  <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
-                  <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.mandante)}">{{ formatName(jogo.mandante) }}</span>
-                  <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_mandante }}</span>
+
+              <!-- Connector Lines -->
+              <div 
+                v-if="pair.length === 2" 
+                class="absolute -right-3 top-[25%] bottom-[25%] w-3 border-r-2 border-t-2 border-b-2 border-copa-border z-0 pointer-events-none rounded-r-md"
+              >
+                <div 
+                  class="absolute top-1/2 -right-3 w-3 border-t-2 border-copa-border pointer-events-none"
+                  style="transform: translateY(-50%);"
+                ></div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Final round (single match, no connectors) -->
+          <template v-else>
+            <div 
+              v-for="jogo in round.matches" 
+              :key="jogo.id" 
+              class="relative group my-2 z-10"
+            >
+              <div 
+                class="glass border border-copa-border rounded-xl p-3 shadow-lg w-full cursor-pointer hover:border-copa-accent hover:bg-copa-surface-light transition-all duration-200"
+                @click="goToMatch(jogo.id)"
+              >
+                <div class="text-[10px] text-slate-400 mb-2 flex justify-between items-center">
+                  <span class="font-mono bg-black/20 px-1.5 py-0.5 rounded">J{{ jogo.id }}</span>
+                  <span>{{ formatDate(jogo.data) }}</span>
                 </div>
                 
-                <!-- Visitante -->
-                <div class="flex items-center gap-2">
-                  <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
-                  <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
-                  <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.visitante)}">{{ formatName(jogo.visitante) }}</span>
-                  <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_visitante }}</span>
+                <div class="flex flex-col gap-2">
+                  <!-- Mandante -->
+                  <div class="flex items-center gap-2">
+                    <img v-if="getFlagUrl(jogo.mandante)" :src="getFlagUrl(jogo.mandante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
+                    <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
+                    <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.mandante)}">{{ formatName(jogo.mandante) }}</span>
+                    <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_mandante }}</span>
+                  </div>
+                  
+                  <!-- Visitante -->
+                  <div class="flex items-center gap-2">
+                    <img v-if="getFlagUrl(jogo.visitante)" :src="getFlagUrl(jogo.visitante)" class="w-5 h-3.5 object-cover rounded-[2px] shadow-sm" />
+                    <div v-else class="w-5 h-3.5 rounded-[2px] bg-slate-700/50 flex-shrink-0"></div>
+                    <span class="text-xs font-semibold text-white truncate flex-1" :class="{'text-slate-400/80': isPlaceholder(jogo.visitante)}">{{ formatName(jogo.visitante) }}</span>
+                    <span v-if="resultados[jogo.id]?.finalizado" class="text-xs font-bold w-5 text-center bg-black/20 rounded py-0.5">{{ resultados[jogo.id].gols_visitante }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-            
-          </div>
+          </template>
+
         </div>
       </div>
       
@@ -54,7 +115,7 @@
       <div v-for="jogo in getMatches(thirdPlaceIds)" :key="jogo.id">
          <div 
             class="glass border border-amber-500/30 bg-amber-500/5 rounded-xl p-3 shadow-lg w-full cursor-pointer hover:border-amber-500 transition-all duration-200"
-            @click="goToEstatisticas(jogo.id)"
+            @click="goToMatch(jogo.id)"
           >
             <div class="text-[10px] text-slate-400 mb-2 flex justify-between items-center">
               <span class="font-mono bg-black/20 px-1.5 py-0.5 rounded text-amber-500/80">J{{ jogo.id }}</span>
@@ -157,8 +218,20 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
 }
 
-function goToEstatisticas(id) {
-  router.push(`/jogo/${id}`)
+function goToMatch(id) {
+  router.push({ name: 'jogos', query: { scrollTo: id } })
+}
+
+function getPairs(matches) {
+  const pairs = []
+  for (let i = 0; i < matches.length; i += 2) {
+    if (i + 1 < matches.length) {
+      pairs.push([matches[i], matches[i + 1]])
+    } else {
+      pairs.push([matches[i]])
+    }
+  }
+  return pairs
 }
 </script>
 

@@ -144,6 +144,10 @@ import CardJogo from '@/components/CardJogo.vue'
 import { getFlagUrl } from '@/utils/flags'
 import { PhCalendar } from '@phosphor-icons/vue'
 
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
 const { user } = useAuth()
 const {
   jogosPorData,
@@ -188,8 +192,7 @@ function closeTeamModal() {
   }, 300)
 }
 
-function scrollToMatchFromModal(jogoId) {
-  closeTeamModal()
+function scrollToMatch(jogoId, delay = 0) {
   setTimeout(() => {
     const el = document.getElementById(`jogo-${jogoId}`)
     if (el) {
@@ -208,7 +211,12 @@ function scrollToMatchFromModal(jogoId) {
         behavior: 'smooth'
       })
     }
-  }, 350)
+  }, delay)
+}
+
+function scrollToMatchFromModal(jogoId) {
+  closeTeamModal()
+  scrollToMatch(jogoId, 350)
 }
 
 const filters = [
@@ -274,7 +282,17 @@ onMounted(async () => {
     fetchCoringaJogos(),
   ])
   initialLoading.value = false
-  scrollToLiveGame()
+  
+  nextTick(() => {
+    if (route.query.scrollTo) {
+      scrollToMatch(route.query.scrollTo, 100)
+      const newQuery = { ...route.query }
+      delete newQuery.scrollTo
+      router.replace({ query: newQuery })
+    } else {
+      scrollToLiveGame()
+    }
+  })
 
   const today = new Date().toLocaleDateString('pt-BR')
   const jogosDeHoje = jogosOrdenados.value.filter(j => new Date(j.data).toLocaleDateString('pt-BR') === today)
