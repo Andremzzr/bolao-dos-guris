@@ -69,17 +69,24 @@
           <template v-if="resultado?.finalizado || ((locked || futureLocked || viewOnly) && resultado)">
             <div class="flex flex-col items-center gap-1">
               <!-- Official result -->
-              <div class="flex items-center gap-1">
-                <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-700 text-white font-black text-lg">
-                  {{ resultado.gols_mandante }}
-                </span>
-                <span class="text-slate-500 text-xs font-bold">×</span>
-                <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-700 text-white font-black text-lg">
-                  {{ resultado.gols_visitante }}
-                </span>
+              <div class="flex flex-col items-center">
+                <div class="flex items-center gap-1">
+                  <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-700 text-white font-black text-lg">
+                    {{ resultado.gols_mandante }}
+                  </span>
+                  <span class="text-slate-500 text-xs font-bold">×</span>
+                  <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-700 text-white font-black text-lg">
+                    {{ resultado.gols_visitante }}
+                  </span>
+                </div>
+                <div v-if="resultado.penaltis_mandante !== null && resultado.penaltis_visitante !== null" class="flex items-center gap-1 text-[10px] text-slate-400 font-bold mt-0.5">
+                  <span>(P: {{ resultado.penaltis_mandante }})</span>
+                  <span>-</span>
+                  <span>(P: {{ resultado.penaltis_visitante }})</span>
+                </div>
               </div>
               <!-- User's prediction (small) -->
-              <div v-if="palpite" class="flex items-center gap-1">
+              <div v-if="palpite" class="flex flex-col items-center gap-0.5 mt-1">
                 <span
                   class="text-[10px] font-semibold px-2 py-0.5 rounded-full"
                   :class="pontosClass"
@@ -87,78 +94,109 @@
                   Seu: {{ palpite.gols_mandante }}-{{ palpite.gols_visitante }}
                   <template v-if="resultado.finalizado">· {{ pontosInfo }}pts</template>
                 </span>
+                <span v-if="palpite.vencedor_penaltis" class="text-[9px] text-slate-500 font-semibold mt-0.5">
+                  Pênaltis: {{ truncateName(palpite.vencedor_penaltis === 'mandante' ? jogo.mandante : jogo.visitante) }}
+                </span>
               </div>
             </div>
           </template>
 
           <!-- If game is live / locked / futureLocked (show prediction readonly) -->
           <template v-else-if="locked || futureLocked || viewOnly">
-            <div class="flex items-center gap-1">
-              <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
-                {{ palpite?.gols_mandante ?? '-' }}
-              </span>
-              <span class="text-slate-500 text-xs font-bold">×</span>
-              <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
-                {{ palpite?.gols_visitante ?? '-' }}
+            <div class="flex flex-col items-center">
+              <div class="flex items-center gap-1">
+                <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
+                  {{ palpite?.gols_mandante ?? '-' }}
+                </span>
+                <span class="text-slate-500 text-xs font-bold">×</span>
+                <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-800 text-slate-400 font-bold text-lg">
+                  {{ palpite?.gols_visitante ?? '-' }}
+                </span>
+              </div>
+              <span v-if="palpite?.vencedor_penaltis" class="text-[9px] text-slate-500 font-semibold mt-0.5">
+                Pênaltis: {{ truncateName(palpite.vencedor_penaltis === 'mandante' ? jogo.mandante : jogo.visitante) }}
               </span>
             </div>
           </template>
 
           <!-- Editable prediction -->
           <template v-else>
-            <div class="flex items-center gap-1">
-              <!-- Home goals -->
-              <div class="flex items-center">
-                <button
-                  @click="decrementHome"
-                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  :disabled="localHome === 0"
-                >
-                  −
-                </button>
-                <input
-                  type="number"
-                  v-model.number="localHome"
-                  min="0"
-                  max="20"
-                  placeholder="-"
-                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
-                  @change="autoSave"
-                />
-                <button
-                  @click="incrementHome"
-                  class="w-7 h-9 flex items-center justify-center rounded-r-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
-                >
-                  +
-                </button>
+            <div class="flex flex-col items-center">
+              <div class="flex items-center gap-1">
+                <!-- Home goals -->
+                <div class="flex items-center">
+                  <button
+                    @click="decrementHome"
+                    class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    :disabled="localHome === 0"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    v-model.number="localHome"
+                    min="0"
+                    max="20"
+                    placeholder="-"
+                    class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
+                    @change="autoSave"
+                  />
+                  <button
+                    @click="incrementHome"
+                    class="w-7 h-9 flex items-center justify-center rounded-r-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+
+                <span class="text-slate-500 text-xs font-bold mx-0.5">×</span>
+
+                <!-- Away goals -->
+                <div class="flex items-center">
+                  <button
+                    @click="decrementAway"
+                    class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    :disabled="localAway === 0"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    v-model.number="localAway"
+                    min="0"
+                    max="20"
+                    placeholder="-"
+                    class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
+                    @change="autoSave"
+                  />
+                  <button
+                    @click="incrementAway"
+                    class="w-7 h-9 flex items-center justify-center rounded-r-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
-              <span class="text-slate-500 text-xs font-bold mx-0.5">×</span>
-
-              <!-- Away goals -->
-              <div class="flex items-center">
-                <button
-                  @click="decrementAway"
-                  class="w-7 h-9 flex items-center justify-center rounded-l-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  :disabled="localAway === 0"
-                >
-                  −
-                </button>
-                <input
-                  type="number"
-                  v-model.number="localAway"
-                  min="0"
-                  max="20"
-                  placeholder="-"
-                  class="w-9 h-9 text-center bg-slate-800 text-white font-black text-lg border-y border-copa-border focus:outline-none focus:bg-slate-700 transition-colors placeholder:text-slate-600"
-                  @change="autoSave"
-                />
-                <button
-                  @click="incrementAway"
-                  class="w-7 h-9 flex items-center justify-center rounded-r-lg bg-slate-700 text-slate-300 font-bold text-sm tap-scale hover:bg-slate-600 active:bg-slate-500 transition-colors"
-                >
-                  +
-                </button>
+              <!-- Penalty Selection UI -->
+              <div v-if="isMataMata && localHome !== '' && localHome === localAway" class="flex flex-col items-center mt-2 w-full">
+                <span class="text-[10px] text-slate-400 font-semibold mb-1">Quem avança nos pênaltis?</span>
+                <div class="flex gap-2 w-full justify-center">
+                  <button 
+                    @click="localVencedorPenaltis = 'mandante'; autoSave()"
+                    class="flex-1 py-1 px-1 rounded-md text-[10px] font-bold border transition-colors max-w-[80px]"
+                    :class="localVencedorPenaltis === 'mandante' ? 'bg-slate-700 text-white border-slate-500' : 'bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-600'"
+                  >
+                    {{ truncateName(jogo.mandante) }}
+                  </button>
+                  <button 
+                    @click="localVencedorPenaltis = 'visitante'; autoSave()"
+                    class="flex-1 py-1 px-1 rounded-md text-[10px] font-bold border transition-colors max-w-[80px]"
+                    :class="localVencedorPenaltis === 'visitante' ? 'bg-slate-700 text-white border-slate-500' : 'bg-slate-800 text-slate-500 border-slate-700 hover:border-slate-600'"
+                  >
+                    {{ truncateName(jogo.visitante) }}
+                  </button>
+                </div>
               </div>
             </div>
           </template>
@@ -336,8 +374,13 @@ function handleCardClick() {
 
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
 const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
+const localVencedorPenaltis = ref(props.palpite ? props.palpite.vencedor_penaltis : null)
 const justSaved = ref(false)
 const showPalpitesModal = ref(false)
+
+const isMataMata = computed(() => {
+  return props.jogo.fase && !props.jogo.fase.includes('Fase de Grupos')
+})
 
 const timelineData = ref(null)
 const activeEvent = ref(null)
@@ -346,7 +389,10 @@ let pollInterval = null
 const isLive = computed(() => {
   if (props.resultado?.finalizado) return false
   const kickoff = new Date(props.jogo.data).getTime()
-  return Date.now() >= kickoff
+  const now = Date.now()
+  // Um jogo é considerado ao vivo se passou do horário de início 
+  // e ainda está dentro de uma janela de 4 horas (14400000 ms)
+  return now >= kickoff && now <= kickoff + 4 * 60 * 60 * 1000
 })
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
@@ -485,9 +531,11 @@ watch(() => props.palpite, (newVal) => {
   if (newVal) {
     localHome.value = newVal.gols_mandante
     localAway.value = newVal.gols_visitante
+    localVencedorPenaltis.value = newVal.vencedor_penaltis
   } else {
     localHome.value = ''
     localAway.value = ''
+    localVencedorPenaltis.value = null
   }
 }, { deep: true })
 
@@ -514,10 +562,16 @@ const percOdds = computed(() => {
 
 const hasChanged = computed(() => {
   if (!props.palpite) {
-    return localHome.value !== '' && localAway.value !== ''
+    if (localHome.value === '' || localAway.value === '') return false
+    if (isMataMata.value && localHome.value === localAway.value && !localVencedorPenaltis.value) return false
+    return true
   }
-  return localHome.value !== props.palpite.gols_mandante ||
-    localAway.value !== props.palpite.gols_visitante
+  const golsChanged = localHome.value !== props.palpite.gols_mandante || localAway.value !== props.palpite.gols_visitante;
+  const penaltyChanged = isMataMata.value && localHome.value === localAway.value && localVencedorPenaltis.value !== props.palpite.vencedor_penaltis;
+  
+  if (isMataMata.value && localHome.value === localAway.value && !localVencedorPenaltis.value) return false;
+
+  return golsChanged || penaltyChanged
 })
 
 const pontosInfo = computed(() => {
@@ -533,11 +587,11 @@ const pontosClass = computed(() => {
 
   if (pts === 0) return 'bg-red-500/20 text-red-400'
 
-  // Acertou resultado (normal=3, coringa=6)
-  if (pts === 3 || pts === 6) return 'bg-copa-green/20 text-copa-green'
+  // Acertou resultado ou pênaltis parciais
+  if (pts === 3 || pts === 6 || pts === 5) return 'bg-copa-green/20 text-copa-green'
 
-  // Placar exato (normal=5, coringa=10)
-  if (pts === 5 || pts === 10) return 'bg-copa-gold/20 text-copa-gold'
+  // Placar exato ou pênaltis perfeitos
+  if (pts === 7 || pts === 10 || pts === 14) return 'bg-copa-gold/20 text-copa-gold'
 
   return 'bg-slate-700 text-slate-400'
 })
@@ -574,6 +628,7 @@ async function save() {
     jogoId: props.jogo.id,
     golsMandante: localHome.value,
     golsVisitante: localAway.value,
+    vencedorPenaltis: isMataMata.value && localHome.value === localAway.value ? localVencedorPenaltis.value : null
   })
   justSaved.value = true
   setTimeout(() => { justSaved.value = false }, 2000)

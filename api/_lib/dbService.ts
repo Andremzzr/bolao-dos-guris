@@ -77,14 +77,16 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
 /**
  * Atualiza (upsert) o resultado de um jogo na base
  */
-export async function updateMatchResult(jogoId: number, homeScore: number, awayScore: number, isFinished: boolean, timeline: any = null, fifaMatchId: string | null = null) {
+export async function updateMatchResult(jogoId: number, homeScore: number, awayScore: number, isFinished: boolean, timeline: any = null, fifaMatchId: string | null = null, homePenaltyScore: number | null = null, awayPenaltyScore: number | null = null) {
   const supabase = getSupabase();
   const payload: any = {
       jogo_id: jogoId,
       gols_mandante: homeScore,
       gols_visitante: awayScore,
       finalizado: isFinished,
-      fifa_match_id: fifaMatchId
+      fifa_match_id: fifaMatchId,
+      penaltis_mandante: homePenaltyScore,
+      penaltis_visitante: awayPenaltyScore
   };
 
   if (timeline !== null) {

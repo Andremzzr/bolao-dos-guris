@@ -89,7 +89,7 @@ export function useJogos() {
   async function fetchResultados() {
     const { data, error } = await supabase
       .from('resultados')
-      .select('jogo_id, gols_mandante, gols_visitante, fifa_match_id, finalizado')
+      .select('jogo_id, gols_mandante, gols_visitante, fifa_match_id, finalizado, penaltis_mandante, penaltis_visitante')
 
     if (error) {
       console.error("fetchResultados error:", error)
@@ -187,6 +187,7 @@ export function useJogos() {
         usuario_id,
         gols_mandante,
         gols_visitante,
+        vencedor_penaltis,
         pontuacao,
         usuarios ( nome )
       `)
@@ -215,7 +216,7 @@ export function useJogos() {
   }
 
   // Save a prediction
-  async function salvarPalpite(userId, jogoId, golsMandante, golsVisitante) {
+  async function salvarPalpite(userId, jogoId, golsMandante, golsVisitante, vencedorPenaltis = null) {
     if (saving.value[jogoId]) return
     
     saving.value[jogoId] = true
@@ -226,6 +227,7 @@ export function useJogos() {
         p_jogo_id: jogoId,
         p_gols_mandante: golsMandante,
         p_gols_visitante: golsVisitante,
+        p_vencedor_penaltis: vencedorPenaltis,
       })
 
       if (error) throw error
@@ -235,6 +237,7 @@ export function useJogos() {
         jogo_id: jogoId,
         gols_mandante: golsMandante,
         gols_visitante: golsVisitante,
+        vencedor_penaltis: vencedorPenaltis,
         atualizado_em: new Date().toISOString(),
       }
 
@@ -292,29 +295,48 @@ export function useJogos() {
 
   // Calculate points for a prediction
   // Note: for display purposes; the authoritative value is palpite.pontuacao from the DB
-  function calcularPontos(palpite, resultado) {
+  function calcularPontos(palpite, resultado, isCoringa = false) {
     if (!resultado?.finalizado || !palpite) return null
 
     const pm = palpite.gols_mandante
     const pv = palpite.gols_visitante
+    const pp = palpite.vencedor_penaltis
+    
     const rm = resultado.gols_mandante
     const rv = resultado.gols_visitante
+    const rpm = resultado.penaltis_mandante
+    const rpv = resultado.penaltis_visitante
 
-    // Exact score
-    if (pm === rm && pv === rv) return { pontos: 25, tipo: 'exato' }
+    let vpr = null
+    if (rpm > rpv) vpr = 'mandante'
+    else if (rpv > rpm) vpr = 'visitante'
 
-    // Correct winner + goal difference
-    if (
-      Math.sign(pm - pv) === Math.sign(rm - rv) &&
-      (pm - pv) === (rm - rv)
-    ) return { pontos: 18, tipo: 'saldo' }
+    let pontos = 0
+    let tipo = 'erro'
 
-    // Correct winner only
-    if (Math.sign(pm - pv) === Math.sign(rm - rv)) {
-      return { pontos: 10, tipo: 'vencedor' }
+    if (pm === rm && pv === rv) {
+      tipo = 'exato'
+      if (pm === pv && pp === vpr && vpr !== null) {
+        pontos = isCoringa ? 14 : 7
+      } else if (pm === pv && pp !== null) {
+        pontos = isCoringa ? 10 : 5
+      } else {
+        pontos = isCoringa ? 10 : 5
+      }
+    } else if (Math.sign(pm - pv) === Math.sign(rm - rv)) {
+      tipo = 'vencedor'
+      if (pm === pv && pp === vpr && vpr !== null) {
+        pontos = isCoringa ? 10 : 5
+      } else if (pm === pv && pp !== null) {
+        pontos = isCoringa ? 6 : 3
+      } else {
+        pontos = isCoringa ? 6 : 3
+      }
+    } else {
+      pontos = isCoringa ? -3 : 0
     }
 
-    return { pontos: 0, tipo: 'erro' }
+    return { pontos, tipo }
   }
 
   function isFutureLocked(jogo) {

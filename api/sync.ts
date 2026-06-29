@@ -94,9 +94,12 @@ export default async function handler(req: Request) {
         if ((isLive || isFinished) && matchFifa.IdMatch) {
           timelineData = await fetchFifaMatchTimeline(matchFifa.IdMatch);
         }
+        
+        const homePenalty = matchFifa.HomeTeamPenaltyScore ?? null;
+        const awayPenalty = matchFifa.AwayTeamPenaltyScore ?? null;
 
         // Atualiza ou insere o placar atual na base
-        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch);
+        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch, homePenalty, awayPenalty);
 
         if (!upsertError) {
           atualizados++;
