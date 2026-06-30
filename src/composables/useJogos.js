@@ -216,7 +216,7 @@ export function useJogos() {
   }
 
   // Save a prediction
-  async function salvarPalpite(userId, jogoId, golsMandante, golsVisitante, vencedorPenaltis = null) {
+  async function salvarPalpite(userId, jogoId, golsMandante, golsVisitante, vencedorPenaltis = null, mvpPlayerId = null, mvpPlayerName = null, mvpPlayerPicture = null) {
     if (saving.value[jogoId]) return
     
     saving.value[jogoId] = true
@@ -232,12 +232,26 @@ export function useJogos() {
 
       if (error) throw error
 
+      const { error: updateError } = await supabase
+        .from('palpites')
+        .update({
+          mvp_player_id: mvpPlayerId,
+          mvp_player_name: mvpPlayerName,
+          mvp_player_picture: mvpPlayerPicture
+        })
+        .match({ usuario_id: userId, jogo_id: jogoId })
+
+      if (updateError) throw updateError
+
       palpites.value[jogoId] = {
         usuario_id: userId,
         jogo_id: jogoId,
         gols_mandante: golsMandante,
         gols_visitante: golsVisitante,
         vencedor_penaltis: vencedorPenaltis,
+        mvp_player_id: mvpPlayerId,
+        mvp_player_name: mvpPlayerName,
+        mvp_player_picture: mvpPlayerPicture,
         atualizado_em: new Date().toISOString(),
       }
 
