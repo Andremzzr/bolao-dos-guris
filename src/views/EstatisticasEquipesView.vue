@@ -1,10 +1,14 @@
 <template>
   <div class="h-[100dvh] pb-20 flex flex-col bg-copa-bg text-slate-100">
-    <!-- Header -->
     <header class="shrink-0 z-30 glass border-b border-copa-border">
-      <div class="px-4 py-3 flex gap-2 items-center">
-        <PhChartBar :size="28" class="text-copa-gold" />
-        <h1 class="text-lg font-bold text-white">Estatísticas das Equipes</h1>
+      <div class="px-4 py-3 flex gap-2 items-center justify-between">
+        <div class="flex gap-2 items-center">
+          <PhChartBar :size="28" class="text-copa-gold" />
+          <h1 class="text-lg font-bold text-white">Estatísticas</h1>
+        </div>
+        <router-link to="/estatisticas-selecao" class="bg-copa-gold text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold tap-scale shadow shadow-copa-gold/20">
+          Por Seleção &rarr;
+        </router-link>
       </div>
     </header>
 
