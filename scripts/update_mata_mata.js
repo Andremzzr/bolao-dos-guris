@@ -16,12 +16,17 @@ const TEAM_NAME_MAPPING = {
   "RI do Irã": "Irã"
 };
 
-function formatTeamName(teamName, placeholder) {
+function formatTeamName(teamName, placeholder, winners = {}) {
   if (teamName) {
     return TEAM_NAME_MAPPING[teamName] || teamName;
   }
   if (placeholder) {
     if (placeholder.startsWith('W')) {
+      const matchNum = parseInt(placeholder.slice(1), 10);
+      if (winners[matchNum]) {
+        const winnerName = winners[matchNum];
+        return TEAM_NAME_MAPPING[winnerName] || winnerName;
+      }
       return `Venc. Jogo ${placeholder.slice(1)}`;
     }
     if (placeholder.startsWith('RU')) {
@@ -56,6 +61,18 @@ async function run() {
     const rawData = fs.readFileSync(JSON_PATH, 'utf-8');
     const jogos = JSON.parse(rawData);
 
+    // Build winners map for Wxx placeholders
+    const winners = {};
+    for (const match of data.Results) {
+      if (match.Winner) {
+        if (match.Home && match.Home.IdTeam === match.Winner) {
+          winners[match.MatchNumber] = match.Home.TeamName[0].Description;
+        } else if (match.Away && match.Away.IdTeam === match.Winner) {
+          winners[match.MatchNumber] = match.Away.TeamName[0].Description;
+        }
+      }
+    }
+
     // Pegar apenas os jogos a partir das oitavas (id 73 em diante)
     const matchesApi = data.Results.filter(m => m.MatchNumber >= 73);
 
@@ -63,8 +80,8 @@ async function run() {
       const homeName = matchApi.Home ? matchApi.Home.TeamName[0].Description : null;
       const awayName = matchApi.Away ? matchApi.Away.TeamName[0].Description : null;
 
-      const formattedHome = formatTeamName(homeName, matchApi.PlaceHolderA);
-      const formattedAway = formatTeamName(awayName, matchApi.PlaceHolderB);
+      const formattedHome = formatTeamName(homeName, matchApi.PlaceHolderA, winners);
+      const formattedAway = formatTeamName(awayName, matchApi.PlaceHolderB, winners);
 
       const brazilTime = getBrazilTime(matchApi.Date);
 
