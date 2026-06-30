@@ -90,7 +90,9 @@
                   <!-- MVP do Palpite -->
                   <div v-if="item.palpite?.mvp_player_id" class="flex items-center gap-2 bg-slate-900/50 px-4 py-2 rounded-full shadow-inner">
                     <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">MVP</span>
-                    <img v-if="item.palpite.mvp_player_picture" :src="item.palpite.mvp_player_picture" class="w-6 h-6 rounded-full object-cover bg-slate-800" crossorigin="anonymous" />
+                    <div v-if="item.palpite.mvp_player_picture" class="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-800">
+                      <img :src="item.palpite.mvp_player_picture" class="w-full h-full object-cover object-top scale-[1.5] origin-top" crossorigin="anonymous" />
+                    </div>
                     <span class="text-sm text-slate-300 font-medium">{{ item.palpite.mvp_player_name }}</span>
                   </div>
                 </div>

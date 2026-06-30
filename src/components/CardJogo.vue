@@ -221,7 +221,7 @@
       <div v-if="!resultado?.finalizado && !locked && !futureLocked && !viewOnly" class="mt-3 relative z-10 border-t border-white/5 pt-3">
         <div class="flex flex-col items-center relative">
           <label class="text-[10px] text-slate-400 font-semibold mb-1">MVP da Partida</label>
-          <div class="relative w-full max-w-[200px]">
+          <div class="relative w-full max-w-[260px]">
             <input 
               v-model="mvpSearchQuery"
               @focus="fetchPlayers(); isMvpDropdownOpen = true"
@@ -229,7 +229,7 @@
               @blur="setTimeout(() => isMvpDropdownOpen = false, 200)"
               type="text"
               placeholder="Digite o nome do jogador..."
-              class="w-full h-8 px-3 rounded bg-slate-800 text-white text-xs border border-slate-700 focus:border-copa-green focus:outline-none transition-colors placeholder:text-slate-500 text-center"
+              class="w-full h-10 px-3 rounded bg-slate-800 text-white text-sm border border-slate-700 focus:border-copa-green focus:outline-none transition-colors placeholder:text-slate-500 text-center"
             />
             <button 
               v-if="localMvpId"
@@ -250,22 +250,23 @@
               <div v-else-if="filteredPlayers.length === 0 && mvpSearchQuery" class="px-3 py-2 text-xs text-slate-400 text-center">
                 Nenhum jogador encontrado
               </div>
-              <ul v-else class="max-h-48 overflow-y-auto">
+              <ul v-else class="max-h-64 overflow-y-auto">
                 <li 
                   v-for="p in filteredPlayers" 
                   :key="p.IdPlayer"
                   @click="selectMvp(p)"
-                  class="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-700 cursor-pointer transition-colors"
+                  class="flex items-center gap-3 px-3 py-2 hover:bg-slate-700 cursor-pointer transition-colors"
                 >
-                  <img 
-                    v-if="p.PlayerPicture?.PictureUrl" 
-                    :src="p.PlayerPicture.PictureUrl" 
-                    class="w-6 h-6 rounded-full object-cover bg-slate-900 border border-slate-600 shrink-0"
-                  />
-                  <div v-else class="w-6 h-6 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
+                  <div v-if="p.PlayerPicture?.PictureUrl" class="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-900">
+                    <img 
+                      :src="p.PlayerPicture.PictureUrl" 
+                      class="w-full h-full object-cover object-top scale-[1.5] origin-top"
+                    />
+                  </div>
+                  <div v-else class="w-10 h-10 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-xs text-slate-400 shrink-0">
                     ?
                   </div>
-                  <span class="text-xs text-slate-200 truncate">{{ p.PlayerName?.[0]?.Description || p.ShortName?.[0]?.Description }}</span>
+                  <span class="text-sm text-slate-200 truncate">{{ p.PlayerName?.[0]?.Description || p.ShortName?.[0]?.Description }}</span>
                 </li>
               </ul>
             </div>
@@ -275,16 +276,24 @@
       <!-- Display MVP for Locked/Finished Games -->
       <div v-else-if="palpite?.mvp_player_id" class="mt-3 border-t border-white/5 pt-3 flex flex-col items-center">
         <span class="text-[10px] text-slate-400 font-semibold mb-1">MVP Escolhido</span>
-        <div class="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
-          <img 
-            v-if="palpite.mvp_player_picture" 
-            :src="palpite.mvp_player_picture" 
-            class="w-5 h-5 rounded-full object-cover bg-slate-900 border border-slate-600 shrink-0"
-          />
-          <div v-else class="w-5 h-5 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[8px] text-slate-400 shrink-0">
+        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full border"
+             :class="{
+               'border-copa-green/50 bg-copa-green/10': resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id === palpite.mvp_player_id,
+               'border-red-500/50 bg-red-500/10': resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id !== palpite.mvp_player_id,
+               'border-slate-700/50 bg-slate-800/50': !resultado?.finalizado || !resultado?.mvp_player_id
+             }">
+          <div v-if="palpite.mvp_player_picture" class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-900">
+            <img 
+              :src="palpite.mvp_player_picture" 
+              class="w-full h-full object-cover object-top scale-[1.5] origin-top"
+            />
+          </div>
+          <div v-else class="w-8 h-8 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
             ?
           </div>
-          <span class="text-xs text-slate-300 font-medium">{{ palpite.mvp_player_name }}</span>
+          <span class="text-sm text-slate-300 font-medium">{{ palpite.mvp_player_name }}</span>
+          <span v-if="resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id === palpite.mvp_player_id" class="text-xs">✅</span>
+          <span v-else-if="resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id !== palpite.mvp_player_id" class="text-xs">❌</span>
         </div>
       </div>
 
