@@ -253,12 +253,17 @@
       </div>
 
       <!-- Stadium info & Weather -->
-      <div class="flex items-center justify-center gap-2 mt-3">
-        <span class="text-[10px] text-slate-600">{{ jogo.estadio }}</span>
-        <div v-if="weather" class="flex items-center gap-1 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded-full border border-white/5" :title="weather.description">
-          <img :src="`https://openweathermap.org/img/wn/${weather.icon}.png`" :alt="weather.description" class="w-4 h-4 object-contain" />
-          <span class="font-medium">{{ weather.temp }}°C</span>
+      <div class="flex flex-col items-center mt-3 gap-1.5">
+        <div class="flex items-center justify-center gap-2">
+          <span class="text-[10px] text-slate-600">{{ jogo.estadio }}</span>
+          <div v-if="weather" class="flex items-center gap-1 text-[10px] text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded-full border border-white/5" :title="weather.description">
+            <img :src="`https://openweathermap.org/img/wn/${weather.icon}.png`" :alt="weather.description" class="w-4 h-4 object-contain" />
+            <span class="font-medium">{{ weather.temp }}°C</span>
+          </div>
         </div>
+        <span v-if="timeLeftToLock && !locked && !futureLocked && !resultado?.finalizado" class="text-xs text-yellow-500/90 font-semibold bg-yellow-500/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+          Fecha em {{ timeLeftToLock }}
+        </span>
       </div>
 
       <!-- Timeline info for live matches -->
@@ -358,7 +363,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
@@ -607,9 +612,21 @@ watch(isLive, (newVal) => {
   }
 }, { immediate: true })
 
+const timeLeftToLock = ref(tempoAteBloquear(props.jogo))
+let timeLockInterval = null
+
+onMounted(() => {
+  if (!props.locked && !props.futureLocked && !props.resultado?.finalizado) {
+    timeLockInterval = setInterval(() => {
+      timeLeftToLock.value = tempoAteBloquear(props.jogo)
+    }, 60000)
+  }
+})
+
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
   if (eventLoopInterval) clearInterval(eventLoopInterval)
+  if (timeLockInterval) clearInterval(timeLockInterval)
 })
 
 // Watch for palpite changes (e.g., after save)
