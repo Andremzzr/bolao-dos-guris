@@ -45,12 +45,12 @@ export function useJogos() {
     return groups
   })
 
-  // Check if a game is locked (less than 1 hour before kickoff)
+  // Check if a game is locked (less than 10 minutes before kickoff)
   function isLocked(jogo) {
     const kickoff = new Date(jogo.data)
     const now = new Date()
     const diffMs = kickoff.getTime() - now.getTime()
-    return diffMs < 60 * 60 * 1000 // 1 hour in ms
+    return diffMs < 10 * 60 * 1000 // 10 minutes in ms
   }
 
   // Time remaining until lock
@@ -58,7 +58,7 @@ export function useJogos() {
     const kickoff = new Date(jogo.data)
     const now = new Date()
     const diffMs = kickoff.getTime() - now.getTime()
-    const lockMs = diffMs - 60 * 60 * 1000
+    const lockMs = diffMs - 10 * 60 * 1000
 
     if (lockMs <= 0) return null
 
