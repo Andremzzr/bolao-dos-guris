@@ -265,6 +265,32 @@
       <div v-if="timelineData && timelineData.Event && isLive" class="mt-4 p-2 bg-slate-800 rounded-lg">
         <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Linha do Tempo (Ao Vivo)</h4>
         
+        <!-- Pênaltis (Ao Vivo) -->
+        <div v-if="penaltyShootout" class="mb-3 pt-2 border-t border-white/5">
+          <div class="text-center text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            Pênaltis
+          </div>
+          <div class="flex items-center justify-between px-1">
+            <div class="flex flex-wrap justify-end gap-0.5 w-[40%]">
+              <component :is="hit ? PhCheckCircle : PhXCircle" 
+                         v-for="(hit, idx) in penaltyShootout.home" :key="'h'+idx"
+                         :class="hit ? 'text-copa-green' : 'text-red-500'" 
+                         weight="fill" 
+                         :size="14" />
+            </div>
+            <div class="font-bold text-xs text-white w-[20%] text-center whitespace-nowrap">
+               {{ penaltyShootout.home.filter(Boolean).length }} - {{ penaltyShootout.away.filter(Boolean).length }}
+            </div>
+            <div class="flex flex-wrap justify-start gap-0.5 w-[40%]">
+              <component :is="hit ? PhCheckCircle : PhXCircle" 
+                         v-for="(hit, idx) in penaltyShootout.away" :key="'a'+idx"
+                         :class="hit ? 'text-copa-green' : 'text-red-500'" 
+                         weight="fill" 
+                         :size="14" />
+            </div>
+          </div>
+        </div>
+
         <MatchPitch :active-event="activeEvent" class="mb-3" />
 
         <ul class="flex flex-col gap-1 max-h-40 overflow-y-auto pr-1">
@@ -337,7 +363,7 @@ import { useRouter } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
-import { PhLockSimple, PhLightning } from '@phosphor-icons/vue'
+import { PhLockSimple, PhLightning, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 import MatchPitch from '@/components/MatchPitch.vue'
 import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
 
@@ -396,6 +422,66 @@ const isLive = computed(() => {
 })
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
+
+const penaltyShootout = computed(() => {
+  if (!timelineData.value?.Event) return null;
+  
+  const allEvents = timelineData.value.Event;
+  const penalties = allEvents.filter(e => 
+    e.Period === 11 && 
+    (e.TypeLocalized?.[0]?.Description === 'Gol de pênalti' || e.TypeLocalized?.[0]?.Description === 'Pênalti perdido')
+  );
+  
+  if (penalties.length === 0) return null;
+
+  let homeTeamId = null;
+  let awayTeamId = null;
+  const uniqueTeams = [...new Set(allEvents.map(e => e.IdTeam).filter(Boolean))];
+
+  for (let i = 1; i < allEvents.length; i++) {
+    const prev = allEvents[i - 1];
+    const curr = allEvents[i];
+    if (curr.HomePenaltyGoals > prev.HomePenaltyGoals) {
+      homeTeamId = curr.IdTeam;
+    } else if (curr.AwayPenaltyGoals > prev.AwayPenaltyGoals) {
+      awayTeamId = curr.IdTeam;
+    }
+  }
+  
+  if (homeTeamId && !awayTeamId) awayTeamId = uniqueTeams.find(id => id !== homeTeamId);
+  if (awayTeamId && !homeTeamId) homeTeamId = uniqueTeams.find(id => id !== awayTeamId);
+  if (!homeTeamId && uniqueTeams.length >= 2) {
+      homeTeamId = uniqueTeams[0];
+      awayTeamId = uniqueTeams[1];
+  }
+
+  const homePenalties = [];
+  const awayPenalties = [];
+
+  penalties.forEach(p => {
+    const isGoal = p.TypeLocalized?.[0]?.Description === 'Gol de pênalti';
+    let shooterTeamId = null;
+
+    if (isGoal) {
+      shooterTeamId = p.IdTeam;
+    } else {
+      const desc = p.EventDescription?.[0]?.Description?.toLowerCase() || '';
+      if (p.Type === 60 || desc.includes('defende')) {
+         shooterTeamId = p.IdTeam === homeTeamId ? awayTeamId : homeTeamId;
+      } else {
+         shooterTeamId = p.IdTeam;
+      }
+    }
+
+    if (shooterTeamId === homeTeamId) {
+      homePenalties.push(isGoal);
+    } else {
+      awayPenalties.push(isGoal);
+    }
+  });
+
+  return { home: homePenalties, away: awayPenalties };
+});
 
 const currentMinute = computed(() => {
   if (events.value.length === 0) return ''
@@ -514,7 +600,7 @@ async function pollTimeline() {
 watch(isLive, (newVal) => {
   if (newVal && !pollInterval) {
     pollTimeline()
-    pollInterval = setInterval(pollTimeline, 60000)
+    pollInterval = setInterval(pollTimeline, 30000)
   } else if (!newVal && pollInterval) {
     clearInterval(pollInterval)
     pollInterval = null

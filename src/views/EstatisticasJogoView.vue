@@ -54,6 +54,32 @@
         <div class="text-center text-xs text-slate-500 mt-2">
           {{ formattedDate }} • {{ jogo.estadio }}
         </div>
+
+        <!-- Pênaltis -->
+        <div v-if="penaltyShootout" class="mt-4 pt-4 border-t border-white/10">
+          <div class="text-center text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+            Pênaltis
+          </div>
+          <div class="flex items-center justify-between px-2 sm:px-4">
+            <div class="flex flex-wrap justify-end gap-1 w-[40%]">
+              <component :is="hit ? PhCheckCircle : PhXCircle" 
+                         v-for="(hit, idx) in penaltyShootout.home" :key="'h'+idx"
+                         :class="hit ? 'text-copa-green' : 'text-red-500'" 
+                         weight="fill" 
+                         :size="20" />
+            </div>
+            <div class="font-bold text-lg text-white w-[20%] text-center whitespace-nowrap">
+               {{ penaltyShootout.home.filter(Boolean).length }} - {{ penaltyShootout.away.filter(Boolean).length }}
+            </div>
+            <div class="flex flex-wrap justify-start gap-1 w-[40%]">
+              <component :is="hit ? PhCheckCircle : PhXCircle" 
+                         v-for="(hit, idx) in penaltyShootout.away" :key="'a'+idx"
+                         :class="hit ? 'text-copa-green' : 'text-red-500'" 
+                         weight="fill" 
+                         :size="20" />
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Team Stats -->
@@ -116,6 +142,7 @@ import { getFlagUrl } from '@/utils/flags'
 import MatchPitch from '@/components/MatchPitch.vue'
 import MatchTeamStats from '@/components/MatchTeamStats.vue'
 import MatchPowerRankings from '@/components/MatchPowerRankings.vue'
+import { PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
 const route = useRoute()
 const { jogosData, fetchResultados, resultados, fetchResultadoTimeline, fetchAdvancedStats } = useJogos()
@@ -131,6 +158,66 @@ const advancedStats = ref(null)
 const activeEvent = ref(null)
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
+
+const penaltyShootout = computed(() => {
+  if (!timelineData.value?.Event) return null;
+  
+  const allEvents = timelineData.value.Event;
+  const penalties = allEvents.filter(e => 
+    e.Period === 11 && 
+    (e.TypeLocalized?.[0]?.Description === 'Gol de pênalti' || e.TypeLocalized?.[0]?.Description === 'Pênalti perdido')
+  );
+  
+  if (penalties.length === 0) return null;
+
+  let homeTeamId = null;
+  let awayTeamId = null;
+  const uniqueTeams = [...new Set(allEvents.map(e => e.IdTeam).filter(Boolean))];
+
+  for (let i = 1; i < allEvents.length; i++) {
+    const prev = allEvents[i - 1];
+    const curr = allEvents[i];
+    if (curr.HomePenaltyGoals > prev.HomePenaltyGoals) {
+      homeTeamId = curr.IdTeam;
+    } else if (curr.AwayPenaltyGoals > prev.AwayPenaltyGoals) {
+      awayTeamId = curr.IdTeam;
+    }
+  }
+  
+  if (homeTeamId && !awayTeamId) awayTeamId = uniqueTeams.find(id => id !== homeTeamId);
+  if (awayTeamId && !homeTeamId) homeTeamId = uniqueTeams.find(id => id !== awayTeamId);
+  if (!homeTeamId && uniqueTeams.length >= 2) {
+      homeTeamId = uniqueTeams[0];
+      awayTeamId = uniqueTeams[1];
+  }
+
+  const homePenalties = [];
+  const awayPenalties = [];
+
+  penalties.forEach(p => {
+    const isGoal = p.TypeLocalized?.[0]?.Description === 'Gol de pênalti';
+    let shooterTeamId = null;
+
+    if (isGoal) {
+      shooterTeamId = p.IdTeam;
+    } else {
+      const desc = p.EventDescription?.[0]?.Description?.toLowerCase() || '';
+      if (p.Type === 60 || desc.includes('defende')) {
+         shooterTeamId = p.IdTeam === homeTeamId ? awayTeamId : homeTeamId;
+      } else {
+         shooterTeamId = p.IdTeam;
+      }
+    }
+
+    if (shooterTeamId === homeTeamId) {
+      homePenalties.push(isGoal);
+    } else {
+      awayPenalties.push(isGoal);
+    }
+  });
+
+  return { home: homePenalties, away: awayPenalties };
+});
 
 let eventLoopInterval = null;
 let currentIndex = 0;
