@@ -65,13 +65,18 @@
               </span>
             </div>
 
-            <!-- Name + label -->
+            <!-- Name + label + MVP -->
             <div class="flex-1 min-w-0">
               <div class="font-bold text-sm truncate" :class="getPalpiteState(palpite).nameClass">
                 {{ palpite.nome }}
               </div>
               <div v-if="getPalpiteState(palpite).label" class="text-[10px] font-semibold mt-0.5" :class="getPalpiteState(palpite).labelClass">
                 {{ getPalpiteState(palpite).label }}
+              </div>
+              <div v-if="palpite.mvp_player_id" class="flex items-center gap-1.5 mt-1.5">
+                <span class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider">MVP</span>
+                <img v-if="palpite.mvp_player_picture" :src="palpite.mvp_player_picture" class="w-4 h-4 rounded-full object-cover bg-slate-800 border border-slate-600 shrink-0" />
+                <span class="text-[10px] text-slate-300 font-medium truncate">{{ palpite.mvp_player_name }}</span>
               </div>
             </div>
 

@@ -70,19 +70,29 @@
                   <span class="text-white text-lg font-bold text-center leading-tight">{{ item.jogo.mandante }}</span>
                 </div>
                 
-                <!-- Placar do Palpite -->
-                <div class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-slate-900/50 shadow-inner">
-                  <span class="text-5xl font-black" :class="{
-                    'text-copa-gold': item.color === 'dourado',
-                    'text-copa-green': item.color === 'verde',
-                    'text-red-400': item.color === 'vermelho'
-                  }">{{ item.palpite?.gols_mandante ?? '-' }}</span>
-                  <span class="text-slate-500 text-2xl font-black">×</span>
-                  <span class="text-5xl font-black" :class="{
-                    'text-copa-gold': item.color === 'dourado',
-                    'text-copa-green': item.color === 'verde',
-                    'text-red-400': item.color === 'vermelho'
-                  }">{{ item.palpite?.gols_visitante ?? '-' }}</span>
+                <!-- Center: Placar + MVP -->
+                <div class="flex flex-col items-center gap-3">
+                  <!-- Placar do Palpite -->
+                  <div class="flex items-center gap-4 px-6 py-4 rounded-2xl bg-slate-900/50 shadow-inner">
+                    <span class="text-5xl font-black" :class="{
+                      'text-copa-gold': item.color === 'dourado',
+                      'text-copa-green': item.color === 'verde',
+                      'text-red-400': item.color === 'vermelho'
+                    }">{{ item.palpite?.gols_mandante ?? '-' }}</span>
+                    <span class="text-slate-500 text-2xl font-black">×</span>
+                    <span class="text-5xl font-black" :class="{
+                      'text-copa-gold': item.color === 'dourado',
+                      'text-copa-green': item.color === 'verde',
+                      'text-red-400': item.color === 'vermelho'
+                    }">{{ item.palpite?.gols_visitante ?? '-' }}</span>
+                  </div>
+                  
+                  <!-- MVP do Palpite -->
+                  <div v-if="item.palpite?.mvp_player_id" class="flex items-center gap-2 bg-slate-900/50 px-4 py-2 rounded-full shadow-inner">
+                    <span class="text-xs text-slate-500 font-bold uppercase tracking-wider">MVP</span>
+                    <img v-if="item.palpite.mvp_player_picture" :src="item.palpite.mvp_player_picture" class="w-6 h-6 rounded-full object-cover bg-slate-800" crossorigin="anonymous" />
+                    <span class="text-sm text-slate-300 font-medium">{{ item.palpite.mvp_player_name }}</span>
+                  </div>
                 </div>
 
                 <!-- Visitante -->

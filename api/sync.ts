@@ -90,6 +90,7 @@ export default async function handler(req: Request) {
         // Determinar se o jogo está rolando (Ao Vivo) - Status 3
         const isLive = statusFifa === 3;
         let timelineData = null;
+        let mvpPlayerId = null;
 
         if ((isLive || isFinished) && matchFifa.IdMatch) {
           timelineData = await fetchFifaMatchTimeline(matchFifa.IdMatch);
@@ -98,8 +99,19 @@ export default async function handler(req: Request) {
         const homePenalty = matchFifa.HomeTeamPenaltyScore ?? null;
         const awayPenalty = matchFifa.AwayTeamPenaltyScore ?? null;
 
+        if (isFinished && matchFifa.Properties?.IdIFES) {
+          const { fetchFifaPowerRanking } = await import('./_lib/fifaApi');
+          const powerRanking = await fetchFifaPowerRanking(matchFifa.Properties.IdIFES);
+          if (powerRanking && Array.isArray(powerRanking.PlayerRankings) && powerRanking.PlayerRankings.length > 0) {
+            // Assume the top ranked player is the MVP
+            mvpPlayerId = powerRanking.PlayerRankings[0].IdPlayer;
+          } else if (powerRanking && Array.isArray(powerRanking) && powerRanking.length > 0) {
+            mvpPlayerId = powerRanking[0].IdPlayer;
+          }
+        }
+
         // Atualiza ou insere o placar atual na base
-        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch, homePenalty, awayPenalty);
+        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch, homePenalty, awayPenalty, mvpPlayerId);
 
         if (!upsertError) {
           atualizados++;

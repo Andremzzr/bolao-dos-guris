@@ -217,6 +217,77 @@
         </div>
       </div>
 
+      <!-- MVP Prediction Area -->
+      <div v-if="!resultado?.finalizado && !locked && !futureLocked && !viewOnly" class="mt-3 relative z-10 border-t border-white/5 pt-3">
+        <div class="flex flex-col items-center relative">
+          <label class="text-[10px] text-slate-400 font-semibold mb-1">MVP da Partida</label>
+          <div class="relative w-full max-w-[200px]">
+            <input 
+              v-model="mvpSearchQuery"
+              @focus="fetchPlayers(); isMvpDropdownOpen = true"
+              @input="isMvpDropdownOpen = true; if (!mvpSearchQuery) clearMvp()"
+              @blur="setTimeout(() => isMvpDropdownOpen = false, 200)"
+              type="text"
+              placeholder="Digite o nome do jogador..."
+              class="w-full h-8 px-3 rounded bg-slate-800 text-white text-xs border border-slate-700 focus:border-copa-green focus:outline-none transition-colors placeholder:text-slate-500 text-center"
+            />
+            <button 
+              v-if="localMvpId"
+              @click.prevent="clearMvp"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 z-10"
+            >
+              ✕
+            </button>
+            
+            <!-- Dropdown -->
+            <div 
+              v-if="isMvpDropdownOpen && (fetchingPlayers || filteredPlayers.length > 0 || (mvpSearchQuery && filteredPlayers.length === 0))"
+              class="absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-700 rounded shadow-xl overflow-hidden z-20"
+            >
+              <div v-if="fetchingPlayers" class="px-3 py-2 text-xs text-slate-400 text-center">
+                Carregando...
+              </div>
+              <div v-else-if="filteredPlayers.length === 0 && mvpSearchQuery" class="px-3 py-2 text-xs text-slate-400 text-center">
+                Nenhum jogador encontrado
+              </div>
+              <ul v-else class="max-h-48 overflow-y-auto">
+                <li 
+                  v-for="p in filteredPlayers" 
+                  :key="p.IdPlayer"
+                  @click="selectMvp(p)"
+                  class="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-700 cursor-pointer transition-colors"
+                >
+                  <img 
+                    v-if="p.PlayerPicture?.PictureUrl" 
+                    :src="p.PlayerPicture.PictureUrl" 
+                    class="w-6 h-6 rounded-full object-cover bg-slate-900 border border-slate-600 shrink-0"
+                  />
+                  <div v-else class="w-6 h-6 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
+                    ?
+                  </div>
+                  <span class="text-xs text-slate-200 truncate">{{ p.PlayerName?.[0]?.Description || p.ShortName?.[0]?.Description }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Display MVP for Locked/Finished Games -->
+      <div v-else-if="palpite?.mvp_player_id" class="mt-3 border-t border-white/5 pt-3 flex flex-col items-center">
+        <span class="text-[10px] text-slate-400 font-semibold mb-1">MVP Escolhido</span>
+        <div class="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
+          <img 
+            v-if="palpite.mvp_player_picture" 
+            :src="palpite.mvp_player_picture" 
+            class="w-5 h-5 rounded-full object-cover bg-slate-900 border border-slate-600 shrink-0"
+          />
+          <div v-else class="w-5 h-5 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[8px] text-slate-400 shrink-0">
+            ?
+          </div>
+          <span class="text-xs text-slate-300 font-medium">{{ palpite.mvp_player_name }}</span>
+        </div>
+      </div>
+
       <!-- Goal Scorers Area -->
       <div v-if="golsMandanteList.length || golsVisitanteList.length" class="flex justify-between px-2 mt-2 text-[10px] text-slate-400">
         <!-- Gols Mandante -->
@@ -371,6 +442,7 @@ import { getFlagColor } from '@/utils/colors'
 import { PhLockSimple, PhLightning, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 import MatchPitch from '@/components/MatchPitch.vue'
 import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
+import { getTeamId } from '@/data/teamIds'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
@@ -406,6 +478,67 @@ function handleCardClick() {
 const localHome = ref(props.palpite ? props.palpite.gols_mandante : '')
 const localAway = ref(props.palpite ? props.palpite.gols_visitante : '')
 const localVencedorPenaltis = ref(props.palpite ? props.palpite.vencedor_penaltis : null)
+
+// MVP Logic
+const localMvpId = ref(props.palpite?.mvp_player_id || null)
+const localMvpName = ref(props.palpite?.mvp_player_name || '')
+const localMvpPicture = ref(props.palpite?.mvp_player_picture || null)
+const mvpSearchQuery = ref(props.palpite?.mvp_player_name || '')
+const isMvpDropdownOpen = ref(false)
+const playersList = ref([])
+const fetchingPlayers = ref(false)
+
+async function fetchPlayers() {
+  if (playersList.value.length > 0) return;
+  fetchingPlayers.value = true;
+  try {
+    const homeId = getTeamId(props.jogo.mandante);
+    const awayId = getTeamId(props.jogo.visitante);
+    
+    const [homeRes, awayRes] = await Promise.all([
+      homeId ? fetch(`https://api.fifa.com/api/v3/teams/${homeId}/squad?idCompetition=17&idSeason=285023&language=pt`).then(r => r.json()) : Promise.resolve({ Players: [] }),
+      awayId ? fetch(`https://api.fifa.com/api/v3/teams/${awayId}/squad?idCompetition=17&idSeason=285023&language=pt`).then(r => r.json()) : Promise.resolve({ Players: [] })
+    ]);
+    
+    const combined = [];
+    if (homeRes.Players) combined.push(...homeRes.Players);
+    if (awayRes.Players) combined.push(...awayRes.Players);
+    
+    playersList.value = combined;
+  } catch (err) {
+    console.error("Failed to fetch players", err);
+  } finally {
+    fetchingPlayers.value = false;
+  }
+}
+
+const filteredPlayers = computed(() => {
+  if (!mvpSearchQuery.value) return [];
+  const query = mvpSearchQuery.value.toLowerCase();
+  return playersList.value.filter(p => {
+    const name = p.PlayerName?.[0]?.Description || p.ShortName?.[0]?.Description || '';
+    return name.toLowerCase().includes(query);
+  }).slice(0, 5);
+});
+
+function selectMvp(player) {
+  const name = player.PlayerName?.[0]?.Description || player.ShortName?.[0]?.Description || '';
+  localMvpId.value = player.IdPlayer;
+  localMvpName.value = name;
+  localMvpPicture.value = player.PlayerPicture?.PictureUrl || null;
+  mvpSearchQuery.value = name;
+  isMvpDropdownOpen.value = false;
+  autoSave();
+}
+
+function clearMvp() {
+  localMvpId.value = null;
+  localMvpName.value = '';
+  localMvpPicture.value = null;
+  mvpSearchQuery.value = '';
+  autoSave();
+}
+
 const justSaved = ref(false)
 const showPalpitesModal = ref(false)
 
@@ -635,10 +768,20 @@ watch(() => props.palpite, (newVal) => {
     localHome.value = newVal.gols_mandante
     localAway.value = newVal.gols_visitante
     localVencedorPenaltis.value = newVal.vencedor_penaltis
+    localMvpId.value = newVal.mvp_player_id
+    localMvpName.value = newVal.mvp_player_name
+    localMvpPicture.value = newVal.mvp_player_picture
+    if (newVal.mvp_player_name) {
+      mvpSearchQuery.value = newVal.mvp_player_name
+    }
   } else {
     localHome.value = ''
     localAway.value = ''
     localVencedorPenaltis.value = null
+    localMvpId.value = null
+    localMvpName.value = ''
+    localMvpPicture.value = null
+    mvpSearchQuery.value = ''
   }
 }, { deep: true })
 
@@ -667,14 +810,17 @@ const hasChanged = computed(() => {
   if (!props.palpite) {
     if (localHome.value === '' || localAway.value === '') return false
     if (isMataMata.value && localHome.value === localAway.value && !localVencedorPenaltis.value) return false
+    if (mvpSearchQuery.value && !localMvpId.value) return true // typing but not selected MVP might be an edge case, but we consider changed if they selected one
+    if (localMvpId.value) return true
     return true
   }
   const golsChanged = localHome.value !== props.palpite.gols_mandante || localAway.value !== props.palpite.gols_visitante;
   const penaltyChanged = isMataMata.value && localHome.value === localAway.value && localVencedorPenaltis.value !== props.palpite.vencedor_penaltis;
+  const mvpChanged = localMvpId.value !== props.palpite.mvp_player_id;
   
   if (isMataMata.value && localHome.value === localAway.value && !localVencedorPenaltis.value) return false;
 
-  return golsChanged || penaltyChanged
+  return golsChanged || penaltyChanged || mvpChanged
 })
 
 const pontosInfo = computed(() => {
@@ -731,7 +877,10 @@ async function save() {
     jogoId: props.jogo.id,
     golsMandante: localHome.value,
     golsVisitante: localAway.value,
-    vencedorPenaltis: isMataMata.value && localHome.value === localAway.value ? localVencedorPenaltis.value : null
+    vencedorPenaltis: isMataMata.value && localHome.value === localAway.value ? localVencedorPenaltis.value : null,
+    mvpPlayerId: localMvpId.value,
+    mvpPlayerName: localMvpName.value,
+    mvpPlayerPicture: localMvpPicture.value
   })
   justSaved.value = true
   setTimeout(() => { justSaved.value = false }, 2000)

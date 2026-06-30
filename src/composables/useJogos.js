@@ -336,6 +336,11 @@ export function useJogos() {
       pontos = isCoringa ? -3 : 0
     }
 
+    // MVP extra points
+    if (palpite.mvp_player_id && resultado.mvp_player_id && palpite.mvp_player_id === resultado.mvp_player_id) {
+      pontos += isCoringa ? 4 : 2;
+    }
+
     return { pontos, tipo }
   }
 
