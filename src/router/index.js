@@ -31,9 +31,9 @@ const routes = [
     component: () => import('@/views/LoginView.vue'),
   },
   {
-    path: '/estatisticas-equipes',
-    name: 'estatisticas-equipes',
-    component: () => import('@/views/EstatisticasEquipesView.vue'),
+    path: '/estatisticas',
+    name: 'estatisticas',
+    component: () => import('@/views/EstatisticasSelecaoView.vue'),
     meta: { requiresAuth: true },
   },
   {
@@ -42,12 +42,7 @@ const routes = [
     component: () => import('@/views/GruposView.vue'),
     meta: { requiresAuth: true },
   },
-  {
-    path: '/estatisticas-selecao',
-    name: 'estatisticas-selecao',
-    component: () => import('@/views/EstatisticasSelecaoView.vue'),
-    meta: { requiresAuth: true },
-  },
+
   {
     path: '/admin',
     name: 'admin',

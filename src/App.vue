@@ -70,7 +70,7 @@ const tabs = [
   { icon: PhSoccerBall, label: 'Jogos', to: '/', name: 'jogos' },
   { icon: PhTrophy, label: 'Ranking', to: '/ranking', name: 'ranking' },
   { icon: PhGridFour, label: 'Torneio', to: '/torneio', name: 'torneio' },
-  { icon: PhChartBar, label: 'Stats', to: '/estatisticas-equipes', name: 'estatisticas-equipes' },
+  { icon: PhChartBar, label: 'Stats', to: '/estatisticas', name: 'estatisticas' },
   { icon: PhUser, label: 'Perfil', to: '/perfil', name: 'perfil' },
 ]
 </script>

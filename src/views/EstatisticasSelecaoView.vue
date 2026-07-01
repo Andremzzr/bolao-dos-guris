@@ -1,14 +1,10 @@
 <template>
   <div class="pb-20 min-h-screen">
     <!-- Header -->
-    <header class="sticky top-0 z-30 glass border-b border-copa-border">
-      <div class="relative px-4 py-3 flex items-center">
-        <button @click="$router.back()" class="p-2 rounded-lg text-white tap-scale relative z-10">
-          &larr;
-        </button>
-        <h1 class="absolute inset-0 flex items-center justify-center font-bold text-white text-lg pointer-events-none">
-          Estatísticas da Seleção
-        </h1>
+    <header class="shrink-0 z-30 glass border-b border-copa-border">
+      <div class="px-4 py-3 flex gap-2 items-center">
+        <PhChartBar :size="28" class="text-copa-gold" />
+        <h1 class="text-lg font-bold text-white">Estatísticas</h1>
       </div>
     </header>
 
@@ -230,6 +226,7 @@ import { useJogos } from '@/composables/useJogos'
 import { getTeamId } from '@/data/teamIds'
 import { getFlagUrl } from '@/utils/flags'
 import TeamShotsHeatmap from '@/components/TeamShotsHeatmap.vue'
+import { PhChartBar } from '@phosphor-icons/vue'
 
 const { jogosData } = useJogos()
 

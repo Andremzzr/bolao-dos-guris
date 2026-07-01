@@ -66,8 +66,8 @@ const props = defineProps({
 const normalizedShots = computed(() => {
   return props.events
     .filter(e => {
-      const desc = (e.TypeLocalized?.[0]?.Description || e.EventDescription?.[0]?.Description || '').toLowerCase()
-      const isShotOrGoal = desc.includes('chute') || desc.includes('gol') || e.Type === 16 || (e.Type >= 12 && e.Type <= 15)
+      // Types: 0 = Gol, 12 = Chute a gol, 13 = Chute para fora, 14 = Chute bloqueado, 34 = Gol contra, 41 = Gol de pênalti, 60 = Pênalti perdido
+      const isShotOrGoal = [0, 12, 13, 14, 34, 41, 60].includes(e.Type)
       return isShotOrGoal && typeof e.PositionX === 'number' && typeof e.PositionY === 'number'
     })
     .map(e => {
@@ -92,7 +92,7 @@ const normalizedShots = computed(() => {
 })
 
 function getMarkerClass(type) {
-  if (type === 16) return 'bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.9)] z-20' // Goal, bring to front
+  if ([0, 34, 41].includes(type)) return 'bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.9)] z-20' // Goal, bring to front
   return 'bg-blue-400 shadow-[0_0_5px_rgba(96,165,250,0.6)] opacity-80' // Shot
 }
 </script>

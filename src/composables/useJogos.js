@@ -189,6 +189,9 @@ export function useJogos() {
         gols_visitante,
         vencedor_penaltis,
         pontuacao,
+        mvp_player_id,
+        mvp_player_name,
+        mvp_player_picture,
         usuarios ( nome )
       `)
       .eq('jogo_id', jogoId)
