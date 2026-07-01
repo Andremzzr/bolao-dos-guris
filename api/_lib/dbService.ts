@@ -77,7 +77,20 @@ export async function getPendingMatches(fromDate: string, toDate: string): Promi
 /**
  * Atualiza (upsert) o resultado de um jogo na base
  */
-export async function updateMatchResult(jogoId: number, homeScore: number, awayScore: number, isFinished: boolean, timeline: any = null, fifaMatchId: string | null = null, homePenaltyScore: number | null = null, awayPenaltyScore: number | null = null, mvpPlayerId: string | null = null) {
+export async function updateMatchResult(
+  jogoId: number, 
+  homeScore: number, 
+  awayScore: number, 
+  isFinished: boolean, 
+  timeline: any = null, 
+  fifaMatchId: string | null = null, 
+  homePenaltyScore: number | null = null, 
+  awayPenaltyScore: number | null = null, 
+  mvpPlayerId: string | null = null,
+  teamStats: any = null,
+  playerStats: any = null,
+  powerRankings: any = null
+) {
   const supabase = getSupabase();
   const payload: any = {
       jogo_id: jogoId,
@@ -94,6 +107,15 @@ export async function updateMatchResult(jogoId: number, homeScore: number, awayS
   }
   if (mvpPlayerId !== null) {
       payload.mvp_player_id = mvpPlayerId;
+  }
+  if (teamStats !== null) {
+      payload.team_stats = teamStats;
+  }
+  if (playerStats !== null) {
+      payload.player_stats = playerStats;
+  }
+  if (powerRankings !== null) {
+      payload.power_rankings = powerRankings;
   }
 
   return await supabase

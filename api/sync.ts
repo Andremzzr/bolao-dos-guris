@@ -91,6 +91,9 @@ export default async function handler(req: Request) {
         const isLive = statusFifa === 3;
         let timelineData = null;
         let mvpPlayerId = null;
+        let teamStats = null;
+        let playerStats = null;
+        let powerRanking = null;
 
         if ((isLive || isFinished) && matchFifa.IdMatch) {
           timelineData = await fetchFifaMatchTimeline(matchFifa.IdMatch);
@@ -100,18 +103,45 @@ export default async function handler(req: Request) {
         const awayPenalty = matchFifa.AwayTeamPenaltyScore ?? null;
 
         if (isFinished && matchFifa.Properties?.IdIFES) {
-          const { fetchFifaPowerRanking } = await import('./_lib/fifaApi');
-          const powerRanking = await fetchFifaPowerRanking(matchFifa.Properties.IdIFES);
-          if (powerRanking && Array.isArray(powerRanking.PlayerRankings) && powerRanking.PlayerRankings.length > 0) {
-            // Assume the top ranked player is the MVP
-            mvpPlayerId = powerRanking.PlayerRankings[0].IdPlayer;
-          } else if (powerRanking && Array.isArray(powerRanking) && powerRanking.length > 0) {
-            mvpPlayerId = powerRanking[0].IdPlayer;
+          const { fetchFifaPowerRanking, fetchFifaTeamStats, fetchFifaPlayerStats } = await import('./_lib/fifaApi');
+          
+          powerRanking = await fetchFifaPowerRanking(matchFifa.Properties.IdIFES);
+          teamStats = await fetchFifaTeamStats(matchFifa.Properties.IdIFES);
+          playerStats = await fetchFifaPlayerStats(matchFifa.Properties.IdIFES);
+          
+          if (powerRanking) {
+            if (Array.isArray(powerRanking.PlayerRankings) && powerRanking.PlayerRankings.length > 0) {
+              // Estrutura antiga
+              mvpPlayerId = String(powerRanking.PlayerRankings[0].IdPlayer);
+            } else if (Array.isArray(powerRanking) && powerRanking.length > 0) {
+              // Estrutura antiga (array direto)
+              mvpPlayerId = String(powerRanking[0].IdPlayer);
+            } else if (powerRanking.outfieldPlayers || powerRanking.goalkeepers) {
+              // Nova estrutura: agrupa todos os jogadores e calcula o que possui o melhor score
+              const allPlayers = [...(powerRanking.outfieldPlayers || []), ...(powerRanking.goalkeepers || [])];
+              if (allPlayers.length > 0) {
+                const getScore = (p: any) => {
+                  if (p.attackingScore !== undefined) {
+                    return (p.attackingScore || 0) + (p.defensiveScore || 0) + (p.creativityScore || 0);
+                  }
+                  if (p.inPossessionScore !== undefined) {
+                    return (p.inPossessionScore || 0) + (p.defendingTheGoalScore || 0);
+                  }
+                  return 0;
+                };
+                
+                const topPlayer = allPlayers.reduce((best: any, current: any) => {
+                  return getScore(current) > getScore(best) ? current : best;
+                }, allPlayers[0]);
+                
+                mvpPlayerId = String(topPlayer.playerId);
+              }
+            }
           }
         }
 
         // Atualiza ou insere o placar atual na base
-        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch, homePenalty, awayPenalty, mvpPlayerId);
+        const { error: upsertError } = await updateMatchResult(jogoLocal.id, homeScore, awayScore, isFinished, timelineData, matchFifa.IdMatch, homePenalty, awayPenalty, mvpPlayerId, teamStats, playerStats, powerRanking);
 
         if (!upsertError) {
           atualizados++;

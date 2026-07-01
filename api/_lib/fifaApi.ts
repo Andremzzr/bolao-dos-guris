@@ -15,7 +15,7 @@ export interface FifaMatch {
  * Busca a lista de partidas na API da FIFA para uma determinada janela de tempo
  */
 export async function fetchFifaMatches(fromDate: string, toDate: string): Promise<FifaMatch[]> {
-  const fifaCalendarUrl = `https://api.fifa.com/api/v3/calendar/matches?from=${fromDate}&to=${toDate}&language=pt&IdCompetition=17`;
+  const fifaCalendarUrl = `https://api.fifa.com/api/v3/calendar/matches?from=${fromDate}&to=${toDate}&language=pt&IdCompetition=17&count=500`;
   const responseFifa = await fetch(fifaCalendarUrl, {
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',

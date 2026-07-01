@@ -226,7 +226,7 @@ const selecoes = computed(() => {
     teams.add(j.mandante)
     teams.add(j.visitante)
   })
-  return Array.from(teams).sort()
+  return Array.from(teams).filter(s => !s.includes("Jogo") ).sort()
 })
 
 const selectedTeam = ref('')
