@@ -89,7 +89,7 @@ export function useJogos() {
   async function fetchResultados() {
     const { data, error } = await supabase
       .from('resultados')
-      .select('jogo_id, gols_mandante, gols_visitante, fifa_match_id, finalizado, penaltis_mandante, penaltis_visitante')
+      .select('jogo_id, gols_mandante, gols_visitante, fifa_match_id, finalizado, penaltis_mandante, penaltis_visitante, mvp_player_id')
 
     if (error) {
       console.error("fetchResultados error:", error)

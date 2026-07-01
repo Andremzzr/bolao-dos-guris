@@ -274,14 +274,39 @@
         </div>
       </div>
       <!-- Display MVP for Locked/Finished Games -->
-      <div v-else-if="palpite?.mvp_player_id" class="mt-3 border-t border-white/5 pt-3 flex flex-col items-center">
-        <span class="text-[10px] text-slate-400 font-semibold mb-1">MVP Escolhido</span>
+      <div v-else-if="resultado?.finalizado && resultado?.mvp_player_id" class="mt-3 border-t border-white/5 pt-3 flex flex-col items-center">
+        <span class="text-[10px] text-slate-400 font-semibold mb-1">MVP da Partida</span>
         <div class="flex items-center gap-2.5 px-4 py-2 rounded-full border"
              :class="{
-               'border-copa-green/50 bg-copa-green/10': resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id === palpite.mvp_player_id,
-               'border-red-500/50 bg-red-500/10': resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id !== palpite.mvp_player_id,
-               'border-slate-700/50 bg-slate-800/50': !resultado?.finalizado || !resultado?.mvp_player_id
+               'border-copa-green/50 bg-copa-green/10': palpite?.mvp_player_id && resultado.mvp_player_id === palpite.mvp_player_id,
+               'border-red-500/50 bg-red-500/10': palpite?.mvp_player_id && resultado.mvp_player_id !== palpite.mvp_player_id,
+               'border-slate-700/50 bg-slate-800/50': !palpite?.mvp_player_id
              }">
+          <div v-if="actualMvpPicture" class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-900">
+            <img 
+              :src="actualMvpPicture" 
+              class="w-full h-full object-cover object-top scale-[1.5] origin-top"
+            />
+          </div>
+          <div v-else class="w-8 h-8 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
+            ?
+          </div>
+          <span class="text-sm text-slate-300 font-medium">{{ actualMvpName || 'Carregando...' }}</span>
+          
+          <!-- Se o usuário palpitou o mesmo -->
+          <PhCheckCircle v-if="palpite?.mvp_player_id && resultado.mvp_player_id === palpite.mvp_player_id" :size="16" weight="fill" class="text-copa-green" />
+          
+          <!-- Se o usuário palpitou errado -->
+          <div v-else-if="palpite?.mvp_player_id && resultado.mvp_player_id !== palpite.mvp_player_id" class="flex flex-col ml-2 pl-2 border-l border-white/10">
+            <span class="text-[9px] text-slate-400 leading-tight">Seu palpite:</span>
+            <span class="text-[10px] text-red-400 font-semibold leading-tight line-through">{{ palpite.mvp_player_name }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- Display User's MVP Prediction before game finishes but is locked -->
+      <div v-else-if="palpite?.mvp_player_id && (locked || futureLocked || viewOnly)" class="mt-3 border-t border-white/5 pt-3 flex flex-col items-center">
+        <span class="text-[10px] text-slate-400 font-semibold mb-1">Seu Palpite de MVP</span>
+        <div class="flex items-center gap-2.5 px-4 py-2 rounded-full border border-slate-700/50 bg-slate-800/50">
           <div v-if="palpite.mvp_player_picture" class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-900">
             <img 
               :src="palpite.mvp_player_picture" 
@@ -292,8 +317,6 @@
             ?
           </div>
           <span class="text-sm text-slate-300 font-medium">{{ palpite.mvp_player_name }}</span>
-          <span v-if="resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id === palpite.mvp_player_id" class="text-xs">✅</span>
-          <span v-else-if="resultado?.finalizado && resultado?.mvp_player_id && resultado?.mvp_player_id !== palpite.mvp_player_id" class="text-xs">❌</span>
         </div>
       </div>
 
@@ -452,6 +475,7 @@ import { PhLockSimple, PhLightning, PhCheckCircle, PhXCircle } from '@phosphor-i
 import MatchPitch from '@/components/MatchPitch.vue'
 import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
 import { getTeamId } from '@/data/teamIds'
+import { getTeamSquad } from '@/utils/squads'
 
 const props = defineProps({
   jogo: { type: Object, required: true },
@@ -497,6 +521,25 @@ const isMvpDropdownOpen = ref(false)
 const playersList = ref([])
 const fetchingPlayers = ref(false)
 
+const actualMvpName = ref('')
+const actualMvpPicture = ref(null)
+
+watch(() => props.resultado?.mvp_player_id, async (newVal) => {
+  if (newVal && props.resultado?.finalizado) {
+    if (props.palpite?.mvp_player_id === newVal && props.palpite?.mvp_player_name) {
+      actualMvpName.value = props.palpite.mvp_player_name
+      actualMvpPicture.value = props.palpite.mvp_player_picture
+    } else {
+      await fetchPlayers()
+      const p = playersList.value.find(x => String(x.IdPlayer) === String(newVal))
+      if (p) {
+        actualMvpName.value = p.PlayerName?.[0]?.Description || p.ShortName?.[0]?.Description || ''
+        actualMvpPicture.value = p.PlayerPicture?.PictureUrl || null
+      }
+    }
+  }
+}, { immediate: true })
+
 async function fetchPlayers() {
   if (playersList.value.length > 0) return;
   fetchingPlayers.value = true;
@@ -504,16 +547,12 @@ async function fetchPlayers() {
     const homeId = getTeamId(props.jogo.mandante);
     const awayId = getTeamId(props.jogo.visitante);
     
-    const [homeRes, awayRes] = await Promise.all([
-      homeId ? fetch(`https://api.fifa.com/api/v3/teams/${homeId}/squad?idCompetition=17&idSeason=285023&language=pt`).then(r => r.json()) : Promise.resolve({ Players: [] }),
-      awayId ? fetch(`https://api.fifa.com/api/v3/teams/${awayId}/squad?idCompetition=17&idSeason=285023&language=pt`).then(r => r.json()) : Promise.resolve({ Players: [] })
+    const [homePlayers, awayPlayers] = await Promise.all([
+      getTeamSquad(homeId),
+      getTeamSquad(awayId)
     ]);
     
-    const combined = [];
-    if (homeRes.Players) combined.push(...homeRes.Players);
-    if (awayRes.Players) combined.push(...awayRes.Players);
-    
-    playersList.value = combined;
+    playersList.value = [...homePlayers, ...awayPlayers];
   } catch (err) {
     console.error("Failed to fetch players", err);
   } finally {

@@ -137,6 +137,18 @@
           </div>
         </div>
 
+        <!-- Heatmap -->
+        <div v-if="selecaoStats.heatmapEvents && selecaoStats.heatmapEvents.length > 0" class="glass p-4 sm:p-6 rounded-2xl shadow-xl space-y-6 relative overflow-hidden mt-6">
+          <div class="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <h4 class="text-sm text-slate-300 font-bold text-center border-b border-white/5 pb-3 relative z-10 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Mapa de Finalizações
+          </h4>
+          
+          <TeamShotsHeatmap :events="selecaoStats.heatmapEvents" class="relative z-10" />
+        </div>
+
         <!-- Highlights per Match -->
         <div class="space-y-4">
           <h3 class="font-bold text-white text-lg pl-2">Destaques por Partida</h3>
@@ -217,6 +229,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { useJogos } from '@/composables/useJogos'
 import { getTeamId } from '@/data/teamIds'
 import { getFlagUrl } from '@/utils/flags'
+import TeamShotsHeatmap from '@/components/TeamShotsHeatmap.vue'
 
 const { jogosData } = useJogos()
 
@@ -253,7 +266,7 @@ watch(selectedTeam, async (newTeam) => {
   
   const { data, error } = await supabase
     .from('resultados')
-    .select('jogo_id, power_rankings, gols_mandante, gols_visitante')
+    .select('jogo_id, power_rankings, gols_mandante, gols_visitante, timeline')
     .in('jogo_id', matchIds)
     .not('power_rankings', 'is', null)
     
@@ -272,6 +285,7 @@ watch(selectedTeam, async (newTeam) => {
   
   const matchesData = []
   const playerStatsMap = {}
+  let allTeamEvents = []
   
   matchIds.forEach(id => {
     const jogo = jogosData.find(j => j.id === id)
@@ -289,6 +303,13 @@ watch(selectedTeam, async (newTeam) => {
     })
     
     if (teamPlayers.length === 0) return;
+
+    if (result.timeline && result.timeline.Event) {
+       const events = result.timeline.Event.filter(e => {
+         return targetTeamId && e.IdTeam && e.IdTeam.toString() === targetTeamId.toString()
+       })
+       allTeamEvents.push(...events)
+    }
 
     const playersWithScore = teamPlayers.map(p => ({
       ...p,
@@ -332,7 +353,8 @@ watch(selectedTeam, async (newTeam) => {
   
   selecaoStats.value = {
     matches: matchesData,
-    averages: averages
+    averages: averages,
+    heatmapEvents: allTeamEvents
   }
   
   loading.value = false
