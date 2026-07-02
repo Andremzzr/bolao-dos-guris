@@ -10,22 +10,54 @@
 
     <div class="p-4 space-y-6 max-w-2xl mx-auto">
       <!-- Select Team -->
-      <div class="glass p-5 rounded-2xl shadow-xl flex flex-col gap-4 relative overflow-hidden">
+      <div class="glass p-5 rounded-2xl shadow-xl flex flex-col gap-4 relative">
         <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
         
         <label class="text-sm font-semibold text-slate-300 relative z-10">Selecione uma Seleção:</label>
+        
         <div class="relative z-10">
-          <select 
-            v-model="selectedTeam" 
-            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-copa-accent appearance-none cursor-pointer"
-          >
-            <option value="" disabled>Escolha...</option>
-            <option v-for="team in selecoes" :key="team" :value="team" class="bg-slate-900">
-              {{ team }}
-            </option>
-          </select>
-          <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+          <!-- Overlay to catch outside clicks -->
+          <div v-if="isDropdownOpen" class="fixed inset-0 z-10" @click="onClickOutside"></div>
+
+          <div class="relative z-20">
+            <input 
+              type="text"
+              v-model="searchQuery"
+              @focus="isDropdownOpen = true"
+              placeholder="Digite para buscar..."
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-copa-accent placeholder-slate-400"
+            />
+            <div class="absolute inset-y-0 right-4 flex items-center">
+              <button 
+                v-if="searchQuery" 
+                @click="clearSearch" 
+                class="text-slate-400 hover:text-white p-1"
+                type="button"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+              <svg v-else class="w-4 h-4 text-slate-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+
+            <!-- Dropdown List -->
+            <ul 
+              v-if="isDropdownOpen"
+              class="absolute left-0 right-0 z-30 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto scrollbar-none"
+            >
+              <li 
+                v-for="team in filteredSelecoes" 
+                :key="team"
+                @click="selectTeam(team)"
+                class="px-4 py-3 cursor-pointer hover:bg-slate-700 flex items-center gap-3 transition-colors text-white border-b border-slate-700/50 last:border-0"
+              >
+                <img v-if="getFlagUrl(team)" :src="getFlagUrl(team)" class="w-8 h-6 object-cover rounded shadow" />
+                <span v-else class="w-8 h-6 flex items-center justify-center text-xs">🏴</span>
+                <span>{{ team }}</span>
+              </li>
+              <li v-if="filteredSelecoes.length === 0" class="px-4 py-3 text-slate-400 text-center text-sm">
+                Nenhuma seleção encontrada.
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -242,6 +274,34 @@ const selecoes = computed(() => {
 const selectedTeam = ref('')
 const selecaoStats = ref(null)
 const loading = ref(false)
+
+const searchQuery = ref('')
+const isDropdownOpen = ref(false)
+
+const filteredSelecoes = computed(() => {
+  const q = searchQuery.value.toLowerCase()
+  if (!q) return selecoes.value
+  return selecoes.value.filter(team => team.toLowerCase().includes(q))
+})
+
+function selectTeam(team) {
+  selectedTeam.value = team
+  searchQuery.value = team
+  isDropdownOpen.value = false
+}
+
+function clearSearch() {
+  selectedTeam.value = ''
+  searchQuery.value = ''
+  isDropdownOpen.value = false
+}
+
+function onClickOutside() {
+  isDropdownOpen.value = false
+  if (searchQuery.value !== selectedTeam.value) {
+    searchQuery.value = selectedTeam.value
+  }
+}
 
 watch(selectedTeam, async (newTeam) => {
   if (!newTeam) {
