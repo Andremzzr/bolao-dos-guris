@@ -527,6 +527,15 @@ async function exportStory() {
     
     const targetEl = cardComponent.value.cardRef || el.querySelector('.w-\\[1080px\\]') || el
     
+    // Warmup render for Safari
+    await toPng(targetEl, {
+      cacheBust: true,
+      skipAutoScale: true,
+      filter: (node) => node.tagName !== 'SCRIPT'
+    }).catch(() => {})
+    
+    await new Promise(resolve => setTimeout(resolve, 300))
+
     // Configurações para o html-to-image ser mais robusto
     const image = await toPng(targetEl, {
       pixelRatio: 2,
@@ -587,6 +596,15 @@ async function exportBoboStory() {
     await new Promise(resolve => setTimeout(resolve, 500))
     
     const targetEl = boboCardComponent.value.cardRef || el.querySelector('.w-\\[1080px\\]') || el
+    
+    // Warmup render for Safari
+    await toPng(targetEl, {
+      cacheBust: true,
+      skipAutoScale: true,
+      filter: (node) => node.tagName !== 'SCRIPT'
+    }).catch(() => {})
+    
+    await new Promise(resolve => setTimeout(resolve, 300))
     
     const image = await toPng(targetEl, {
       pixelRatio: 2,

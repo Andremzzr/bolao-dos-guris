@@ -390,9 +390,23 @@ async function exportCartaImage() {
   
   isExporting.value = true
   try {
+    // Primeira renderização (warm up) para o Safari carregar as fontes e imagens no canvas
+    await toPng(cardContainer.value, {
+      cacheBust: true,
+      skipAutoScale: true,
+      filter: (node) => node.tagName !== 'SCRIPT'
+    }).catch(() => {})
+    
+    // Pequeno delay para garantir
+    await new Promise(resolve => setTimeout(resolve, 300))
+
     const dataUrl = await toPng(cardContainer.value, {
       quality: 1,
       pixelRatio: 2,
+      cacheBust: true,
+      skipAutoScale: true,
+      backgroundColor: '#0f172a',
+      filter: (node) => node.tagName !== 'SCRIPT'
     })
     
     const link = document.createElement('a')

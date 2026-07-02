@@ -18,7 +18,7 @@
         <!-- Image Box -->
         <div class="relative w-full aspect-[4/3] bg-black p-1 border-b-2 border-slate-400 shadow-inner z-10">
           <div class="w-full h-full border border-slate-600 rounded-sm overflow-hidden relative group-hover:brightness-110 transition-all">
-            <img v-if="imageUrl" :src="imageUrl" :alt="title" class="w-full h-full object-cover" />
+            <img v-if="imageUrl" :src="imageUrl" :alt="title" class="w-full h-full object-cover" crossorigin="anonymous" />
             <div v-else class="w-full h-full bg-slate-800 flex items-center justify-center">
               <PhImage :size="32" class="text-slate-500" />
             </div>
