@@ -38,7 +38,7 @@
           <!-- Text background texture hint -->
           <div class="absolute inset-0 opacity-[0.03] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')] pointer-events-none"></div>
           
-          <p class="text-xs leading-relaxed font-serif relative z-10">{{ description }}</p>
+          <p class="text-xs leading-relaxed font-serif relative z-10 whitespace-pre-line">{{ description }}</p>
           
           <div class="absolute bottom-2 right-2 opacity-50 flex items-center gap-1 z-10">
             <span class="text-[8px] font-bold tracking-widest text-slate-600">COPA26</span>

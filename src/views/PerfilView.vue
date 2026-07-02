@@ -154,17 +154,32 @@
         leave-to-class="opacity-0 scale-95"
       >
         <div v-if="selectedCarta" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm" @click="selectedCarta = null">
-          <div class="relative w-full max-w-sm mx-auto" @click.stop>
+          <div class="relative w-full max-w-sm mx-auto flex flex-col gap-4" @click.stop>
             <button @click="selectedCarta = null" class="absolute -top-14 right-0 text-white bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-md transition-colors cursor-pointer">
               <PhX :size="24" />
             </button>
             
-            <CardMagic 
-              :title="selectedCarta.title"
-              :description="selectedCarta.description"
-              :imageUrl="selectedCarta.image_url"
-              class="shadow-2xl shadow-copa-accent/20"
-            />
+            <div ref="cardContainer" class="w-full rounded-2xl overflow-hidden">
+              <CardMagic 
+                :title="selectedCarta.title"
+                :description="selectedCarta.description"
+                :imageUrl="selectedCarta.image_url"
+                class="shadow-2xl shadow-copa-accent/20"
+              />
+            </div>
+
+            <button
+              @click="exportCartaImage"
+              :disabled="isExporting"
+              class="w-full glass rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-white font-semibold text-sm tap-scale hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <PhDownloadSimple v-if="!isExporting" :size="20" />
+              <svg v-else class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              <span>{{ isExporting ? 'Exportando...' : 'Salvar Imagem' }}</span>
+            </button>
           </div>
         </div>
       </Transition>
@@ -179,7 +194,8 @@ import { useRanking } from '@/composables/useRanking'
 import { supabase } from '@/lib/supabaseClient'
 import PontosChart from '@/components/PontosChart.vue'
 import CardMagic from '@/components/CardMagic.vue'
-import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera, PhCards, PhX } from '@phosphor-icons/vue'
+import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera, PhCards, PhX, PhDownloadSimple } from '@phosphor-icons/vue'
+import { toPng } from 'html-to-image'
 
 const { user, logout, updateAvatar } = useAuth()
 const { ranking, fetchRanking } = useRanking()
@@ -190,6 +206,9 @@ const uploadingAvatar = ref(false)
 const minhasCartas = ref([])
 const loadingCartas = ref(true)
 const selectedCarta = ref(null)
+
+const isExporting = ref(false)
+const cardContainer = ref(null)
 
 onMounted(async () => {
   if (user.value?.id) {
@@ -208,14 +227,55 @@ async function fetchCartas() {
           id,
           title,
           description,
-          image_url
+          image_url,
+          jogo_id,
+          jogos (
+            mandante,
+            visitante,
+            data
+          )
         )
       `)
       .eq('usuario_id', user.value.id)
       
     if (error) throw error
     if (data) {
-      minhasCartas.value = data.map(item => item.cartas).filter(Boolean)
+      const cartasMap = data.map(item => item.cartas).filter(Boolean)
+      const jogosIds = cartasMap.map(c => c.jogo_id).filter(Boolean)
+      
+      let resultadosMap = {}
+      if (jogosIds.length > 0) {
+        const { data: resData } = await supabase
+          .from('resultados')
+          .select('jogo_id, gols_mandante, gols_visitante')
+          .in('jogo_id', jogosIds)
+          
+        if (resData) {
+          resData.forEach(r => {
+            resultadosMap[r.jogo_id] = r
+          })
+        }
+      }
+
+      minhasCartas.value = cartasMap.map(carta => {
+        let extraInfo = '';
+        if (carta.jogos) {
+          const j = carta.jogos;
+          const dataFormatada = new Date(j.data).toLocaleDateString('pt-BR');
+          const r = resultadosMap[carta.jogo_id] || {};
+          
+          if (r.gols_mandante !== undefined) {
+             extraInfo = `\n\n${j.mandante} ${r.gols_mandante} x ${r.gols_visitante} ${j.visitante}\n${dataFormatada}`;
+          } else {
+             extraInfo = `\n\n${j.mandante} x ${j.visitante}\n${dataFormatada}`;
+          }
+        }
+        
+        return {
+          ...carta,
+          description: (carta.description || '') + extraInfo
+        };
+      })
     }
   } catch (err) {
     console.error('Erro ao buscar cartas:', err)
@@ -323,6 +383,28 @@ function compartilhar() {
   const text = `⚽ Bolão Copa 2026 ⚽\n\n🏆 ${user.value?.nome} está em ${stats.value.posicao} com ${stats.value.pontos} pontos!\n\nEntra no bolão: ${window.location.origin}`
   const url = `https://wa.me/?text=${encodeURIComponent(text)}`
   window.open(url, '_blank')
+}
+
+async function exportCartaImage() {
+  if (!cardContainer.value) return
+  
+  isExporting.value = true
+  try {
+    const dataUrl = await toPng(cardContainer.value, {
+      quality: 1,
+      pixelRatio: 2,
+    })
+    
+    const link = document.createElement('a')
+    link.download = `carta-${selectedCarta.value?.title || 'bolao'}.png`
+    link.href = dataUrl
+    link.click()
+  } catch (err) {
+    console.error('Erro ao exportar carta:', err)
+    alert('Erro ao exportar a imagem da carta.')
+  } finally {
+    isExporting.value = false
+  }
 }
 
 function handleLogout() {
