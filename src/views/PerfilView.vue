@@ -95,6 +95,35 @@
         </div>
       </div>
 
+      <!-- Coleção de Cartas -->
+      <div class="glass rounded-xl p-4 space-y-4">
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+          <PhCards :size="20" class="text-copa-accent" /> Coleção de Cartas
+        </h3>
+        
+        <div v-if="loadingCartas" class="flex justify-center py-4">
+          <svg class="animate-spin h-6 w-6 text-copa-accent" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+        </div>
+        
+        <div v-else-if="minhasCartas.length === 0" class="text-center py-6">
+          <p class="text-sm text-slate-400">Você ainda não tem nenhuma carta.</p>
+          <p class="text-xs text-slate-500 mt-1">Acerte um placar na mosca para ganhar!</p>
+        </div>
+        
+        <div v-else class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div v-for="carta in minhasCartas" :key="carta.id" class="w-full cursor-pointer tap-scale" @click="selectedCarta = carta">
+            <CardMagic 
+              :title="carta.title"
+              :description="carta.description"
+              :imageUrl="carta.image_url"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Share link -->
       <button
         @click="compartilhar"
@@ -113,6 +142,33 @@
         <span>Sair do Bolão</span>
       </button>
     </div>
+
+    <!-- Modal de Carta Expandida -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div v-if="selectedCarta" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-sm" @click="selectedCarta = null">
+          <div class="relative w-full max-w-sm mx-auto" @click.stop>
+            <button @click="selectedCarta = null" class="absolute -top-14 right-0 text-white bg-white/10 hover:bg-white/20 p-2 rounded-full backdrop-blur-md transition-colors cursor-pointer">
+              <PhX :size="24" />
+            </button>
+            
+            <CardMagic 
+              :title="selectedCarta.title"
+              :description="selectedCarta.description"
+              :imageUrl="selectedCarta.image_url"
+              class="shadow-2xl shadow-copa-accent/20"
+            />
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -122,13 +178,51 @@ import { useAuth } from '@/composables/useAuth'
 import { useRanking } from '@/composables/useRanking'
 import { supabase } from '@/lib/supabaseClient'
 import PontosChart from '@/components/PontosChart.vue'
-import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera } from '@phosphor-icons/vue'
+import CardMagic from '@/components/CardMagic.vue'
+import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera, PhCards, PhX } from '@phosphor-icons/vue'
 
 const { user, logout, updateAvatar } = useAuth()
 const { ranking, fetchRanking } = useRanking()
 
 const fileInput = ref(null)
 const uploadingAvatar = ref(false)
+
+const minhasCartas = ref([])
+const loadingCartas = ref(true)
+const selectedCarta = ref(null)
+
+onMounted(async () => {
+  if (user.value?.id) {
+    fetchCartas()
+  }
+})
+
+async function fetchCartas() {
+  loadingCartas.value = true
+  try {
+    const { data, error } = await supabase
+      .from('usuario_carta')
+      .select(`
+        adquirida_em,
+        cartas (
+          id,
+          title,
+          description,
+          image_url
+        )
+      `)
+      .eq('usuario_id', user.value.id)
+      
+    if (error) throw error
+    if (data) {
+      minhasCartas.value = data.map(item => item.cartas).filter(Boolean)
+    }
+  } catch (err) {
+    console.error('Erro ao buscar cartas:', err)
+  } finally {
+    loadingCartas.value = false
+  }
+}
 
 
 const stats = computed(() => {

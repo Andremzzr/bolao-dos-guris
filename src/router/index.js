@@ -48,6 +48,11 @@ const routes = [
     name: 'admin',
     component: () => import('@/views/AdminView.vue'),
   },
+  {
+    path: '/admin/cartas',
+    name: 'admin-cartas',
+    component: () => import('@/views/AdminCartasView.vue'),
+  },
 ]
 
 const router = createRouter({
