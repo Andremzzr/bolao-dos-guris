@@ -49,6 +49,15 @@ export function useRanking() {
             }
           }
           player.acertos_seguidos = streak
+
+          let erros = 0
+          for (const jogoId of finishedJogoIds) {
+            const palpite = palpitesData.find(p => p.jogo_id === jogoId && p.usuario_id === player.usuario_id)
+            if (palpite && palpite.pontuacao <= 0) {
+              erros++
+            }
+          }
+          player.erros_count = erros
         })
 
         // Calculate previous position

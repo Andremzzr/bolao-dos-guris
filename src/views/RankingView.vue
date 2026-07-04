@@ -30,6 +30,13 @@
         >
           Diário
         </button>
+        <button
+          class="pb-2 text-sm font-bold border-b-2 transition-colors"
+          :class="activeTab === 'piores' ? 'border-red-500 text-white' : 'border-transparent text-slate-400 hover:text-slate-300'"
+          @click="activeTab = 'piores'"
+        >
+          Piores
+        </button>
       </div>
     </header>
 
@@ -238,11 +245,11 @@
         </div>
       </div>
 
-      <!-- GERAL E DIÁRIO VIEWS -->
-      <div v-else-if="activeTab === 'geral' || activeTab === 'diario'" class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
+      <!-- GERAL E DIÁRIO E PIORES VIEWS -->
+      <div v-else-if="activeTab === 'geral' || activeTab === 'diario' || activeTab === 'piores'" class="flex-1 overflow-y-auto px-3 pb-6 space-y-2">
         <div class="flex items-center justify-between mb-3 px-1 mt-2">
           <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            {{ activeTab === 'geral' ? 'Ranking Geral' : 'Ranking Diário' }}
+            {{ activeTab === 'geral' ? 'Ranking Geral' : activeTab === 'diario' ? 'Ranking Diário' : 'Os Piores' }}
           </h3>
           
           <div v-if="activeTab === 'diario'" class="relative">
@@ -264,18 +271,20 @@
         <div
           class="glass rounded-xl px-4 py-3 flex items-center gap-3 transition-all duration-200"
           :class="{
-            'ring-1 ring-copa-gold/40 bg-copa-gold/5': player.posicao === 1,
-            'ring-1 ring-copa-silver/30 bg-copa-silver/5': player.posicao === 2,
-            'ring-1 ring-copa-bronze/30 bg-copa-bronze/5': player.posicao === 3,
+            'ring-1 ring-copa-gold/40 bg-copa-gold/5': activeTab !== 'piores' && player.posicao === 1,
+            'ring-1 ring-copa-silver/30 bg-copa-silver/5': activeTab !== 'piores' && player.posicao === 2,
+            'ring-1 ring-copa-bronze/30 bg-copa-bronze/5': activeTab !== 'piores' && player.posicao === 3,
+            'ring-1 ring-red-500/40 bg-red-500/5': activeTab === 'piores' && index === 0,
             'ring-1 ring-copa-accent/20 bg-copa-accent/5': isCurrentUser(player),
           }"
         >
           <!-- Position -->
           <div class="shrink-0 w-10 flex flex-col items-center justify-center">
-            <span v-if="player.posicao === 1" class="text-2xl">🥇</span>
-            <span v-else-if="player.posicao === 2" class="text-2xl">🥈</span>
-            <span v-else-if="player.posicao === 3" class="text-2xl">🥉</span>
-            <span v-else class="text-lg font-bold text-slate-500">{{ player.posicao }}º</span>
+            <span v-if="activeTab !== 'piores' && player.posicao === 1" class="text-2xl">🥇</span>
+            <span v-else-if="activeTab !== 'piores' && player.posicao === 2" class="text-2xl">🥈</span>
+            <span v-else-if="activeTab !== 'piores' && player.posicao === 3" class="text-2xl">🥉</span>
+            <span v-else-if="activeTab === 'piores' && index === 0" class="text-2xl">💩</span>
+            <span v-else class="text-lg font-bold text-slate-500">{{ activeTab === 'piores' ? index + 1 : player.posicao }}º</span>
             
             <!-- Position Change Indicator -->
             <div v-if="activeTab === 'geral' && player.mudanca_posicao !== undefined" class="flex items-center text-[10px] font-bold mt-0.5" title="Mudança de posição em relação aos jogos anteriores">
@@ -298,9 +307,10 @@
             <!-- Avatar -->
             <div class="w-8 h-8 rounded-full bg-slate-800 shrink-0 border border-slate-700 overflow-hidden flex items-center justify-center"
                  :class="{
-                   'border-copa-gold ring-1 ring-copa-gold/50': player.posicao === 1,
-                   'border-copa-silver ring-1 ring-copa-silver/50': player.posicao === 2,
-                   'border-copa-bronze ring-1 ring-copa-bronze/50': player.posicao === 3,
+                   'border-copa-gold ring-1 ring-copa-gold/50': activeTab !== 'piores' && player.posicao === 1,
+                   'border-copa-silver ring-1 ring-copa-silver/50': activeTab !== 'piores' && player.posicao === 2,
+                   'border-copa-bronze ring-1 ring-copa-bronze/50': activeTab !== 'piores' && player.posicao === 3,
+                   'border-red-500 ring-1 ring-red-500/50': activeTab === 'piores' && index === 0,
                  }">
               <img v-if="player.avatar_url" :src="player.avatar_url" class="w-full h-full object-cover" />
               <span v-else class="text-xs font-bold text-slate-400">{{ player.nome?.charAt(0).toUpperCase() }}</span>
@@ -337,15 +347,16 @@
             <div
               class="text-xl font-black"
               :class="{
-                'text-copa-gold': player.posicao === 1,
-                'text-copa-silver': player.posicao === 2,
-                'text-copa-bronze': player.posicao === 3,
-                'text-white': player.posicao > 3,
+                'text-copa-gold': activeTab !== 'piores' && player.posicao === 1,
+                'text-copa-silver': activeTab !== 'piores' && player.posicao === 2,
+                'text-copa-bronze': activeTab !== 'piores' && player.posicao === 3,
+                'text-red-500': activeTab === 'piores',
+                'text-white': activeTab !== 'piores' && player.posicao > 3,
               }"
             >
-              {{ player.pontos }}
+              {{ activeTab === 'piores' ? player.erros_count : player.pontos }}
             </div>
-            <div class="text-[10px] text-slate-500 font-semibold">pts</div>
+            <div class="text-[10px] text-slate-500 font-semibold">{{ activeTab === 'piores' ? 'erros' : 'pts' }}</div>
           </div>
         </div>
       </div>
@@ -426,8 +437,20 @@ const highlightsRanking = computed(() => {
   return rankingDiario.value && rankingDiario.value.length > 0 ? rankingDiario.value : rankingOntem.value
 })
 
-const displayedRanking = computed(() => activeTab.value === 'geral' ? ranking.value : rankingDiario.value)
-const isDisplayedLoading = computed(() => activeTab.value === 'geral' ? loading.value : loadingDiario.value)
+const displayedRanking = computed(() => {
+  if (activeTab.value === 'geral') return ranking.value
+  if (activeTab.value === 'diario') return rankingDiario.value
+  if (activeTab.value === 'piores') {
+    return [...ranking.value]
+      .filter(p => p.erros_count > 0)
+      .sort((a, b) => {
+        if (b.erros_count !== a.erros_count) return b.erros_count - a.erros_count;
+        return a.pontos - b.pontos;
+      })
+  }
+  return []
+})
+const isDisplayedLoading = computed(() => activeTab.value === 'diario' ? loadingDiario.value : loading.value)
 
 const reiDaRodada = computed(() => {
   if (highlightsRanking.value && highlightsRanking.value.length > 0) {
