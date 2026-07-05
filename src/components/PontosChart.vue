@@ -222,9 +222,9 @@
               <div
                 :class="[
                   'px-1.5 py-1 rounded text-[10px] font-black min-w-[45px] text-center border font-mono',
-                  item.pontos === 5
+                  item.pontos >= 7
                     ? 'bg-copa-gold/10 text-copa-gold border-copa-gold/30'
-                    : item.pontos === 3
+                    : item.pontos > 0
                     ? 'bg-copa-green/10 text-copa-green border-copa-green/30'
                     : 'bg-red-500/10 text-red-400 border-red-500/20'
                 ]"

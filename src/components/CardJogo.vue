@@ -879,16 +879,15 @@ const pontosInfo = computed(() => {
 const pontosClass = computed(() => {
   const pts = pontosInfo.value
 
-  // Negativo (erro em coringa)
   if (pts !== null && pts < 0) return 'bg-red-500/20 text-red-400'
 
   if (pts === 0) return 'bg-red-500/20 text-red-400'
 
-  // Acertou resultado ou pênaltis parciais
-  if (pts === 3 || pts === 6 || pts === 5) return 'bg-copa-green/20 text-copa-green'
+  // Acertos com bônus ou exatos
+  if (pts >= 7) return 'bg-copa-gold/20 text-copa-gold'
 
-  // Placar exato ou pênaltis perfeitos
-  if (pts === 7 || pts === 10 || pts === 14) return 'bg-copa-gold/20 text-copa-gold'
+  // Acertou o vencedor ou ganhou pontos parciais
+  if (pts > 0) return 'bg-copa-green/20 text-copa-green'
 
   return 'bg-slate-700 text-slate-400'
 })

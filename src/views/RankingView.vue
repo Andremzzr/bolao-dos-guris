@@ -369,21 +369,57 @@
       </div>
 
       <!-- Scoring legend -->
-      <div class="mt-4 mb-4">
+      <div class="mt-4 mb-4 space-y-4">
+        <!-- Normal Games -->
         <div class="glass rounded-xl p-4">
-          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Pontuação</h3>
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Pontuação Normal</h3>
           <div class="space-y-2">
             <div class="flex items-center justify-between text-sm">
               <span class="text-slate-300">🎯 Placar exato</span>
-              <span class="font-bold text-copa-gold">5 pts</span>
+              <span class="font-bold text-copa-gold flex items-center gap-1">5 pts <span class="text-[10px] text-slate-500 font-normal">(7 c/ pên)</span></span>
             </div>
             <div class="flex items-center justify-between text-sm">
-              <span class="text-slate-300">✅ Acertou vencedor/empate</span>
-              <span class="font-bold text-copa-green">3 pts</span>
+              <span class="text-slate-300">✅ Vencedor/empate</span>
+              <span class="font-bold text-copa-green flex items-center gap-1">3 pts <span class="text-[10px] text-slate-500 font-normal">(5 c/ pên)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">🌟 Craque (MVP)</span>
+              <span class="font-bold text-blue-400">2 pts</span>
             </div>
             <div class="flex items-center justify-between text-sm">
               <span class="text-slate-300">❌ Errou</span>
-              <span class="font-bold text-red-400">0 pts</span>
+              <span class="font-bold text-slate-500">0 pts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Joker Games -->
+        <div class="glass rounded-xl p-4 border border-purple-500/30 bg-purple-500/5">
+          <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+            <span>🃏</span> Jogos Coringa
+          </h3>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">🎯 Placar exato</span>
+              <span class="font-bold text-copa-gold flex items-center gap-1">10 pts <span class="text-[10px] text-slate-500 font-normal">(14 c/ pên)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">✅ Vencedor/empate</span>
+              <span class="font-bold text-copa-green flex items-center gap-1">6 pts <span class="text-[10px] text-slate-500 font-normal">(10 c/ pên)</span></span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">🌟 Craque (MVP)</span>
+              <span class="font-bold text-blue-400">4 pts</span>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-slate-300">❌ Errou</span>
+              <span class="font-bold text-red-500">0 pts</span>
+            </div>
+            <div class="mt-2 pt-2 border-t border-purple-500/20">
+              <div class="flex flex-col text-xs">
+                <span class="text-purple-300 font-bold mb-1">🚀 Catchup (Recuperação)</span>
+                <span class="text-slate-400 leading-tight">Ganha <b class="text-purple-400">30%</b> da diferença de pontos para o 3º lugar se acertar pelo menos o vencedor.</span>
+              </div>
             </div>
           </div>
         </div>
