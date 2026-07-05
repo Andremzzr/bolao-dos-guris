@@ -124,6 +124,20 @@
         </div>
       </div>
 
+      <!-- Notificações -->
+      <button
+        v-if="isSupported && !isSubscribed"
+        @click="subscribe(user?.id)"
+        class="w-full glass border border-copa-accent/30 bg-copa-accent/10 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-copa-accent-light font-semibold text-sm tap-scale hover:bg-copa-accent/20 transition-colors cursor-pointer"
+      >
+        <PhBell :size="18" />
+        <span>Ativar Notificações de Jogos</span>
+      </button>
+      <div v-else-if="isSubscribed" class="w-full glass border border-copa-green/30 bg-copa-green/10 rounded-xl px-4 py-3.5 flex items-center justify-center gap-2 text-copa-green font-semibold text-sm">
+        <PhBellRinging :size="18" />
+        <span>Notificações Ativadas</span>
+      </div>
+
       <!-- Share link -->
       <button
         @click="compartilhar"
@@ -191,14 +205,16 @@
 import { computed, onMounted, ref } from 'vue'
 import { useAuth } from '@/composables/useAuth'
 import { useRanking } from '@/composables/useRanking'
+import { usePush } from '@/composables/usePush'
 import { supabase } from '@/lib/supabaseClient'
 import PontosChart from '@/components/PontosChart.vue'
 import CardMagic from '@/components/CardMagic.vue'
-import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera, PhCards, PhX, PhDownloadSimple } from '@phosphor-icons/vue'
+import { PhUser, PhTarget, PhFire, PhChartBar, PhCheckCircle, PhClipboardText, PhShareNetwork, PhSignOut, PhCamera, PhCards, PhX, PhDownloadSimple, PhBell, PhBellRinging } from '@phosphor-icons/vue'
 import { toPng } from 'html-to-image'
 
 const { user, logout, updateAvatar } = useAuth()
 const { ranking, fetchRanking } = useRanking()
+const { isSupported, isSubscribed, checkSubscription, subscribe } = usePush()
 
 const fileInput = ref(null)
 const uploadingAvatar = ref(false)
@@ -213,6 +229,7 @@ const cardContainer = ref(null)
 onMounted(async () => {
   if (user.value?.id) {
     fetchCartas()
+    checkSubscription()
   }
 })
 
