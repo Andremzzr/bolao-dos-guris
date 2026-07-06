@@ -821,7 +821,7 @@
   {
     "id": 92,
     "fase": "Oitavas de Final",
-    "data": "2026-07-05T21:00:00",
+    "data": "2026-07-05T22:00:00",
     "mandante": "México",
     "visitante": "Inglaterra",
     "estadio": "Estádio da Cidade do México, Cidade do México",
@@ -867,8 +867,8 @@
     "id": 97,
     "fase": "Quartas de Final",
     "data": "2026-07-09T17:00:00",
-    "mandante": "Venc. Jogo 89",
-    "visitante": "Venc. Jogo 90",
+    "mandante": "França",
+    "visitante": "Marrocos",
     "estadio": "Estádio de Boston, Boston",
     "grupo": null
   },
@@ -885,7 +885,7 @@
     "id": 99,
     "fase": "Quartas de Final",
     "data": "2026-07-11T18:00:00",
-    "mandante": "Venc. Jogo 91",
+    "mandante": "Noruega",
     "visitante": "Venc. Jogo 92",
     "estadio": "Estádio de Miami, Miami",
     "grupo": null
