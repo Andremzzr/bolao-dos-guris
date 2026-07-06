@@ -370,7 +370,7 @@
       </div>
 
       <!-- Volume Chart (Ao Vivo) -->
-      <div v-if="isLive && (volumeData || jogo.sofascore_id)" class="mt-4 p-2 bg-slate-800 rounded-lg">
+      <div v-if="isLive && volumeData" class="mt-4 p-2 bg-slate-800 rounded-lg">
         <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Pressão (Ao Vivo)</h4>
         <div ref="chartRef" class="w-full h-24"></div>
       </div>
@@ -505,7 +505,7 @@ const dataLiberacaoPalpite = computed(() => {
   date.setDate(date.getDate() - 1)
   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
 })
-const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline } = useJogos()
+const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline, fetchVolumeDataDB } = useJogos()
 const router = useRouter()
 
 const chartRef = ref(null)
@@ -513,16 +513,15 @@ let chartInstance = null
 const volumeData = ref(props.jogo.volume_data || null)
 
 async function fetchVolumeData() {
-  if (!props.jogo.sofascore_id) return
+  if (!props.jogo.id) return
   try {
-    const res = await fetch(`/api/sofascore?eventId=${props.jogo.sofascore_id}`)
-    const data = await res.json()
-    if (data && data.graph) {
-      volumeData.value = data.graph
-      updateChart()
+    const data = await fetchVolumeDataDB(props.jogo.id)
+    if (data) {
+      volumeData.value = data
+      // updateChart is handled by the watcher
     }
   } catch (err) {
-    console.error('Erro ao puxar volume data:', err)
+    console.error('Erro ao puxar volume data do Supabase:', err)
   }
 }
 
@@ -852,9 +851,7 @@ async function pollTimeline() {
   if (isLive.value) {
     const data = await fetchResultadoTimeline(props.jogo.id)
     if (data) timelineData.value = data
-    if (props.jogo.sofascore_id) {
-      await fetchVolumeData()
-    }
+    await fetchVolumeData()
   }
 }
 

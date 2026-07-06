@@ -151,6 +151,18 @@ export function useJogos() {
     return null;
   }
 
+  // Fetch volume data directly from DB
+  async function fetchVolumeDataDB(jogoId) {
+    const { data, error } = await supabase
+      .from('jogos')
+      .select('volume_data')
+      .eq('id', jogoId)
+      .single()
+
+    if (!error && data) return data.volume_data;
+    return null;
+  }
+
   // Fetch advanced stats for a single game (heavy JSONs)
   async function fetchAdvancedStats(jogoId) {
     const { data, error } = await supabase
@@ -400,5 +412,6 @@ export function useJogos() {
     salvarPalpite,
     upsertResultado,
     calcularPontos,
+    fetchVolumeDataDB,
   }
 }

@@ -75,10 +75,11 @@ export default async function handler(req: Request) {
           });
           const data = JSON.parse(response.body);
           
-          if (data && data.graph) {
+          const graphData = data.graph || data.graphPoints;
+          if (graphData) {
              const { error: updateError } = await supabase
                .from('jogos')
-               .update({ volume_data: data.graph })
+               .update({ volume_data: graphData })
                .eq('id', jogo.id);
              
              if (updateError) {
