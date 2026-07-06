@@ -14,6 +14,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/racing',
+    name: 'racing',
+    component: () => import('@/views/RacingView.vue'),
+    meta: { requiresAuth: false },
+  },
+  {
     path: '/perfil',
     name: 'perfil',
     component: () => import('@/views/PerfilView.vue'),
@@ -34,6 +40,12 @@ const routes = [
     path: '/estatisticas',
     name: 'estatisticas',
     component: () => import('@/views/EstatisticasSelecaoView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/mapa-selecao',
+    name: 'mapa-selecao',
+    component: () => import('@/views/MapaSelecaoView.vue'),
     meta: { requiresAuth: true },
   },
   {

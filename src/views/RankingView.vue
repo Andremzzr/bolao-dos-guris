@@ -2,9 +2,14 @@
   <div class="h-[100dvh] pb-20 flex flex-col">
     <!-- Header -->
     <header class="shrink-0 z-30 glass border-b border-copa-border">
-      <div class="px-4 py-3 flex gap-2">
-        <PhTrophy :size="28" />
-        <h1 class="text-lg font-bold text-white">Classificação</h1>
+      <div class="px-4 py-3 flex gap-2 items-center justify-between">
+        <div class="flex gap-2">
+          <PhTrophy :size="28" />
+          <h1 class="text-lg font-bold text-white">Classificação</h1>
+        </div>
+        <router-link to="/racing" class="bg-copa-accent/20 text-copa-accent text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 border border-copa-accent/30 hover:bg-copa-accent/40 transition-colors">
+          <PhLightning :size="14" weight="fill" /> Race
+        </router-link>
       </div>
 
       <!-- Tabs -->
@@ -450,7 +455,7 @@ import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus } from '@phosphor-icons/vue'
+import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus, PhLightning } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()

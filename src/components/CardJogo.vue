@@ -369,6 +369,12 @@
         </span>
       </div>
 
+      <!-- Volume Chart (Ao Vivo) -->
+      <div v-if="isLive && (volumeData || jogo.sofascore_id)" class="mt-4 p-2 bg-slate-800 rounded-lg">
+        <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Pressão (Ao Vivo)</h4>
+        <div ref="chartRef" class="w-full h-24"></div>
+      </div>
+
       <!-- Timeline info for live matches -->
       <div v-if="timelineData && timelineData.Event && isLive" class="mt-4 p-2 bg-slate-800 rounded-lg">
         <h4 class="text-xs text-slate-400 font-bold mb-2 text-center">Linha do Tempo (Ao Vivo)</h4>
@@ -466,8 +472,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onUnmounted, onMounted } from 'vue'
+import { ref, computed, watch, onUnmounted, onMounted, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
+import * as echarts from 'echarts'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
@@ -500,6 +507,71 @@ const dataLiberacaoPalpite = computed(() => {
 })
 const { calcularPontos, tempoAteBloquear, fetchResultadoTimeline } = useJogos()
 const router = useRouter()
+
+const chartRef = ref(null)
+let chartInstance = null
+const volumeData = ref(props.jogo.volume_data || null)
+
+async function fetchVolumeData() {
+  if (!props.jogo.sofascore_id) return
+  try {
+    const res = await fetch(`/api/sofascore?eventId=${props.jogo.sofascore_id}`)
+    const data = await res.json()
+    if (data && data.graph) {
+      volumeData.value = data.graph
+      updateChart()
+    }
+  } catch (err) {
+    console.error('Erro ao puxar volume data:', err)
+  }
+}
+
+function updateChart() {
+  if (!chartRef.value || !volumeData.value) return
+  if (!chartInstance) {
+    chartInstance = echarts.init(chartRef.value)
+  }
+  const data = volumeData.value.map(item => [item.minute, item.value])
+  
+  const option = {
+    grid: { top: 5, right: 5, bottom: 20, left: 5 },
+    xAxis: { 
+      type: 'value', 
+      min: 0, 
+      max: 120, 
+      splitLine: { show: false }, 
+      axisLabel: { color: '#94a3b8', fontSize: 9 } 
+    },
+    yAxis: { 
+      type: 'value', 
+      min: -100, 
+      max: 100, 
+      splitLine: { show: false }, 
+      axisLabel: { show: false } 
+    },
+    series: [
+      {
+        type: 'bar',
+        data: data,
+        itemStyle: {
+          color: (params) => {
+             return params.value[1] > 0 ? colorMandante.value : colorVisitante.value
+          },
+          borderRadius: [2, 2, 0, 0]
+        },
+        barWidth: '70%'
+      }
+    ]
+  }
+  chartInstance.setOption(option)
+}
+
+watch(() => volumeData.value, () => {
+  nextTick(() => {
+    updateChart()
+  })
+}, { deep: true })
+
 
 function handleCardClick() {
   if (props.viewOnly) return; // parent handles it
@@ -780,6 +852,9 @@ async function pollTimeline() {
   if (isLive.value) {
     const data = await fetchResultadoTimeline(props.jogo.id)
     if (data) timelineData.value = data
+    if (props.jogo.sofascore_id) {
+      await fetchVolumeData()
+    }
   }
 }
 
@@ -808,6 +883,10 @@ onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
   if (eventLoopInterval) clearInterval(eventLoopInterval)
   if (timeLockInterval) clearInterval(timeLockInterval)
+  if (chartInstance) {
+    chartInstance.dispose()
+    chartInstance = null
+  }
 })
 
 // Watch for palpite changes (e.g., after save)
