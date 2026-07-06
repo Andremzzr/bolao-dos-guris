@@ -14,7 +14,6 @@ export default async function handler(req: Request) {
     const url = new URL(req.url);
     const eventId = url.searchParams.get('eventId');
     
-    // Dynamic import to avoid issues if Vercel somehow tries to bundle it statically for Edge
     const { gotScraping } = await import('got-scraping');
 
     if (eventId) {
