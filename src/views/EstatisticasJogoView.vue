@@ -82,6 +82,12 @@
         </div>
       </div>
 
+      <!-- Volume de Jogo -->
+      <div v-if="volumeData && volumeData.length > 0" class="glass p-5 rounded-2xl shadow-xl flex flex-col gap-4">
+        <h4 class="text-sm text-slate-300 font-bold text-center border-b border-white/5 pb-3">Pressão (Volume de Jogo)</h4>
+        <div ref="chartRef" class="w-full h-32 mt-2"></div>
+      </div>
+
       <!-- Team Stats -->
       <MatchTeamStats 
         v-if="advancedStats?.team_stats" 
@@ -135,17 +141,19 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
+import { getFlagColor } from '@/utils/colors'
+import * as echarts from 'echarts'
 import MatchPitch from '@/components/MatchPitch.vue'
 import MatchTeamStats from '@/components/MatchTeamStats.vue'
 import MatchPowerRankings from '@/components/MatchPowerRankings.vue'
 import { PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
 
 const route = useRoute()
-const { jogosData, fetchResultados, resultados, fetchResultadoTimeline, fetchAdvancedStats } = useJogos()
+const { jogosData, fetchResultados, resultados, fetchResultadoTimeline, fetchAdvancedStats, fetchVolumeDataDB } = useJogos()
 
 const jogoId = Number(route.params.id)
 const jogo = computed(() => jogosData.find(j => j.id === jogoId))
@@ -156,6 +164,63 @@ const loadingTimeline = ref(true)
 const timelineData = ref(null)
 const advancedStats = ref(null)
 const activeEvent = ref(null)
+
+const volumeData = ref(null)
+const chartRef = ref(null)
+let chartInstance = null
+
+const colorMandante = computed(() => jogo.value ? getFlagColor(jogo.value.mandante) : '#fff')
+const colorVisitante = computed(() => jogo.value ? getFlagColor(jogo.value.visitante) : '#fff')
+
+function updateChart() {
+  if (!chartRef.value || !volumeData.value) return
+  if (!chartInstance) {
+    chartInstance = echarts.init(chartRef.value)
+  }
+  const data = volumeData.value.map(item => [item.minute, item.value])
+  
+  const maxMinute = data.length > 0 ? Math.max(...data.map(d => d[0])) : 120
+  
+  const option = {
+    grid: { top: 5, right: 5, bottom: 20, left: 5 },
+    xAxis: { 
+      type: 'value', 
+      min: 0, 
+      max: maxMinute, 
+      splitLine: { show: false }, 
+      axisLabel: { color: '#94a3b8', fontSize: 9 } 
+    },
+    yAxis: { 
+      type: 'value', 
+      min: -100, 
+      max: 100, 
+      splitLine: { show: false }, 
+      axisLabel: { show: false } 
+    },
+    series: [
+      {
+        type: 'bar',
+        data: data,
+        itemStyle: {
+          color: (params) => {
+             return params.value[1] > 0 ? colorMandante.value : colorVisitante.value
+          },
+          borderRadius: [2, 2, 0, 0]
+        },
+        barWidth: '70%'
+      }
+    ]
+  }
+  chartInstance.setOption(option)
+}
+
+watch([() => volumeData.value, loading], () => {
+  if (volumeData.value && !loading.value) {
+    nextTick(() => {
+      updateChart()
+    })
+  }
+}, { deep: true, immediate: true })
 
 const events = computed(() => timelineData.value?.Event?.slice()?.reverse() || [])
 
@@ -267,9 +332,10 @@ onMounted(async () => {
   loading.value = false
   
   if (jogo.value) {
-    const [tData, aStats] = await Promise.all([
+    const [tData, aStats, vData] = await Promise.all([
       fetchResultadoTimeline(jogoId),
-      fetchAdvancedStats(jogoId)
+      fetchAdvancedStats(jogoId),
+      fetchVolumeDataDB(jogoId)
     ])
     
     if (tData) {
@@ -277,6 +343,9 @@ onMounted(async () => {
     }
     if (aStats) {
       advancedStats.value = aStats
+    }
+    if (vData) {
+      volumeData.value = vData
     }
     loadingTimeline.value = false
   }

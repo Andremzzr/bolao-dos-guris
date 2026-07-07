@@ -532,12 +532,14 @@ function updateChart() {
   }
   const data = volumeData.value.map(item => [item.minute, item.value])
   
+  const maxMinute = data.length > 0 ? Math.max(...data.map(d => d[0])) : 120
+  
   const option = {
     grid: { top: 5, right: 5, bottom: 20, left: 5 },
     xAxis: { 
       type: 'value', 
       min: 0, 
-      max: 120, 
+      max: maxMinute, 
       splitLine: { show: false }, 
       axisLabel: { color: '#94a3b8', fontSize: 9 } 
     },
