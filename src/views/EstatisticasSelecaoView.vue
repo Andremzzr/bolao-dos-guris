@@ -279,9 +279,9 @@ const searchQuery = ref('')
 const isDropdownOpen = ref(false)
 
 const filteredSelecoes = computed(() => {
-  const q = searchQuery.value.toLowerCase()
+  const q = searchQuery.value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   if (!q) return selecoes.value
-  return selecoes.value.filter(team => team.toLowerCase().includes(q))
+  return selecoes.value.filter(team => team.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(q))
 })
 
 function selectTeam(team) {
