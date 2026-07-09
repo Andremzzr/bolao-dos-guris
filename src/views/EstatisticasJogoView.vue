@@ -146,7 +146,12 @@ import { useRoute } from 'vue-router'
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
+import { BarChart } from 'echarts/charts'
+import { GridComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+echarts.use([BarChart, GridComponent, CanvasRenderer])
+
 import MatchPitch from '@/components/MatchPitch.vue'
 import MatchTeamStats from '@/components/MatchTeamStats.vue'
 import MatchPowerRankings from '@/components/MatchPowerRankings.vue'
@@ -353,6 +358,10 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (eventLoopInterval) clearInterval(eventLoopInterval)
+  if (chartInstance) {
+    chartInstance.dispose()
+    chartInstance = null
+  }
 })
 
 const formattedDate = computed(() => {

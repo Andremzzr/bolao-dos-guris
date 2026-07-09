@@ -49,7 +49,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted, shallowRef } from 'vue'
 import { supabase } from '@/lib/supabaseClient'
-import * as echarts from 'echarts'
+import * as echarts from 'echarts/core'
+import { BarChart } from 'echarts/charts'
+import { GridComponent, GraphicComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+echarts.use([BarChart, GridComponent, GraphicComponent, CanvasRenderer])
+
 import { PhTrophy } from '@phosphor-icons/vue'
 
 import jogosJson from '@/data/jogos.json'
