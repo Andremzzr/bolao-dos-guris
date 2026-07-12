@@ -232,7 +232,7 @@ const filteredJogosPorData = computed(() => {
   for (const [data, jogos] of Object.entries(jogosPorData.value)) {
     const filteredJogos = jogos.filter(jogo => {
       const status = statusJogo(jogo)
-      if (activeFilter.value === 'abertos') return status === 'agendado'
+      if (activeFilter.value === 'abertos') return status === 'agendado' || status === 'em_andamento'
       if (activeFilter.value === 'finalizados') return status === 'finalizado'
       return true
     })
