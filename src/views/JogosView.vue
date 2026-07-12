@@ -170,7 +170,7 @@ const {
 const { fetchWeatherForToday, weatherMap } = useWeather()
 
 const initialLoading = ref(true)
-const activeFilter = ref('todos')
+const activeFilter = ref('abertos')
 
 const selectedTeam = ref(null)
 const isModalOpen = ref(false)
