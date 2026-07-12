@@ -341,18 +341,26 @@
         </div>
       </div>
 
-      <!-- Odds Bar -->
+      <!-- Odds Bar or Total Palpites -->
       <div class="mt-3 px-2">
-        <div class="flex items-center justify-between text-[10px] font-semibold mb-1">
-          <span :style="{ color: colorMandante }">{{ percOdds.mandante }}%</span>
-          <span class="text-slate-500">{{ percOdds.empate }}%</span>
-          <span :style="{ color: colorVisitante }">{{ percOdds.visitante }}%</span>
-        </div>
-        <div class="flex w-full h-1.5 rounded-full overflow-hidden bg-slate-800 gap-px">
-          <div :style="{ width: percOdds.mandante + '%', backgroundColor: colorMandante }" class="h-full transition-all duration-500 rounded-l-full"></div>
-          <div :style="{ width: percOdds.empate + '%', backgroundColor: '#64748b' }" class="h-full transition-all duration-500"></div>
-          <div :style="{ width: percOdds.visitante + '%', backgroundColor: colorVisitante }" class="h-full transition-all duration-500 rounded-r-full"></div>
-        </div>
+        <template v-if="jogo.id <= 100">
+          <div class="flex items-center justify-between text-[10px] font-semibold mb-1">
+            <span :style="{ color: colorMandante }">{{ percOdds.mandante }}%</span>
+            <span class="text-slate-500">{{ percOdds.empate }}%</span>
+            <span :style="{ color: colorVisitante }">{{ percOdds.visitante }}%</span>
+          </div>
+          <div class="flex w-full h-1.5 rounded-full overflow-hidden bg-slate-800 gap-px">
+            <div :style="{ width: percOdds.mandante + '%', backgroundColor: colorMandante }" class="h-full transition-all duration-500 rounded-l-full"></div>
+            <div :style="{ width: percOdds.empate + '%', backgroundColor: '#64748b' }" class="h-full transition-all duration-500"></div>
+            <div :style="{ width: percOdds.visitante + '%', backgroundColor: colorVisitante }" class="h-full transition-all duration-500 rounded-r-full"></div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-semibold bg-slate-800/50 py-1.5 rounded-lg border border-white/5">
+            <PhUsers :size="14" weight="fill" class="text-slate-500" />
+            <span>{{ totalPalpites }} palpites realizados</span>
+          </div>
+        </template>
       </div>
 
       <!-- Stadium info & Weather -->
@@ -483,7 +491,7 @@ echarts.use([BarChart, GridComponent, CanvasRenderer])
 import { useJogos } from '@/composables/useJogos'
 import { getFlagUrl } from '@/utils/flags'
 import { getFlagColor } from '@/utils/colors'
-import { PhLockSimple, PhLightning, PhCheckCircle, PhXCircle } from '@phosphor-icons/vue'
+import { PhLockSimple, PhLightning, PhCheckCircle, PhXCircle, PhUsers } from '@phosphor-icons/vue'
 import MatchPitch from '@/components/MatchPitch.vue'
 import PalpitesDaGaleraModal from '@/components/PalpitesDaGaleraModal.vue'
 import { getTeamId } from '@/data/teamIds'
@@ -935,6 +943,11 @@ const percOdds = computed(() => {
   const empate = Math.round((vE / total) * 100)
   const visitante = 100 - mandante - empate
   return { mandante, empate, visitante }
+})
+
+const totalPalpites = computed(() => {
+  if (!props.odd) return 0
+  return (props.odd.votos_mandante || 0) + (props.odd.votos_visitante || 0) + (props.odd.votos_empate || 0)
 })
 
 const hasChanged = computed(() => {
