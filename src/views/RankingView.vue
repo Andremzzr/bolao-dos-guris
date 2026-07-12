@@ -247,6 +247,32 @@
             </div>
           </div>
         </div>
+        
+        <!-- Top 5 Jogadores Favoritos (MVP) -->
+        <div v-if="topMVPs.length > 0" class="glass rounded-xl p-4 mt-2">
+          <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+            <PhStar :size="16" weight="fill" class="text-blue-400" /> Favoritos da gurizada
+          </h3>
+          <div class="space-y-3">
+            <div v-for="(mvp, index) in topMVPs" :key="mvp.name" class="flex items-center gap-3">
+              <div class="w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400 shrink-0 border border-slate-700">
+                {{ index + 1 }}º
+              </div>
+              <div v-if="mvp.picture" class="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-600 bg-slate-900">
+                <img :src="mvp.picture" class="w-full h-full object-cover object-top scale-[1.5] origin-top" />
+              </div>
+              <div v-else class="w-8 h-8 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center text-[10px] text-slate-400 shrink-0">
+                ?
+              </div>
+              <div class="flex-1 text-sm font-bold text-white truncate">
+                {{ mvp.name }}
+              </div>
+              <div class="text-xs font-bold text-blue-400 px-2 py-1 bg-blue-400/10 rounded shrink-0">
+                {{ mvp.count }} {{ mvp.count === 1 ? 'voto' : 'votos' }}
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -451,14 +477,16 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRanking } from '@/composables/useRanking'
 import { useRankingDiario } from '@/composables/useRankingDiario'
+import { useTopMVPs } from '@/composables/useTopMVPs'
 import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus, PhLightning } from '@phosphor-icons/vue'
+import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus, PhLightning, PhStar } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()
+const { topMVPs } = useTopMVPs()
 const { user } = useAuth()
 
 const activeTab = ref('tops')
