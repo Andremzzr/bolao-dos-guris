@@ -4,11 +4,7 @@
     <header class="sticky top-0 z-30 glass border-b border-copa-border">
       <div class="px-4 py-3">
         <div class="flex items-center justify-between">
-          <div v-if="!hasLiveGame">
-            <p class="text-xs text-slate-400">Copa do Mundo 2026</p>
-          </div>
-          <span v-else @click="scrollToLiveGame" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"> 🔴 AO VIVO </span>
-
+          <span v-if="hasLiveGame" @click="scrollToLiveGame" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 animate-pulse-live"> 🔴 AO VIVO </span>
           <div class="flex items-center gap-2">
             <!-- Filter buttons -->
             <button
