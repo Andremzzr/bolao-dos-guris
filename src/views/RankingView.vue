@@ -7,9 +7,9 @@
           <PhTrophy :size="28" />
           <h1 class="text-lg font-bold text-white">Classificação</h1>
         </div>
-        <router-link to="/racing" class="bg-copa-accent/20 text-copa-accent text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 border border-copa-accent/30 hover:bg-copa-accent/40 transition-colors">
+        <!-- <router-link to="/racing" class="bg-copa-accent/20 text-copa-accent text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 border border-copa-accent/30 hover:bg-copa-accent/40 transition-colors">
           <PhLightning :size="14" weight="fill" /> Race
-        </router-link>
+        </router-link> -->
       </div>
 
       <!-- Tabs -->
@@ -157,6 +157,41 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                 </svg>
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rei do Baralho -->
+        <div v-if="reiDoBaralho" class="relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-500 to-indigo-700 p-[1px]">
+          <div class="absolute top-0 right-0 p-2 opacity-20">
+            <span class="text-4xl drop-shadow-lg">🃏</span>
+          </div>
+          <div class="bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 relative z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400 to-indigo-500 p-[1px] shadow-sm shadow-purple-500/20">
+                <img v-if="reiDoBaralho.avatar_url" :src="reiDoBaralho.avatar_url" class="w-full h-full object-cover rounded-full border border-slate-900" />
+                <div v-else class="w-full h-full bg-slate-800 rounded-full flex items-center justify-center border border-slate-900">
+                  <span class="text-sm font-black text-white">
+                    {{ reiDoBaralho.nome?.charAt(0).toUpperCase() }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h2 class="text-[10px] font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1">
+                    <span>🃏</span> Rei do Baralho
+                  </h2>
+                  <span class="text-[8px] text-slate-400 font-medium bg-white/5 px-1.5 py-0.5 rounded">Geral</span>
+                </div>
+                <div class="text-sm font-black text-white leading-tight truncate mt-0.5">
+                  {{ reiDoBaralho.nome }}
+                  <span v-if="isCurrentUser(reiDoBaralho)" class="text-[10px] text-purple-400 font-bold ml-1">(Você)</span>
+                </div>
+                <div class="text-[10px] text-slate-300 mt-0.5">
+                  <span class="font-bold text-purple-400">{{ reiDoBaralho.acertos_coringa }} acertos</span> em coringas
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -364,6 +399,9 @@
               <div class="flex items-center gap-1.5">
                 <span v-if="player.acertos_exatos > 0" class="text-[10px] text-copa-gold">
                   🎯 {{ player.acertos_exatos }}
+                </span>
+                <span v-if="player.acertos_coringa > 0 && activeTab === 'geral'" class="text-[10px] text-purple-400">
+                  🤡 {{ player.acertos_coringa }}
                 </span>
                 <span v-if="player.acertos_seguidos > 1" class="text-[10px] text-orange-500 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   🔥 {{ player.acertos_seguidos }}
@@ -578,6 +616,27 @@ const onFirePlayer = computed(() => {
   }
 
   if (maxStreak > 1) return onFire
+  return null
+})
+
+const reiDoBaralho = computed(() => {
+  if (!ranking.value || ranking.value.length === 0) return null
+  
+  let rei = null
+  let maxAcertosCoringa = 0
+
+  for (const player of ranking.value) {
+    if ((player.acertos_coringa || 0) > maxAcertosCoringa) {
+      maxAcertosCoringa = player.acertos_coringa
+      rei = player
+    } else if ((player.acertos_coringa || 0) === maxAcertosCoringa && maxAcertosCoringa > 0) {
+      if (rei && player.pontos > rei.pontos) {
+        rei = player
+      }
+    }
+  }
+
+  if (maxAcertosCoringa > 0) return rei
   return null
 })
 

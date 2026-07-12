@@ -42,12 +42,7 @@ const routes = [
     component: () => import('@/views/EstatisticasSelecaoView.vue'),
     meta: { requiresAuth: true },
   },
-  {
-    path: '/mapa-selecao',
-    name: 'mapa-selecao',
-    component: () => import('@/views/MapaSelecaoView.vue'),
-    meta: { requiresAuth: true },
-  },
+
   {
     path: '/torneio',
     name: 'torneio',

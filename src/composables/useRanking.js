@@ -21,10 +21,11 @@ export function useRanking() {
       
       let finalRanking = data || []
 
-      // Fetch additional data to calculate streaks
-      const [{ data: resultadosData }, { data: palpitesData }] = await Promise.all([
+      // Fetch additional data to calculate streaks and coringa correct guesses
+      const [{ data: resultadosData }, { data: palpitesData }, { data: jogosCoringaData }] = await Promise.all([
         supabase.from('resultados').select('jogo_id, finalizado').eq('finalizado', true),
-        supabase.from('palpites').select('usuario_id, jogo_id, pontuacao')
+        supabase.from('palpites').select('usuario_id, jogo_id, pontuacao'),
+        supabase.from('jogos').select('id, coringa').eq('coringa', true)
       ])
 
       if (resultadosData && palpitesData) {
@@ -34,6 +35,7 @@ export function useRanking() {
         const { default: jogosData } = await import('@/data/jogos.json')
         
         const finishedJogoIds = new Set(resultadosData.map(r => r.jogo_id))
+        const coringaJogoIds = new Set(jogosCoringaData?.map(j => j.id) || [])
         const sortedFinishedJogos = jogosData
           .filter(j => finishedJogoIds.has(j.id))
           .sort((a, b) => new Date(b.data) - new Date(a.data))
@@ -51,13 +53,18 @@ export function useRanking() {
           player.acertos_seguidos = streak
 
           let erros = 0
+          let acertosCoringa = 0
           for (const jogoId of finishedJogoIds) {
             const palpite = palpitesData.find(p => p.jogo_id === jogoId && p.usuario_id === player.usuario_id)
             if (palpite && palpite.pontuacao <= 0) {
               erros++
             }
+            if (palpite && palpite.pontuacao > 0 && coringaJogoIds.has(jogoId)) {
+              acertosCoringa++
+            }
           }
           player.erros_count = erros
+          player.acertos_coringa = acertosCoringa
         })
 
         // Calculate previous position
