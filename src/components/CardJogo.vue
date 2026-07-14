@@ -2,12 +2,15 @@
   <div
     class="rounded-xl overflow-hidden transition-all duration-300 relative"
     :class="[
-      coringa ? 'coringa-card' : 'glass',
+      jogo.id === 104 ? 'golden-card' : (coringa ? 'coringa-card' : 'glass'),
       { 'ring-1 ring-copa-green/30': justSaved },
       (viewOnly || resultado?.finalizado) ? 'cursor-pointer hover:bg-white/5 hover:scale-[1.01]' : ''
     ]"
     @click="handleCardClick"
   >
+    <!-- Imagem de Fundo para o Jogo Dourado -->
+    <img v-if="jogo.id === 104" src="/trophy.png" class="trophy-bg" alt="Troféu" />
+
     <!-- Game header: phase + time -->
     <div class="flex items-center justify-between px-3 py-2 border-b border-white/5">
       <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider truncate mr-2">

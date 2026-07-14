@@ -187,3 +187,101 @@ input[type="number"] {
 .toast-leave {
   animation: toast-out 0.3s ease-in;
 }
+
+/* ── Golden (Match 104) card — Animated Gold Border ───────────── */
+@property --golden-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes golden-border-spin {
+  to { --golden-angle: 360deg; }
+}
+
+@keyframes golden-shine {
+  0% { transform: translateX(-150%) skewX(-20deg); }
+  20% { transform: translateX(200%) skewX(-20deg); }
+  100% { transform: translateX(200%) skewX(-20deg); }
+}
+
+.golden-card {
+  position: relative;
+  border-radius: 0.7rem;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--golden-angle),
+    #ffea00,
+    #8b6508,
+    #ffd700,
+    #ffffff,
+    #8b6508,
+    #ffea00
+  );
+  animation: golden-border-spin 3s linear infinite;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+
+.golden-card::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: calc(0.7rem - 2px);
+  background: rgba(30, 41, 59, 0.95); /* Match other cards */
+  z-index: 0;
+}
+
+.golden-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  animation: golden-shine 6s infinite;
+  z-index: 2;
+  pointer-events: none;
+  border-radius: calc(0.7rem - 2px);
+}
+
+.golden-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.trophy-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  opacity: 0.20;
+  mix-blend-mode: screen; /* To hide the black background of the generated image */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Text contrast overrides for golden-card */
+.golden-card .text-slate-600 {
+  color: #cbd5e1 !important; /* text-slate-300 */
+}
+.golden-card .text-slate-500 {
+  color: #e2e8f0 !important; /* text-slate-200 */
+}
+.golden-card .text-slate-400 {
+  color: #f8fafc !important; /* text-slate-50 */
+}
+.golden-card .text-white {
+  text-shadow: 0 0 6px rgba(255, 234, 0, 0.4);
+}
