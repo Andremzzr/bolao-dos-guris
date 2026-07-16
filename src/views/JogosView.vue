@@ -128,6 +128,36 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Wrapped Available Modal -->
+    <Transition
+      enter-active-class="transition ease-out duration-300"
+      enter-from-class="opacity-0 translate-y-4 scale-95"
+      enter-to-class="opacity-100 translate-y-0 scale-100"
+      leave-active-class="transition ease-in duration-200"
+      leave-from-class="opacity-100 translate-y-0 scale-100"
+      leave-to-class="opacity-0 translate-y-4 scale-95"
+    >
+      <div v-if="showWrappedModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80" @click.self="closeWrappedModal">
+        <div class="bg-[#181818] w-full max-w-sm rounded-2xl flex flex-col overflow-hidden shadow-2xl relative text-center p-8">
+          
+          <div class="text-5xl mb-4 animate-bounce flex justify-center">
+            <PhSparkle weight="fill" class="text-[#1DB954]" />
+          </div>
+          
+          <h2 class="text-2xl font-black text-white mb-2">Seu Bolão Wrapped chegou!</h2>
+          <p class="text-slate-400 text-sm mb-8">Descubra suas estatísticas, maiores acertos e as zebras que te derrubaram nesta edição.</p>
+          
+          <button @click="goToWrapped" class="bg-[#1DB954] hover:bg-[#1ed760] text-black font-bold py-4 px-6 rounded-full transition-colors w-full mb-4 flex items-center justify-center gap-2">
+            <PhSparkle weight="fill" /> Ver meu Wrapped
+          </button>
+          
+          <button @click="closeWrappedModal" class="text-slate-400 hover:text-white text-sm font-semibold transition-colors">
+            Talvez mais tarde
+          </button>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -138,7 +168,7 @@ import { useJogos } from '@/composables/useJogos'
 import { useWeather } from '@/composables/useWeather'
 import CardJogo from '@/components/CardJogo.vue'
 import { getFlagUrl } from '@/utils/flags'
-import { PhCalendar } from '@phosphor-icons/vue'
+import { PhCalendar, PhSparkle } from '@phosphor-icons/vue'
 
 import { useRoute, useRouter } from 'vue-router'
 
@@ -170,6 +200,21 @@ const activeFilter = ref('abertos')
 
 const selectedTeam = ref(null)
 const isModalOpen = ref(false)
+const showWrappedModal = ref(false)
+
+const wrappedAvailableDate = new Date('2026-07-19T00:00:00')
+const isWrappedAvailable = computed(() => new Date() >= wrappedAvailableDate)
+
+function closeWrappedModal() {
+  localStorage.setItem('wrapped_modal_seen', 'true')
+  showWrappedModal.value = false
+}
+
+function goToWrapped() {
+  localStorage.setItem('wrapped_modal_seen', 'true')
+  showWrappedModal.value = false
+  router.push('/wrapped')
+}
 
 const teamGames = computed(() => {
   if (!selectedTeam.value) return []
@@ -279,6 +324,10 @@ onMounted(async () => {
   ])
   initialLoading.value = false
   
+  if (isWrappedAvailable.value && localStorage.getItem('wrapped_modal_seen') !== 'true') {
+    showWrappedModal.value = true
+  }
+
   nextTick(() => {
     if (route.query.scrollTo) {
       scrollToMatch(route.query.scrollTo, 100)

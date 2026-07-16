@@ -7,9 +7,9 @@
           <PhTrophy :size="28" />
           <h1 class="text-lg font-bold text-white">Classificação</h1>
         </div>
-        <!-- <router-link to="/racing" class="bg-copa-accent/20 text-copa-accent text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 border border-copa-accent/30 hover:bg-copa-accent/40 transition-colors">
-          <PhLightning :size="14" weight="fill" /> Race
-        </router-link> -->
+        <router-link v-if="isWrappedAvailable" to="/wrapped" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-lg animate-pulse">
+          <PhSparkle weight="fill" /> Wrapped
+        </router-link>
       </div>
 
       <!-- Tabs -->
@@ -520,12 +520,15 @@ import { useAuth } from '@/composables/useAuth'
 import { toPng } from 'html-to-image'
 import ReiDaRodadaCard from '@/components/ReiDaRodadaCard.vue'
 import BoboDaRodadaCard from '@/components/BoboDaRodadaCard.vue'
-import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus, PhLightning, PhStar } from '@phosphor-icons/vue'
+import { PhTrophy, PhCrownSimple, PhBone, PhFire, PhCaretUp, PhCaretDown, PhMinus, PhLightning, PhStar, PhSparkle } from '@phosphor-icons/vue'
 
 
 const { ranking, loading } = useRanking()
 const { topMVPs } = useTopMVPs()
 const { user } = useAuth()
+
+const wrappedAvailableDate = new Date('2026-07-19T00:00:00')
+const isWrappedAvailable = computed(() => new Date() >= wrappedAvailableDate)
 
 const activeTab = ref('tops')
 

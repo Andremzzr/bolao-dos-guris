@@ -60,6 +60,12 @@ const routes = [
     name: 'admin-cartas',
     component: () => import('@/views/AdminCartasView.vue'),
   },
+  {
+    path: '/wrapped',
+    name: 'wrapped',
+    component: () => import('@/views/WrappedView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
