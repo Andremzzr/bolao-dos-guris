@@ -47,6 +47,7 @@ export function useJogos() {
 
   // Check if a game is locked (less than 10 minutes before kickoff)
   function isLocked(jogo) {
+    if (jogo.id === 103) return true
     const kickoff = new Date(jogo.data)
     const now = new Date()
     const diffMs = kickoff.getTime() - now.getTime()
@@ -326,6 +327,7 @@ export function useJogos() {
   // Note: for display purposes; the authoritative value is palpite.pontuacao from the DB
   function calcularPontos(palpite, resultado, isCoringa = false) {
     if (!resultado?.finalizado || !palpite) return null
+    if (resultado.jogo_id === 103) return { pontos: 0, tipo: 'erro' }
 
     const pm = palpite.gols_mandante
     const pv = palpite.gols_visitante

@@ -448,6 +448,13 @@
       <div v-else-if="futureLocked && !viewOnly && !resultado?.finalizado" class="mt-4 text-center">
         <p class="text-xs font-medium text-slate-500 bg-slate-800/50 py-2 rounded-lg border border-slate-700/50">Palpites liberam dia {{ dataLiberacaoPalpite }}</p>
       </div>
+
+      <!-- Disputa 3o lugar message -->
+      <div v-if="jogo.id === 103" class="mt-4 text-center">
+        <p class="text-xs font-medium text-amber-500 bg-amber-500/10 py-2 rounded-lg border border-amber-500/20 px-2">
+          Disputa de 3º lugar não conta pontos para o bolão.
+        </p>
+      </div>
     </div>
 
     <!-- Save button (only when editable and changed) -->
