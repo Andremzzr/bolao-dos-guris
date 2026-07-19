@@ -404,6 +404,28 @@ const exportImage = async (e) => {
       cacheBust: true
     })
     
+    try {
+      const res = await fetch(dataUrl)
+      const blob = await res.blob()
+      const file = new File([blob], 'meu-bolao-wrapped.png', { type: 'image/png' })
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Bolão Wrapped 2026',
+          text: 'Veja meu desempenho no Bolão dos Guris!'
+        })
+        return
+      }
+    } catch (shareErr) {
+      if (shareErr.name !== 'AbortError') {
+        console.error('Erro ao compartilhar', shareErr)
+      } else {
+        return // O usuário cancelou o share
+      }
+    }
+    
+    // Fallback para desktop ou browsers que não suportam file share
     const link = document.createElement('a')
     link.download = 'meu-bolao-wrapped.png'
     link.href = dataUrl
